@@ -10,9 +10,9 @@ const MainLayout = ({
 }: {
     title?: string;
     description?: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }) => {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     return (
         <>
             <Head>

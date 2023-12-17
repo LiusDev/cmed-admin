@@ -22,34 +22,53 @@ instance.interceptors.request.use(
     }
 );
 
-// auto refresh accessToken if user have refreshToken
+// auto refresh accessToken (/auth/refresh) if user have refreshToken and store new accessToken in localStorage
 instance.interceptors.response.use(
-    (response) => {
+    function (response) {
         return response;
     },
-    async (error) => {
+    async function (error) {
         const originalRequest = error.config;
-        if (error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-            const refresh = localStorage.getItem("refreshToken");
-            const res = await axios.post(
-                "https://cmed-server.onrender.com/api/v1/auth/refresh",
-                {
-                    refresh,
+        // if (
+        //     error.response.status === 401 &&
+        //     originalRequest.url === "/auth/refresh"
+        // ) {
+        //     // if refresh token is expired, logout user
+        //     localStorage.removeItem("accessToken");
+        //     localStorage.removeItem("refreshToken");
+        //     localStorage.removeItem("user");
+        //     window.location.reload();
+        //     return Promise.reject(error);
+        // }
+        if (
+            error.response.status === 401 &&
+            originalRequest.url !== "/auth/refresh"
+        ) {
+            const refreshToken =
+                typeof window !== "undefined"
+                    ? localStorage.getItem("refreshToken")
+                    : null;
+
+            if (refreshToken) {
+                try {
+                    const res = await instance.post("/auth/refresh", {
+                        refresh: refreshToken,
+                    });
+
+                    if (res.status === 201) {
+                        const accessToken = res.data.accessToken;
+
+                        localStorage.setItem("accessToken", accessToken);
+                        return instance(originalRequest);
+                    }
+                } catch (error) {
+                    return Promise.reject(error);
                 }
-            );
-            if (res.status === 200) {
-                localStorage.setItem("accessToken", res.data.accessToken);
-                instance.defaults.headers.common[
-                    "Authorization"
-                ] = `Bearer ${res.data.accessToken}`;
-                return instance(originalRequest);
             }
         }
         return Promise.reject(error);
     }
 );
-
 export interface User {
     id: string;
     username: string;

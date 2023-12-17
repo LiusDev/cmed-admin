@@ -1,8 +1,7 @@
-import Loader from "@/components/loader";
+import { Loader } from "@/components/common";
 import { useRouter } from "next/router";
 import React, { useEffect, FC, useState } from "react";
 
-// This is the HOC
 const withAuth = (WrappedComponent: FC) => {
     return (props: any) => {
         const [mount, setMount] = useState(false);

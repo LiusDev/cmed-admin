@@ -1,6 +1,8 @@
 import MainLayout from "@/components/layouts/MainLayout";
-import { useEffect } from "react";
+import withAuth from "@/hoc/withAuth";
 
-export default function Home() {
-    return <MainLayout>Main</MainLayout>;
-}
+const Home = () => {
+    return <MainLayout>OK</MainLayout>;
+};
+
+export default withAuth(Home);

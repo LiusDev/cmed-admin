@@ -1,3 +1,7 @@
+import { instance } from "@/utils";
+import Link from "next/link";
+import parse, { Element, HTMLReactParserOptions } from "html-react-parser";
+
 import {
     MdOutlineDelete,
     MdOutlineEdit,
@@ -10,7 +14,32 @@ interface NewsTableProps {
     content: string;
 }
 
-const Table = ({ tableData }: { tableData: NewsTableProps[] | null }) => {
+const options: HTMLReactParserOptions = {
+    replace: (domNode) => {
+        const typedNode = domNode as Element;
+        if (typedNode.name === "img") {
+            return <></>;
+        }
+    },
+};
+
+const Table = ({
+    tableData,
+    setTableData,
+}: {
+    tableData: NewsTableProps[];
+    setTableData: (arg: any) => void;
+}) => {
+    const handleDelete = (id: number) => {
+        instance.delete(`/news/${id}`).then((res) => {
+            console.log(res);
+            // delete item with id from tableData
+            const filteredTableData = tableData!.filter(
+                (item) => item.id !== id
+            );
+            setTableData(filteredTableData);
+        });
+    };
     return (
         <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
             <div className="max-w-full overflow-x-auto">
@@ -40,18 +69,27 @@ const Table = ({ tableData }: { tableData: NewsTableProps[] | null }) => {
                                     </td>
                                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                         <p className="text-black dark:text-white">
-                                            {content}
+                                            {parse(content, options)}
                                         </p>
                                     </td>
                                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                         <div className="flex items-center space-x-3.5">
-                                            <button className="hover:text-primary">
+                                            <Link
+                                                href={`/news/${id}`}
+                                                className="hover:text-primary"
+                                            >
                                                 <MdOutlineRemoveRedEye className="text-xl" />
-                                            </button>
-                                            <button className="hover:text-success">
+                                            </Link>
+                                            <Link
+                                                href={`/news/edit/${id}`}
+                                                className="hover:text-success"
+                                            >
                                                 <MdOutlineEdit className="text-xl" />
-                                            </button>
-                                            <button className="hover:text-danger">
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDelete(id)}
+                                                className="hover:text-danger"
+                                            >
                                                 <MdOutlineDelete className="text-xl" />
                                             </button>
                                         </div>

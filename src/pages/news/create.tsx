@@ -1,8 +1,9 @@
 import { Box, Button, Breadcrumb } from "@/components/common";
-import CustomEditor from "@/components/customEditor";
+import { formats, modules } from "@/components/customEditor";
 import MainLayout from "@/components/layouts/MainLayout";
 import withAuth from "@/hoc/withAuth";
 import { instance } from "@/utils";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -13,6 +14,10 @@ const Create = () => {
     const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value);
     };
+
+    const QuillNoSSRWrapper = dynamic(import("react-quill"), {
+        ssr: false,
+    });
 
     const router = useRouter();
 
@@ -49,7 +54,13 @@ const Create = () => {
                         />
                     </div>
                     <div>
-                        <CustomEditor value={value} onChange={setValue} />
+                        <QuillNoSSRWrapper
+                            theme="snow"
+                            modules={modules}
+                            formats={formats}
+                            value={value}
+                            onChange={setValue}
+                        />
                     </div>
 
                     <div>

@@ -1,10 +1,11 @@
 import { Box, Breadcrumb, Button } from "@/components/common";
-import CustomEditor from "@/components/customEditor";
+import { formats, modules } from "@/components/customEditor";
 import MainLayout from "@/components/layouts/MainLayout";
 import type { News } from "@/types";
 import { instance } from "@/utils";
 import { InferGetServerSidePropsType } from "next";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
@@ -24,6 +25,10 @@ const Edit = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const [title, setTitle] = useState(news.title);
     const [value, setValue] = useState(news.content);
+
+    const QuillNoSSRWrapper = dynamic(import("react-quill"), {
+        ssr: false,
+    });
 
     const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value);
@@ -64,7 +69,13 @@ const Edit = ({
                         />
                     </div>
                     <div>
-                        <CustomEditor value={value} onChange={setValue} />
+                        <QuillNoSSRWrapper
+                            theme="snow"
+                            modules={modules}
+                            formats={formats}
+                            value={value}
+                            onChange={setValue}
+                        />
                     </div>
 
                     <div>

@@ -1,6 +1,4 @@
-import dynamic from "next/dynamic";
-
-const modules = {
+export const modules = {
     toolbar: [
         [{ header: "1" }, { header: "2" }, { font: [] }],
         [{ size: [] }],
@@ -23,7 +21,7 @@ const modules = {
  * Quill editor formats
  * See https://quilljs.com/docs/formats/
  */
-const formats = [
+export const formats = [
     "header",
     "font",
     "size",
@@ -38,27 +36,3 @@ const formats = [
     "link",
     "image",
 ];
-
-const QuillNoSSRWrapper = dynamic(import("react-quill"), {
-    ssr: false,
-});
-
-const CustomEditor = ({
-    value,
-    onChange,
-}: {
-    value: string;
-    onChange: (arg: string) => void;
-}) => {
-    return (
-        <QuillNoSSRWrapper
-            theme="snow"
-            modules={modules}
-            formats={formats}
-            value={value}
-            onChange={onChange}
-        />
-    );
-};
-
-export default CustomEditor;

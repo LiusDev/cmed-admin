@@ -31,6 +31,7 @@ interface ButtonProps {
     size?: ButtonSizes;
     href?: string;
     newTab?: boolean;
+    isLoading?: boolean;
     className?: string;
     onClick?: () => void;
     children?: React.ReactNode;
@@ -42,6 +43,7 @@ const Button = ({
     size = "medium",
     href,
     newTab = false,
+    isLoading = false,
     className = "",
     onClick,
     children,
@@ -66,11 +68,20 @@ const Button = ({
     return (
         <button
             onClick={onClick}
+            disabled={isLoading}
             className={twMerge(
-                `${buttonColors[color]} ${buttonVariants[variant]} ${buttonSizes[size]} ${className} transition-all duration-500`
+                `${buttonVariants[variant]} ${buttonSizes[size]} ${className} ${
+                    isLoading
+                        ? "bg-body border-body cursor-not-allowed"
+                        : buttonColors[color]
+                } flex items-center justify-center transition-all duration-500`
             )}
         >
-            {children}
+            {isLoading ? (
+                <div className="w-6 h-6 border-4 border-bodydark1 rounded-full flex items-center justify-center border-t-4 border-t-white animate-spin" />
+            ) : (
+                `${children}`
+            )}
         </button>
     );
 };

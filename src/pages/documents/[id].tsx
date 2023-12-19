@@ -1,25 +1,29 @@
 import { Box, Breadcrumb, Button } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
-import type { News } from "@/types";
+import type { Document } from "@/types";
 import { convertDate, instance } from "@/utils";
 import { useRouter } from "next/router";
-import parse from "html-react-parser";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
+import dynamic from "next/dynamic";
 
-const News = () => {
+const PDFViewer = dynamic(() => import("@/components/pdfViewer"), {
+    ssr: false,
+});
+
+const Documents = () => {
     const [mounted, setMounted] = useState(false);
-    const [news, setNews] = useState<News | null>(null);
+    const [document, setDocument] = useState<Document | null>(null);
     let path: string;
     const router = useRouter();
     useEffect(() => {
         path = window.location.pathname.split("/")[2];
         instance
-            .get(`/news/${path}`)
+            .get(`/documents/${path}`)
             .then((res) => {
                 setMounted(true);
-                setNews(res.data);
+                setDocument(res.data);
             })
             .catch((err) => {
                 if (err.response.status === 401) {
@@ -29,18 +33,18 @@ const News = () => {
     }, []);
 
     return (
-        <MainLayout title="News">
-            <Breadcrumb pageName="News" link="/news">
+        <MainLayout title="Documents">
+            <Breadcrumb pageName="Documents" link="/documents">
                 <Button
                     color="success"
                     variant="rounded"
                     size="large"
-                    href={`/news/edit/${router.query.id}`}
+                    href={`/documents/edit/${router.query.id}`}
                 >
                     Edit
                 </Button>
             </Breadcrumb>
-            {!news ? (
+            {!document ? (
                 <TableSkeleton
                     rows={1}
                     columns={1}
@@ -51,24 +55,17 @@ const News = () => {
                     <div className="flex flex-col gap-5.5 p-6.5">
                         <div>
                             <h2 className="text-4xl font-semibold text-black dark:text-white mb-2">
-                                {news.title}
+                                {document.name}
                             </h2>
-                            <p>{convertDate(news.createdAt)}</p>
+                            <p>{convertDate(document.createdAt)}</p>
                         </div>
                         <div>
                             <p className="text-base text-black dark:text-white">
-                                {news.description}
+                                {document.description}
                             </p>
                         </div>
                         <div>
-                            <img
-                                src={news.featuredImage}
-                                alt={news.title}
-                                className="w-full object-cover"
-                            />
-                        </div>
-                        <div>
-                            <p>{mounted && parse(news.content)}</p>
+                            <PDFViewer />
                         </div>
                     </div>
                 </Box>
@@ -77,4 +74,4 @@ const News = () => {
     );
 };
 
-export default withAuth(News);
+export default withAuth(Documents);

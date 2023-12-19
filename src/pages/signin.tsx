@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { instance } from "@/utils";
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import { MdLockOutline, MdPersonOutline } from "react-icons/md";
 import { useRouter } from "next/router";
 

@@ -2,10 +2,9 @@ import { Box, Breadcrumb, Button } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
-import type { Category, News } from "@/types";
+import type { Staff } from "@/types";
 import { convertBase64, instance } from "@/utils";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 const FroalaEditorComponent = dynamic(
@@ -16,38 +15,23 @@ const FroalaEditorComponent = dynamic(
 );
 
 const Edit = () => {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [news, setNews] = useState<News | null>(null);
+    const [staff, setStaff] = useState<Staff | null>(null);
 
-    const [title, setTitle] = useState("");
-    const [category, setCategory] = useState<Category["id"]>(1);
-    const [description, setDescription] = useState("");
+    const [name, setName] = useState("");
+    const [position, setPosition] = useState("");
     const [featuredImage, setFeaturedImage] = useState("");
-    const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
 
     let path: string;
     useEffect(() => {
         path = window.location.pathname.split("/")[3];
         instance
-            .get(`/categories`)
+            .get(`/staffs/${path}`)
             .then((res) => {
-                setCategories(res.data);
-            })
-            .catch((err) => {
-                if (err.response.status === 401) {
-                    window.location.href = "/signin";
-                }
-            });
-        instance
-            .get(`/news/${path}`)
-            .then((res) => {
-                setNews(res.data);
-                setTitle(res.data.title);
-                setCategory(res.data.category.id);
-                setDescription(res.data.description);
+                setStaff(res.data);
+                setName(res.data.name);
+                setPosition(res.data.position);
                 setFeaturedImage(res.data.featuredImage);
-                setContent(res.data.content);
             })
             .catch((err) => {
                 if (err.response.status === 401) {
@@ -56,18 +40,12 @@ const Edit = () => {
             });
     }, []);
 
-    const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value);
+    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value);
     };
 
-    const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCategory(parseInt(e.target.value));
-    };
-
-    const handleChangeDescription = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setDescription(e.target.value);
+    const handleChangePosition = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPosition(e.target.value);
     };
 
     const handleUploadFeaturedImage = async (
@@ -80,20 +58,17 @@ const Edit = () => {
         }
     };
 
-    const router = useRouter();
     const handlePublish = async () => {
         setLoading(true);
-        if (news) {
+        if (staff) {
             await instance
-                .patch(`/news/${news.id}`, {
-                    title,
-                    categoryId: category,
-                    description,
+                .patch(`/staffs/${staff.id}`, {
+                    name,
+                    position,
                     featuredImage,
-                    content,
                 })
                 .then(() => {
-                    window.location.href = "/news";
+                    window.location.href = "/staffs";
                 })
                 .catch((err) => {
                     if (err.response.status === 401) {
@@ -110,8 +85,8 @@ const Edit = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="News" link="/news" />
-            {!news ? (
+            <Breadcrumb pageName="Staffs" link="/staffs" />
+            {!staff ? (
                 <TableSkeleton
                     rows={4}
                     columns={1}
@@ -121,52 +96,31 @@ const Edit = () => {
                 <Box className="max-w-230 m-auto">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                         <h3 className="font-medium text-black dark:text-white">
-                            Update News
+                            Update Staff
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
-                        <div className="grid grid-cols-2 gap-2">
-                            <div>
-                                <label className="mb-3 block text-black dark:text-white">
-                                    Title
-                                </label>
-                                <input
-                                    value={title}
-                                    onChange={handleChangeTitle}
-                                    type="text"
-                                    placeholder="News title"
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                                />
-                            </div>
-                            <div>
-                                <label className="mb-3 block text-black dark:text-white">
-                                    Category
-                                </label>
-                                <select
-                                    onChange={handleChangeCategory}
-                                    value={category}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                                >
-                                    {categories.map((category) => (
-                                        <option
-                                            key={category.id}
-                                            value={category.id}
-                                        >
-                                            {category.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">
+                                Staff Name
+                            </label>
+                            <input
+                                value={name}
+                                onChange={handleChangeName}
+                                type="text"
+                                placeholder="Staff name"
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            />
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Description
+                                Position
                             </label>
                             <input
-                                value={description}
-                                onChange={handleChangeDescription}
+                                value={position}
+                                onChange={handleChangePosition}
                                 type="text"
-                                placeholder="News description"
+                                placeholder="Staff position"
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>
@@ -188,15 +142,7 @@ const Edit = () => {
                                 />
                             )}
                         </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Content
-                            </label>
-                            <FroalaEditorComponent
-                                model={content}
-                                setModel={setContent}
-                            />
-                        </div>
+
                         <div>
                             <Button
                                 onClick={handlePublish}

@@ -2,27 +2,23 @@ import { Button, Breadcrumb } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
-import type { News } from "@/types";
+import type { Staff } from "@/types";
 import { instance } from "@/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-    MdOutlineDelete,
-    MdOutlineEdit,
-    MdOutlineRemoveRedEye,
-} from "react-icons/md";
+import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 
-const News = () => {
-    const [data, setData] = useState<News[] | null>(null);
+const Staffs = () => {
+    const [data, setData] = useState<Staff[] | null>(null);
     useEffect(() => {
-        instance.get(`/news`).then((res) => {
+        instance.get(`/staffs`).then((res) => {
             setData(res.data);
         });
     }, []);
 
     const handleDelete = (id: number) => {
         instance
-            .delete(`/news/${id}`)
+            .delete(`/staffs/${id}`)
             .then(() => {
                 const filteredTableData = data!.filter(
                     (item) => item.id !== id
@@ -37,19 +33,19 @@ const News = () => {
     };
 
     return (
-        <MainLayout title="News">
-            <Breadcrumb pageName="News" link="">
+        <MainLayout title="Staffs">
+            <Breadcrumb pageName="Staffs" link="">
                 <Button
                     color="success"
                     variant="rounded"
                     size="large"
-                    href="/news/create"
+                    href="/staffs/create"
                 >
                     Create
                 </Button>
             </Breadcrumb>
             {!data ? (
-                <TableSkeleton rows={5} columns={4} />
+                <TableSkeleton rows={5} columns={3} />
             ) : (
                 <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
                     <div className="max-w-full overflow-x-auto">
@@ -57,13 +53,14 @@ const News = () => {
                             <thead>
                                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Title
+                                        Name
+                                    </th>
+
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
+                                        Position
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
-                                        Description
-                                    </th>
-                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
-                                        Category
+                                        Image
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         Actions
@@ -72,33 +69,31 @@ const News = () => {
                             </thead>
                             <tbody>
                                 {data.map(
-                                    ({ id, title, description, category }) => (
+                                    ({ id, name, featuredImage, position }) => (
                                         <tr key={id}>
                                             <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                                                 <h5 className="font-medium text-black dark:text-white">
-                                                    {title}
+                                                    {name}
                                                 </h5>
                                             </td>
                                             <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                 <p className="text-black dark:text-white">
-                                                    {description}
+                                                    {position}
                                                 </p>
                                             </td>
                                             <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                <p className="text-black dark:text-white">
-                                                    {category.name}
-                                                </p>
+                                                <div className="font-medium text-black dark:text-white">
+                                                    <img
+                                                        src={featuredImage}
+                                                        alt="featured image"
+                                                        className="h-40 object-cover rounded-sm"
+                                                    />
+                                                </div>
                                             </td>
                                             <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                 <div className="flex items-center space-x-3.5">
                                                     <Link
-                                                        href={`/news/${id}`}
-                                                        className="hover:text-primary"
-                                                    >
-                                                        <MdOutlineRemoveRedEye className="text-xl" />
-                                                    </Link>
-                                                    <Link
-                                                        href={`/news/edit/${id}`}
+                                                        href={`/staffs/edit/${id}`}
                                                         className="hover:text-success"
                                                     >
                                                         <MdOutlineEdit className="text-xl" />
@@ -124,4 +119,4 @@ const News = () => {
         </MainLayout>
     );
 };
-export default withAuth(News);
+export default withAuth(Staffs);

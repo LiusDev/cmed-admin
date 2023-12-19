@@ -1,6 +1,9 @@
+import { tw } from "@/utils";
+
 interface TableSkeletonProps {
     rows?: number;
     columns?: number;
+    className?: string;
 }
 
 const Cell = () => (
@@ -9,9 +12,17 @@ const Cell = () => (
     </td>
 );
 
-const TableSkeleton = ({ rows = 5, columns = 4 }: TableSkeletonProps) => {
+const TableSkeleton = ({
+    rows = 5,
+    columns = 4,
+    className,
+}: TableSkeletonProps) => {
     return (
-        <table className="rounded-sm border border-stroke bg-white p-4 shadow-default dark:border-strokedark dark:bg-boxdark w-full">
+        <table
+            className={tw(
+                ` rounded-sm border border-stroke bg-white p-4 shadow-default dark:border-strokedark dark:bg-boxdark w-full ${className}`
+            )}
+        >
             <tbody className="bg-white dark:bg-boxdark border-stroke dark:border-strokedark p-4 w-full">
                 {[...Array(rows)].map((_, i) => (
                     <tr key={i}>

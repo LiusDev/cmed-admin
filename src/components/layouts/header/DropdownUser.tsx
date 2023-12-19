@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { User } from "@/utils";
+import { User } from "@/types";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 
 const DropdownUser = () => {
@@ -60,7 +60,7 @@ const DropdownUser = () => {
             >
                 <span className="hidden text-right lg:block">
                     <span className="block text-sm font-medium text-black dark:text-white">
-                        {userData ? userData.username : "User"}
+                        {userData ? userData.name : "User"}
                     </span>
                     {/* <span className="block text-xs">UX Designer</span> */}
                 </span>

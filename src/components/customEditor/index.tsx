@@ -1,38 +1,100 @@
-export const modules = {
-    toolbar: [
-        [{ header: "1" }, { header: "2" }, { font: [] }],
-        [{ size: [] }],
-        ["bold", "italic", "underline", "strike", "blockquote"],
-        [
-            { list: "ordered" },
-            { list: "bullet" },
-            { indent: "-1" },
-            { indent: "+1" },
-        ],
-        ["link", "image"],
-        ["clean"],
+import "froala-editor/js/plugins.pkgd.min.js";
+import FroalaEditor from "react-froala-wysiwyg";
+import "froala-editor/css/froala_editor.pkgd.min.css";
+
+// config for froala editor
+export const config = {
+    pluginsEnabled: [
+        "fontSize",
+        "image",
+        "imageManager",
+        "table",
+        "align",
+        "colors",
+        "emoticons",
+        "paragraphFormat",
+        "paragraphStyle",
+        "quote",
+        "url",
     ],
-    clipboard: {
-        // toggle to add extra line breaks when pasting HTML:
-        matchVisual: false,
-    },
+    toolbarButtons: [
+        "fontSize",
+        "colors",
+        "bold",
+        "italic",
+        "underline",
+        "strikeThrough",
+        "|",
+
+        "textColor",
+        "backgroundColor",
+        "|",
+
+        "alignLeft",
+        "alignCenter",
+        "alignRight",
+        "|",
+
+        "insertImage",
+        "insertTable",
+        "horizon",
+
+        "|",
+        "insertHR",
+        "insertFile",
+        "fileM",
+    ],
+    fontSize: [
+        "8",
+        "10",
+        "12",
+        "14",
+        "18",
+        "24",
+        "30",
+        "36",
+        "48",
+        "60",
+        "72",
+        "96",
+    ],
+
+    fontSizeDefaultSelection: "12",
+
+    imageEditButtons: [
+        "imageReplace",
+        "imageAlign",
+        "imageRemove",
+        "|",
+        "imageLink",
+        "linkOpen",
+        "linkEdit",
+        "linkRemove",
+        "-",
+        "imageDisplay",
+        "imageStyle",
+        "imageAlt",
+        "imageSize",
+    ],
+
+    imageInsertButtons: ["imageBack", "|", "imageUpload", "imageByURL"],
+    imageUploadMethod: "POST",
+    // Validation
+    imageAllowedTypes: ["jpeg", "jpg", "png"],
+    // Set max image size to 10MB.
+    imageMaxSize: 1024 * 1024 * 10,
 };
-/*
- * Quill editor formats
- * See https://quilljs.com/docs/formats/
- */
-export const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-];
+
+const MyFroalaEditor = ({
+    model,
+    setModel,
+}: {
+    model?: string;
+    setModel: (model: string) => void;
+}) => {
+    return (
+        <FroalaEditor config={config} model={model} onModelChange={setModel} />
+    );
+};
+
+export default MyFroalaEditor;

@@ -25,9 +25,44 @@ const menuItems = [
         title: "Manage",
         items: [
             {
+                label: "Categories",
+                icon: <MdCalendarMonth className="text-2xl" />,
+                link: "/categories",
+            },
+            {
                 label: "News",
                 icon: <MdNewspaper className="text-2xl" />,
                 link: "/news",
+            },
+            {
+                label: "Documents",
+                icon: <MdNewspaper className="text-2xl" />,
+                link: "/documents",
+            },
+            {
+                label: "Partners",
+                icon: <MdPersonOutline className="text-2xl" />,
+                link: "/partners",
+            },
+            {
+                label: "Projects",
+                icon: <MdPersonOutline className="text-2xl" />,
+                link: "/projects",
+            },
+            {
+                label: "Services",
+                icon: <MdPersonOutline className="text-2xl" />,
+                link: "/services",
+            },
+            {
+                label: "Users",
+                icon: <MdPersonOutline className="text-2xl" />,
+                link: "/users",
+            },
+            {
+                label: "Staffs",
+                icon: <MdPersonOutline className="text-2xl" />,
+                link: "/staffs",
             },
         ],
     },

@@ -1,3 +1,4 @@
+import { User } from "@/types";
 import axios from "axios";
 
 export { twMerge as tw } from "tailwind-merge";
@@ -29,17 +30,17 @@ instance.interceptors.response.use(
     },
     async function (error) {
         const originalRequest = error.config;
-        // if (
-        //     error.response.status === 401 &&
-        //     originalRequest.url === "/auth/refresh"
-        // ) {
-        //     // if refresh token is expired, logout user
-        //     localStorage.removeItem("accessToken");
-        //     localStorage.removeItem("refreshToken");
-        //     localStorage.removeItem("user");
-        //     window.location.reload();
-        //     return Promise.reject(error);
-        // }
+        if (
+            error.response.status === 401 &&
+            originalRequest.url === "/auth/refresh"
+        ) {
+            // if refresh token is expired, logout user
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("user");
+            window.location.reload();
+            return Promise.reject(error);
+        }
         if (
             error.response.status === 401 &&
             originalRequest.url !== "/auth/refresh"
@@ -69,11 +70,24 @@ instance.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-export interface User {
-    id: string;
-    username: string;
-    role: string;
-}
+
+export const convertBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+        fileReader.onload = () => {
+            resolve(fileReader.result as string);
+        };
+        fileReader.onerror = (error) => {
+            reject(error);
+        };
+    });
+};
+// eg recive date format: 2023-12-19T04:49:45.000Z, output is 19/12/2023
+export const convertDate = (date: string): string => {
+    const d = new Date(date);
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+};
 
 // get user object from localStorage, also check type of window
 export const getUserData = (): User => {

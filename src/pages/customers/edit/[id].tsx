@@ -17,7 +17,7 @@ const Update = () => {
     useEffect(() => {
         path = window.location.pathname.split("/")[3];
         instance
-            .get(`/partners/${path}`)
+            .get(`/customers/${path}`)
             .then((res) => {
                 setName(res.data.name);
                 setImage(res.data.image);
@@ -48,12 +48,12 @@ const Update = () => {
     const handlePublish = async () => {
         setLoading(true);
         instance
-            .patch(`/partners/${path}`, {
+            .patch(`/customers/${router.query.id}`, {
                 name,
                 image,
             })
             .then(() => {
-                router.push("/partners");
+                router.push("/customers");
             })
             .catch((err) => {
                 if (err.response.status === 401) {
@@ -67,7 +67,7 @@ const Update = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="Partners" link="/partners" />
+            <Breadcrumb pageName="Customers" link="/customers" />
             {!mount ? (
                 <TableSkeleton
                     rows={3}
@@ -78,7 +78,7 @@ const Update = () => {
                 <Box className="max-w-230 m-auto">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                         <h3 className="font-medium text-black dark:text-white">
-                            Update partners
+                            Update customer
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
@@ -90,7 +90,7 @@ const Update = () => {
                                 value={name}
                                 onChange={handleChangeName}
                                 type="text"
-                                placeholder="Partner name"
+                                placeholder="Customer name"
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>

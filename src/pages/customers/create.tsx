@@ -29,12 +29,12 @@ const Create = () => {
     const handlePublish = async () => {
         setLoading(true);
         instance
-            .post("/partners", {
+            .post("/customers", {
                 name,
                 image,
             })
             .then(() => {
-                router.push("/partners");
+                router.push("/customers");
             })
             .catch((err) => {
                 if (err.response.status === 401) {
@@ -48,11 +48,11 @@ const Create = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="Partners" link="/partners" />
+            <Breadcrumb pageName="Customers" link="/customers" />
             <Box className="max-w-230 m-auto">
                 <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                     <h3 className="font-medium text-black dark:text-white">
-                        Create Partners
+                        Create Customer
                     </h3>
                 </div>
                 <div className="flex flex-col gap-5.5 p-6.5">
@@ -64,7 +64,7 @@ const Create = () => {
                             value={name}
                             onChange={handleChangeName}
                             type="text"
-                            placeholder="Partner name"
+                            placeholder="Customer name"
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
                     </div>

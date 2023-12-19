@@ -5,7 +5,13 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     MdArrowBack,
     MdCalendarMonth,
+    MdLightbulbOutline,
+    MdMenuOpen,
+    MdMiscellaneousServices,
     MdNewspaper,
+    MdOutlineDocumentScanner,
+    MdOutlineHandshake,
+    MdOutlinePersonAddAlt,
     MdPersonOutline,
 } from "react-icons/md";
 
@@ -26,7 +32,7 @@ const menuItems = [
         items: [
             {
                 label: "Categories",
-                icon: <MdCalendarMonth className="text-2xl" />,
+                icon: <MdMenuOpen className="text-2xl" />,
                 link: "/categories",
             },
             {
@@ -36,29 +42,29 @@ const menuItems = [
             },
             {
                 label: "Documents",
-                icon: <MdNewspaper className="text-2xl" />,
+                icon: <MdOutlineDocumentScanner className="text-2xl" />,
                 link: "/documents",
             },
             {
                 label: "Partners",
-                icon: <MdPersonOutline className="text-2xl" />,
+                icon: <MdOutlineHandshake className="text-2xl" />,
                 link: "/partners",
             },
             {
+                label: "Customers",
+                icon: <MdOutlinePersonAddAlt className="text-2xl" />,
+                link: "/customers",
+            },
+            {
                 label: "Projects",
-                icon: <MdPersonOutline className="text-2xl" />,
+                icon: <MdLightbulbOutline className="text-2xl" />,
                 link: "/projects",
             },
             {
                 label: "Services",
-                icon: <MdPersonOutline className="text-2xl" />,
+                icon: <MdMiscellaneousServices className="text-2xl" />,
                 link: "/services",
             },
-            // {
-            //     label: "Users",
-            //     icon: <MdPersonOutline className="text-2xl" />,
-            //     link: "/users",
-            // },
             {
                 label: "Staffs",
                 icon: <MdPersonOutline className="text-2xl" />,

@@ -59,27 +59,33 @@ const Customers = () => {
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                                         Name
                                     </th>
+                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                                        Image
+                                    </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map(({ id, name }) => (
+                                {data.map(({ id, name, image }) => (
                                     <tr key={id}>
                                         <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                                             <h5 className="font-medium text-black dark:text-white">
                                                 {name}
                                             </h5>
                                         </td>
+                                        <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                                            <div className="font-medium text-black dark:text-white">
+                                                <img
+                                                    src={image}
+                                                    alt="featured image"
+                                                    className="h-40 object-cover rounded-sm"
+                                                />
+                                            </div>
+                                        </td>
                                         <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                             <div className="flex items-center space-x-3.5">
-                                                <Link
-                                                    href={`/customers/${id}`}
-                                                    className="hover:text-primary"
-                                                >
-                                                    <MdOutlineRemoveRedEye className="text-xl" />
-                                                </Link>
                                                 <Link
                                                     href={`/customers/edit/${id}`}
                                                     className="hover:text-success"

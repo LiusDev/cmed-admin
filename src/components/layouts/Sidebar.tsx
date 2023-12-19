@@ -54,11 +54,11 @@ const menuItems = [
                 icon: <MdPersonOutline className="text-2xl" />,
                 link: "/services",
             },
-            {
-                label: "Users",
-                icon: <MdPersonOutline className="text-2xl" />,
-                link: "/users",
-            },
+            // {
+            //     label: "Users",
+            //     icon: <MdPersonOutline className="text-2xl" />,
+            //     link: "/users",
+            // },
             {
                 label: "Staffs",
                 icon: <MdPersonOutline className="text-2xl" />,

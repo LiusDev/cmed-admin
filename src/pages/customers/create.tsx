@@ -2,7 +2,7 @@ import { Box, Button, Breadcrumb } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import withAuth from "@/hoc/withAuth";
 import {} from "@/types";
-import { instance } from "@/utils";
+import { convertBase64, instance } from "@/utils";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -20,8 +20,8 @@ const Create = () => {
     ) => {
         if (e.target.files) {
             const file = e.target.files[0];
-            const url = URL.createObjectURL(file);
-            setImage(url);
+            const base64 = await convertBase64(file);
+            setImage(base64);
         }
     };
     const router = useRouter();

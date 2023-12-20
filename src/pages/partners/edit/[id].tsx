@@ -97,7 +97,7 @@ const Update = () => {
 
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Ảnh
+                                Logo
                             </label>
                             <input
                                 type="file"

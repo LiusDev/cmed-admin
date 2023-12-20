@@ -2,7 +2,7 @@ import { Box, Button, Breadcrumb } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
-import { instance } from "@/utils";
+import { convertBase64, instance } from "@/utils";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ const FroalaEditorComponent = dynamic(
 const Create = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [featuredImage, setFeaturedImage] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -30,6 +31,16 @@ const Create = () => {
         setDescription(e.target.value);
     };
 
+    const handleUploadFeaturedImage = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        if (e.target.files) {
+            const file = e.target.files[0];
+            const base64image = await convertBase64(file);
+            setFeaturedImage(base64image);
+        }
+    };
+
     const router = useRouter();
     const handlePublish = async () => {
         setLoading(true);
@@ -37,6 +48,7 @@ const Create = () => {
             .post("/projects", {
                 name,
                 description,
+                featuredImage,
                 content,
             })
             .then(() => {
@@ -86,6 +98,24 @@ const Create = () => {
                             placeholder="Mô tả dự án"
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
+                    </div>
+                    <div>
+                        <label className="mb-3 block text-black dark:text-white">
+                            Ảnh nổi bật
+                        </label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleUploadFeaturedImage}
+                            className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
+                        />
+                        {featuredImage && (
+                            <img
+                                src={featuredImage}
+                                alt="featured image"
+                                className="h-40 object-cover rounded-sm"
+                            />
+                        )}
                     </div>
                     <div>
                         <label className="mb-3 block text-black dark:text-white">

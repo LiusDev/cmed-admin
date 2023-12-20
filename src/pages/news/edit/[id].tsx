@@ -75,8 +75,8 @@ const Edit = () => {
     ) => {
         if (e.target.files) {
             const file = e.target.files[0];
-            const url = URL.createObjectURL(file);
-            setFeaturedImage(url);
+            const base64image = await convertBase64(file);
+            setFeaturedImage(base64image);
         }
     };
 

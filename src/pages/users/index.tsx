@@ -73,54 +73,68 @@ const Users = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map(({ id, name, role, username }) => (
-                                    <tr key={id}>
-                                        <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                                            <h5 className="font-medium text-black dark:text-white">
-                                                {name}
-                                            </h5>
-                                        </td>
-                                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                            <p className="text-black dark:text-white">
-                                                {username}
-                                            </p>
-                                        </td>
-                                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                            <p className="text-black dark:text-white">
-                                                {roleLabels[role]}
-                                            </p>
-                                        </td>
-                                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                            {role !== UserRole.ADMIN && (
-                                                <div className="flex items-center space-x-3.5">
-                                                    <Link
-                                                        href={`/users/edit/${id}`}
-                                                        className="hover:text-success"
-                                                    >
-                                                        <MdOutlineEdit className="text-xl" />
-                                                    </Link>
-                                                    <button
-                                                        onClick={() =>
-                                                            setShowModal(true)
-                                                        }
-                                                        className="hover:text-danger"
-                                                    >
-                                                        <MdOutlineDelete className="text-xl" />
-                                                    </button>
-                                                    <ConfirmDelete
-                                                        title="Bạn có chắc chắn muốn xóa?"
-                                                        description="Hành động này không thể hoàn tác."
-                                                        show={showModal}
-                                                        setShow={setShowModal}
-                                                        handleDelete={() =>
-                                                            handleDelete(id)
-                                                        }
-                                                    />
-                                                </div>
-                                            )}
+                                {data.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={10}>
+                                            <div className="text-black/70 dark:text-white/70 w-full flex items-center justify-center h-20 font-medium">
+                                                Không có dữ liệu
+                                            </div>
                                         </td>
                                     </tr>
-                                ))}
+                                ) : (
+                                    data.map(({ id, name, role, username }) => (
+                                        <tr key={id}>
+                                            <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                                                <h5 className="font-medium text-black dark:text-white">
+                                                    {name}
+                                                </h5>
+                                            </td>
+                                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                <p className="text-black dark:text-white">
+                                                    {username}
+                                                </p>
+                                            </td>
+                                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                <p className="text-black dark:text-white">
+                                                    {roleLabels[role]}
+                                                </p>
+                                            </td>
+                                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                {role !== UserRole.ADMIN && (
+                                                    <div className="flex items-center space-x-3.5">
+                                                        <Link
+                                                            href={`/users/edit/${id}`}
+                                                            className="hover:text-success"
+                                                        >
+                                                            <MdOutlineEdit className="text-xl" />
+                                                        </Link>
+                                                        <button
+                                                            onClick={() =>
+                                                                setShowModal(
+                                                                    true
+                                                                )
+                                                            }
+                                                            className="hover:text-danger"
+                                                        >
+                                                            <MdOutlineDelete className="text-xl" />
+                                                        </button>
+                                                        <ConfirmDelete
+                                                            title="Bạn có chắc chắn muốn xóa?"
+                                                            description="Hành động này không thể hoàn tác."
+                                                            show={showModal}
+                                                            setShow={
+                                                                setShowModal
+                                                            }
+                                                            handleDelete={() =>
+                                                                handleDelete(id)
+                                                            }
+                                                        />
+                                                    </div>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>

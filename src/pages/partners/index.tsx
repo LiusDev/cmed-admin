@@ -3,7 +3,7 @@ import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
 import type { Partner } from "@/types";
-import { instance } from "@/utils";
+import { convertDate, instance } from "@/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
@@ -61,57 +61,97 @@ const Partners = () => {
                                         Tên
                                     </th>
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Ảnh
+                                        Logo
+                                    </th>
+                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                                        Ngày tạo
+                                    </th>
+                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                                        Ngày chỉnh sửa
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white" />
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map(({ id, name, image }) => (
-                                    <tr key={id}>
-                                        <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                                            <h5 className="font-medium text-black dark:text-white">
-                                                {name}
-                                            </h5>
-                                        </td>
-                                        <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                                            <div className="font-medium text-black dark:text-white">
-                                                <img
-                                                    src={image}
-                                                    alt="featured image"
-                                                    className="h-40 object-cover rounded-sm"
-                                                />
-                                            </div>
-                                        </td>
-                                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                            <div className="flex items-center space-x-3.5">
-                                                <Link
-                                                    href={`/partners/edit/${id}`}
-                                                    className="hover:text-success"
-                                                >
-                                                    <MdOutlineEdit className="text-xl" />
-                                                </Link>
-                                                <button
-                                                    onClick={() =>
-                                                        setShowModal(true)
-                                                    }
-                                                    className="hover:text-danger"
-                                                >
-                                                    <MdOutlineDelete className="text-xl" />
-                                                </button>
-                                                <ConfirmDelete
-                                                    title="Bạn có chắc chắn muốn xóa?"
-                                                    description="Hành động này không thể hoàn tác."
-                                                    show={showModal}
-                                                    setShow={setShowModal}
-                                                    handleDelete={() =>
-                                                        handleDelete(id)
-                                                    }
-                                                />
+                                {data.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={10}>
+                                            <div className="text-black/70 dark:text-white/70 w-full flex items-center justify-center h-20 font-medium">
+                                                Không có dữ liệu
                                             </div>
                                         </td>
                                     </tr>
-                                ))}
+                                ) : (
+                                    data.map(
+                                        ({
+                                            id,
+                                            name,
+                                            image,
+                                            createdAt,
+                                            modifiedAt,
+                                        }) => (
+                                            <tr key={id}>
+                                                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                                                    <h5 className="font-medium text-black dark:text-white">
+                                                        {name}
+                                                    </h5>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                                                    <div className="font-medium text-black dark:text-white">
+                                                        <img
+                                                            src={image}
+                                                            alt="featured image"
+                                                            className="h-40 object-cover rounded-sm"
+                                                        />
+                                                    </div>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                    <p className="text-black dark:text-white">
+                                                        {convertDate(createdAt)}
+                                                    </p>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                    <p className="text-black dark:text-white">
+                                                        {convertDate(
+                                                            modifiedAt
+                                                        )}
+                                                    </p>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                    <div className="flex items-center space-x-3.5">
+                                                        <Link
+                                                            href={`/partners/edit/${id}`}
+                                                            className="hover:text-success"
+                                                        >
+                                                            <MdOutlineEdit className="text-xl" />
+                                                        </Link>
+                                                        <button
+                                                            onClick={() =>
+                                                                setShowModal(
+                                                                    true
+                                                                )
+                                                            }
+                                                            className="hover:text-danger"
+                                                        >
+                                                            <MdOutlineDelete className="text-xl" />
+                                                        </button>
+                                                        <ConfirmDelete
+                                                            title="Bạn có chắc chắn muốn xóa?"
+                                                            description="Hành động này không thể hoàn tác."
+                                                            show={showModal}
+                                                            setShow={
+                                                                setShowModal
+                                                            }
+                                                            handleDelete={() =>
+                                                                handleDelete(id)
+                                                            }
+                                                        />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    )
+                                )}
                             </tbody>
                         </table>
                     </div>

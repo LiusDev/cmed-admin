@@ -39,6 +39,7 @@ export interface Document {
     createdAt: string;
     modifiedAt: string;
     name: string;
+    fileName: string;
     description: string;
     documentUrl: string;
     view: number;
@@ -66,6 +67,7 @@ export interface Project {
     createdAt: string;
     modifiedAt: string;
     name: string;
+    featuredImage: string;
     description: string;
     content: string;
 }

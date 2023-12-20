@@ -1,8 +1,12 @@
+export enum UserRole {
+    ADMIN = "admin",
+    STAFF = "staff",
+}
 export interface User {
     id: string;
     username: string;
     name: string;
-    role: string;
+    role: UserRole;
 }
 export interface Category {
     id: number;

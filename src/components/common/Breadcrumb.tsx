@@ -9,7 +9,7 @@ const Breadcrumb = ({ pageName, link, children }: BreadcrumbProps) => {
         <div className="mb-6 flex gap-3 items-center justify-between">
             <div>
                 <Link className="font-medium" href="/">
-                    Dashboard /
+                    Quản lý /
                 </Link>
                 <Link href={link}>
                     <h2 className="text-title-md2 font-semibold text-primary ">

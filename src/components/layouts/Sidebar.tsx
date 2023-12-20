@@ -1,8 +1,11 @@
+import { User, UserRole } from "@/types";
+import { getUserData } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import {
+    MdAccountCircle,
     MdArrowBack,
     MdCalendarMonth,
     MdLightbulbOutline,
@@ -19,6 +22,7 @@ interface MenuItemProps {
     label: string;
     icon: React.ReactNode;
     link: string;
+    roles: UserRole[];
 }
 
 interface MenuSectionProps {
@@ -28,60 +32,74 @@ interface MenuSectionProps {
 
 const menuItems = [
     {
-        title: "Manage",
+        title: "Quản lý",
         items: [
             {
-                label: "Categories",
+                label: "Danh Mục",
                 icon: <MdMenuOpen className="text-2xl" />,
                 link: "/categories",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
-                label: "News",
+                label: "Bài viết",
                 icon: <MdNewspaper className="text-2xl" />,
                 link: "/news",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
-                label: "Documents",
+                label: "Tài liệu",
                 icon: <MdOutlineDocumentScanner className="text-2xl" />,
                 link: "/documents",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
-                label: "Partners",
+                label: "Đối tác",
                 icon: <MdOutlineHandshake className="text-2xl" />,
                 link: "/partners",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
-                label: "Customers",
+                label: "Khách hàng",
                 icon: <MdOutlinePersonAddAlt className="text-2xl" />,
                 link: "/customers",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
-                label: "Projects",
+                label: "Dự án",
                 icon: <MdLightbulbOutline className="text-2xl" />,
                 link: "/projects",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
-                label: "Services",
+                label: "Dịch vụ",
                 icon: <MdMiscellaneousServices className="text-2xl" />,
                 link: "/services",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
-                label: "Staffs",
+                label: "Nhân viên",
                 icon: <MdPersonOutline className="text-2xl" />,
                 link: "/staffs",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
+            },
+            {
+                label: "Quản lý tài khoản",
+                icon: <MdAccountCircle className="text-2xl" />,
+                link: "/users",
+                roles: [UserRole.ADMIN],
             },
         ],
     },
 ];
 
-const MenuItem = ({ label, icon, link }: MenuItemProps) => {
+const MenuItem = ({ label, icon, link }: Omit<MenuItemProps, "roles">) => {
     const pathname = useRouter().pathname;
 
     return (
         <li>
             <Link
                 href={link}
-                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 capitalize duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes(link) && "bg-graydark dark:bg-meta-4"
                 }`}
             >
@@ -93,6 +111,8 @@ const MenuItem = ({ label, icon, link }: MenuItemProps) => {
 };
 
 const MenuSection = ({ title, items }: MenuSectionProps) => {
+    let userData = getUserData();
+
     return (
         <div>
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2 uppercase">
@@ -100,14 +120,17 @@ const MenuSection = ({ title, items }: MenuSectionProps) => {
             </h3>
 
             <ul className="mb-6 flex flex-col gap-1.5">
-                {items.map((item) => (
-                    <MenuItem
-                        key={item.link}
-                        label={item.label}
-                        icon={item.icon}
-                        link={item.link}
-                    />
-                ))}
+                {items.map(
+                    (item) =>
+                        item.roles.includes(userData.role) && (
+                            <MenuItem
+                                key={item.link}
+                                label={item.label}
+                                icon={item.icon}
+                                link={item.link}
+                            />
+                        )
+                )}
             </ul>
         </div>
     );
@@ -152,9 +175,9 @@ const Sidebar = ({
             <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
                 <Link href="/">
                     <Image
-                        width={176}
+                        width={120}
                         height={32}
-                        src={"/images/logo/logo.svg"}
+                        src={"/images/logo/logo.png"}
                         alt="Logo"
                     />
                 </Link>

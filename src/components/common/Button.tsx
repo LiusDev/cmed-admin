@@ -8,7 +8,7 @@ const buttonColors: Record<ButtonColors, string> = {
     primary: "bg-primary text-white font-medium hover:bg-opacity-90",
     success: "bg-meta-3 text-white font-medium hover:bg-opacity-90",
     dark: "bg-black text-white font-medium hover:bg-opacity-90",
-    danger: "bg-danger text-secondary font-semibold hover:bg-danger-hover",
+    danger: "bg-danger text-white font-semibold hover:bg-danger-hover",
 };
 
 const buttonVariants: Record<ButtonVariants, string> = {

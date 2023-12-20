@@ -2,14 +2,17 @@ import Head from "next/head";
 import { instance } from "@/utils";
 import { useState } from "react";
 import { MdLockOutline, MdPersonOutline } from "react-icons/md";
+import { TiWarningOutline } from "react-icons/ti";
 import { useRouter } from "next/router";
 
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setError(false);
         const { name, value } = e.target;
         if (name === "username") {
             setUsername(value);
@@ -23,26 +26,30 @@ const Login = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        try {
-            const res = await instance.post("/auth/signin", {
+        instance
+            .post("/auth/signin", {
                 username,
                 password,
+            })
+            .then((res) => {
+                const { user, accessToken, refreshToken } = res.data;
+                localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem("refreshToken", refreshToken);
+                localStorage.setItem("user", JSON.stringify(user));
+                router.push("/");
+            })
+            .catch((err) => {
+                setError(true);
+            })
+            .finally(() => {
+                setLoading(false);
             });
-            const { user, accessToken, refreshToken } = res.data;
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
-            localStorage.setItem("user", JSON.stringify(user));
-
-            router.push("/");
-        } catch (err) {
-            setLoading(false);
-        }
     };
 
     return (
         <>
             <Head>
-                <title>Sign In</title>
+                <title>Đăng nhập</title>
                 <meta name="description" content="Sign In" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
@@ -50,14 +57,23 @@ const Login = () => {
                 <div className="w-full max-w-150 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div className="w-full border-stroke dark:border-strokedark ">
                         <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
-                            <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2 text-center">
-                                Sign in
+                            <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2 text-center capitalize">
+                                Đăng nhập
                             </h2>
+
+                            {error && (
+                                <div className="flex items-center py-3 px-4 bg-black/5 rounded-md border border-black/20 mb-4">
+                                    <TiWarningOutline className="mr-3 text-red-600" />
+                                    <p className="text-black/70">
+                                        Sai tên đăng nhập hoặc mật khẩu
+                                    </p>
+                                </div>
+                            )}
 
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-4">
-                                    <label className="mb-2.5 block font-medium text-black dark:text-white">
-                                        Username
+                                    <label className="mb-2.5 block font-medium text-black dark:text-white capitalize">
+                                        Tên đăng nhập
                                     </label>
                                     <div className="relative">
                                         <input
@@ -65,7 +81,7 @@ const Login = () => {
                                             onChange={handleInput}
                                             name="username"
                                             type="text"
-                                            placeholder="Enter your username"
+                                            placeholder=""
                                             className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                         />
 
@@ -74,8 +90,8 @@ const Login = () => {
                                 </div>
 
                                 <div className="mb-6">
-                                    <label className="mb-2.5 block font-medium text-black dark:text-white">
-                                        Password
+                                    <label className="mb-2.5 block font-medium text-black dark:text-white capitalize">
+                                        Mật khẩu
                                     </label>
                                     <div className="relative">
                                         <input
@@ -83,7 +99,7 @@ const Login = () => {
                                             value={password}
                                             name="password"
                                             type="password"
-                                            placeholder="Enter your password"
+                                            placeholder=""
                                             className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                         />
                                         <MdLockOutline className="absolute right-4 top-4 text-2xl opacity-50" />
@@ -103,7 +119,7 @@ const Login = () => {
                                         {loading ? (
                                             <div className="w-6 h-6 border-4 border-bodydark1 rounded-full flex items-center justify-center border-t-4 border-t-white animate-spin" />
                                         ) : (
-                                            "Sign In"
+                                            "Đăng nhập"
                                         )}
                                     </button>
                                 </div>

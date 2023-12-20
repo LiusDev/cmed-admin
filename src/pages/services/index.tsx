@@ -1,4 +1,4 @@
-import { Button, Breadcrumb } from "@/components/common";
+import { Button, Breadcrumb, ConfirmDelete } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
@@ -14,6 +14,7 @@ import {
 
 const Services = () => {
     const [data, setData] = useState<Service[] | null>(null);
+    const [showModal, setShowModal] = useState(false);
     useEffect(() => {
         instance.get(`/services`).then((res) => {
             setData(res.data);
@@ -97,12 +98,22 @@ const Services = () => {
                                                 </Link>
                                                 <button
                                                     onClick={() =>
-                                                        handleDelete(id)
+                                                        setShowModal(true)
                                                     }
                                                     className="hover:text-danger"
                                                 >
                                                     <MdOutlineDelete className="text-xl" />
                                                 </button>
+
+                                                <ConfirmDelete
+                                                    title="Bạn có chắc chắn muốn xóa?"
+                                                    description="Hành động này không thể hoàn tác."
+                                                    show={showModal}
+                                                    setShow={setShowModal}
+                                                    handleDelete={() =>
+                                                        handleDelete(id)
+                                                    }
+                                                />
                                             </div>
                                         </td>
                                     </tr>

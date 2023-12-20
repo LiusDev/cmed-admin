@@ -12,7 +12,7 @@ const Breadcrumb = ({ pageName, link, children }: BreadcrumbProps) => {
                     Quản lý /
                 </Link>
                 <Link href={link}>
-                    <h2 className="text-title-md2 font-semibold text-primary ">
+                    <h2 className="text-title-md2 font-semibold text-primary capitalize">
                         {pageName}
                     </h2>
                 </Link>

@@ -29,15 +29,15 @@ const Project = () => {
     }, []);
 
     return (
-        <MainLayout title="Projects">
-            <Breadcrumb pageName="Projects" link="/projects">
+        <MainLayout>
+            <Breadcrumb pageName="Dự án" link="/projects">
                 <Button
                     color="success"
                     variant="rounded"
                     size="large"
                     href={`/projects/edit/${router.query.id}`}
                 >
-                    Edit
+                    Chỉnh sửa
                 </Button>
             </Breadcrumb>
             {!projects ? (

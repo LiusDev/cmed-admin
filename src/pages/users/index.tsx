@@ -1,9 +1,9 @@
-import { Button, Breadcrumb } from "@/components/common";
+import { Button, Breadcrumb, ConfirmDelete } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
-import type { Partner } from "@/types";
-import { instance } from "@/utils";
+import { UserRole, type User, roleLabels } from "@/types";
+import { getUserData, instance } from "@/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
@@ -13,7 +13,8 @@ import {
 } from "react-icons/md";
 
 const Users = () => {
-    const [data, setData] = useState<Partner[] | null>(null);
+    const [data, setData] = useState<User[] | null>(null);
+    const [showModal, setShowModal] = useState(false);
     useEffect(() => {
         instance.get(`/users`).then((res) => {
             setData(res.data);
@@ -40,15 +41,15 @@ const Users = () => {
     };
 
     return (
-        <MainLayout title="users">
-            <Breadcrumb pageName="Users" link="">
+        <MainLayout>
+            <Breadcrumb pageName="Tài khoản" link="">
                 <Button
                     color="success"
                     variant="rounded"
                     size="large"
                     href="/users/create"
                 >
-                    Create
+                    Tạo tài khoản
                 </Button>
             </Breadcrumb>
             {!data ? (
@@ -60,50 +61,63 @@ const Users = () => {
                             <thead>
                                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Name
+                                        Tên
                                     </th>
-                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Image
+                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
+                                        Tên đăng nhập
                                     </th>
-                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
-                                        Actions
+                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
+                                        Quyền hạn
                                     </th>
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white" />
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map(({ id, name, image }) => (
+                                {data.map(({ id, name, role, username }) => (
                                     <tr key={id}>
                                         <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                                             <h5 className="font-medium text-black dark:text-white">
                                                 {name}
                                             </h5>
                                         </td>
-                                        <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                                            <div className="font-medium text-black dark:text-white">
-                                                <img
-                                                    src={image}
-                                                    alt="featured image"
-                                                    className="h-40 object-cover rounded-sm"
-                                                />
-                                            </div>
+                                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                            <p className="text-black dark:text-white">
+                                                {username}
+                                            </p>
                                         </td>
                                         <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                            <div className="flex items-center space-x-3.5">
-                                                <Link
-                                                    href={`/users/edit/${id}`}
-                                                    className="hover:text-success"
-                                                >
-                                                    <MdOutlineEdit className="text-xl" />
-                                                </Link>
-                                                <button
-                                                    onClick={() =>
-                                                        handleDelete(id)
-                                                    }
-                                                    className="hover:text-danger"
-                                                >
-                                                    <MdOutlineDelete className="text-xl" />
-                                                </button>
-                                            </div>
+                                            <p className="text-black dark:text-white">
+                                                {roleLabels[role]}
+                                            </p>
+                                        </td>
+                                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                            {role !== UserRole.ADMIN && (
+                                                <div className="flex items-center space-x-3.5">
+                                                    <Link
+                                                        href={`/users/edit/${id}`}
+                                                        className="hover:text-success"
+                                                    >
+                                                        <MdOutlineEdit className="text-xl" />
+                                                    </Link>
+                                                    <button
+                                                        onClick={() =>
+                                                            setShowModal(true)
+                                                        }
+                                                        className="hover:text-danger"
+                                                    >
+                                                        <MdOutlineDelete className="text-xl" />
+                                                    </button>
+                                                    <ConfirmDelete
+                                                        title="Bạn có chắc chắn muốn xóa?"
+                                                        description="Hành động này không thể hoàn tác."
+                                                        show={showModal}
+                                                        setShow={setShowModal}
+                                                        handleDelete={() =>
+                                                            handleDelete(id)
+                                                        }
+                                                    />
+                                                </div>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

@@ -38,15 +38,15 @@ const Projects = () => {
     };
 
     return (
-        <MainLayout title="Projects">
-            <Breadcrumb pageName="Projects" link="">
+        <MainLayout>
+            <Breadcrumb pageName="Dự án" link="">
                 <Button
                     color="success"
                     variant="rounded"
                     size="large"
                     href="/projects/create"
                 >
-                    Create
+                    Thêm mới
                 </Button>
             </Breadcrumb>
             {!data ? (
@@ -58,15 +58,13 @@ const Projects = () => {
                             <thead>
                                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Name
+                                        Tên
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
-                                        Description
+                                        Mô tả
                                     </th>
 
-                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
-                                        Actions
-                                    </th>
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white" />
                                 </tr>
                             </thead>
                             <tbody>

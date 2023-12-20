@@ -42,11 +42,14 @@ const Create = () => {
         setDescription(e.target.value);
     };
 
-    const handleChangeDocumentUrl = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setDocumentUrl(e.target.value);
+    const handleUploadDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const file = e.target.files[0];
+            const url = URL.createObjectURL(file);
+            setDocumentUrl(url);
+        }
     };
+
     const router = useRouter();
 
     const handlePublish = async () => {
@@ -73,7 +76,7 @@ const Create = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="Documents" link="/documents" />
+            <Breadcrumb pageName="Tài liệu" link="/documents" />
             {!categories ? (
                 <TableSkeleton
                     rows={4}
@@ -84,26 +87,26 @@ const Create = () => {
                 <Box className="max-w-230 m-auto">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                         <h3 className="font-medium text-black dark:text-white">
-                            Create Documents
+                            Thêm tài liệu mới
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
-                        <div className="grid grid-cols-2 gap-2">
-                            <div>
+                        <div className="grid grid-cols-5 gap-2">
+                            <div className="col-span-3">
                                 <label className="mb-3 block text-black dark:text-white">
-                                    Name
+                                    Tên
                                 </label>
                                 <input
                                     value={name}
                                     onChange={handleChangeName}
                                     type="text"
-                                    placeholder="Document name"
+                                    placeholder="Tên tài liệu"
                                     className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                 />
                             </div>
-                            <div>
+                            <div className="col-span-2">
                                 <label className="mb-3 block text-black dark:text-white">
-                                    Category
+                                    Danh mục
                                 </label>
                                 <select
                                     onChange={handleChangeCategory}
@@ -122,26 +125,25 @@ const Create = () => {
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Description
+                                Mô tả
                             </label>
                             <input
                                 value={description}
                                 onChange={handleChangeDescription}
                                 type="text"
-                                placeholder="Document description"
+                                placeholder="Mô tả tài liệu"
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Document URL
+                                Upload tài liệu
                             </label>
                             <input
-                                value={documentUrl}
-                                onChange={handleChangeDocumentUrl}
-                                type="text"
-                                placeholder="Document URL"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                type="file"
+                                accept="application/pdf"
+                                onChange={handleUploadDocument}
+                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
                             />
                         </div>
                         <div>
@@ -152,7 +154,7 @@ const Create = () => {
                                 className="w-full"
                                 isLoading={loading}
                             >
-                                Publish
+                                Thêm mới
                             </Button>
                         </div>
                     </div>

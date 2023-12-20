@@ -30,14 +30,14 @@ const Service = () => {
 
     return (
         <MainLayout title="Services">
-            <Breadcrumb pageName="Services" link="/services">
+            <Breadcrumb pageName="Dịch vụ" link="/services">
                 <Button
                     color="success"
                     variant="rounded"
                     size="large"
                     href={`/services/edit/${router.query.id}`}
                 >
-                    Edit
+                    Chỉnh sửa
                 </Button>
             </Breadcrumb>
             {!service ? (

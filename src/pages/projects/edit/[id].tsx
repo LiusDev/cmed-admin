@@ -74,7 +74,7 @@ const Edit = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="Projects" link="/projects" />
+            <Breadcrumb pageName="Dự án" link="/projects" />
             {!mounted ? (
                 <TableSkeleton
                     rows={4}
@@ -85,38 +85,38 @@ const Edit = () => {
                 <Box className="max-w-230 m-auto">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                         <h3 className="font-medium text-black dark:text-white">
-                            Update Project
+                            Cập nhật dự án
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Project Name
+                                Tên
                             </label>
                             <input
                                 value={name}
                                 onChange={handleChangeName}
                                 type="text"
-                                placeholder="Project name"
+                                placeholder="Tên dự án"
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>
 
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Description
+                                Mô tả
                             </label>
                             <input
                                 value={description}
                                 onChange={handleChangeDescription}
                                 type="text"
-                                placeholder="Project description"
+                                placeholder="Mô tả dự án"
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Content
+                                Nội dung
                             </label>
                             <FroalaEditorComponent
                                 model={content}
@@ -131,7 +131,7 @@ const Edit = () => {
                                 isLoading={loading}
                                 className="w-full"
                             >
-                                Save & Publish
+                                Lưu
                             </Button>
                         </div>
                     </div>

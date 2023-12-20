@@ -58,8 +58,8 @@ const Edit = () => {
     ) => {
         if (e.target.files) {
             const file = e.target.files[0];
-            const base64Image = await convertBase64(file);
-            setFeaturedImage(base64Image);
+            const url = URL.createObjectURL(file);
+            setFeaturedImage(url);
         }
     };
 
@@ -91,7 +91,7 @@ const Edit = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="Services" link="/services" />
+            <Breadcrumb pageName="Dịch vụ" link="/services" />
             {!service ? (
                 <TableSkeleton
                     rows={4}
@@ -102,37 +102,37 @@ const Edit = () => {
                 <Box className="max-w-230 m-auto">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                         <h3 className="font-medium text-black dark:text-white">
-                            Update Service
+                            Cập nhật dịch vụ
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Service Name
+                                Tên
                             </label>
                             <input
                                 value={name}
                                 onChange={handleChangeTitle}
                                 type="text"
-                                placeholder="Service name"
+                                placeholder="Tên dịch vụ"
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Description
+                                Mô tả
                             </label>
                             <input
                                 value={description}
                                 onChange={handleChangeDescription}
                                 type="text"
-                                placeholder="Service description"
+                                placeholder="Mô tả dịch vụ"
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Featured image
+                                Ảnh nổi bật
                             </label>
                             <input
                                 type="file"
@@ -150,7 +150,7 @@ const Edit = () => {
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Content
+                                Nội dung
                             </label>
                             <FroalaEditorComponent
                                 model={content}
@@ -165,7 +165,7 @@ const Edit = () => {
                                 isLoading={loading}
                                 className="w-full"
                             >
-                                Save & Publish
+                                Lưu
                             </Button>
                         </div>
                     </div>

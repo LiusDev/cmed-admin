@@ -33,15 +33,15 @@ const Documents = () => {
     }, []);
 
     return (
-        <MainLayout title="Documents">
-            <Breadcrumb pageName="Documents" link="/documents">
+        <MainLayout>
+            <Breadcrumb pageName="Tài liệu" link="/documents">
                 <Button
                     color="success"
                     variant="rounded"
                     size="large"
                     href={`/documents/edit/${router.query.id}`}
                 >
-                    Edit
+                    Chỉnh sửa
                 </Button>
             </Breadcrumb>
             {!document ? (

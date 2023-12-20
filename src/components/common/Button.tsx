@@ -74,7 +74,7 @@ const Button = ({
                     isLoading
                         ? "bg-body border-body cursor-not-allowed"
                         : buttonColors[color]
-                } flex items-center justify-center transition-all duration-500`
+                } flex items-center justify-center transition-all duration-500 capitalize`
             )}
         >
             {isLoading ? (

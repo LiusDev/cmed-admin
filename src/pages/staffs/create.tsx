@@ -6,13 +6,6 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const FroalaEditorComponent = dynamic(
-    () => import("@/components/customEditor"),
-    {
-        ssr: false,
-    }
-);
-
 const Create = () => {
     const [name, setName] = useState("");
     const [position, setPosition] = useState("");
@@ -32,8 +25,8 @@ const Create = () => {
     ) => {
         if (e.target.files) {
             const file = e.target.files[0];
-            const base64Image = await convertBase64(file);
-            setFeaturedImage(base64Image);
+            const url = URL.createObjectURL(file);
+            setFeaturedImage(url);
         }
     };
 
@@ -57,42 +50,42 @@ const Create = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="Staffs" link="/staffs" />
+            <Breadcrumb pageName="Nhân viên" link="/staffs" />
             <Box className="max-w-230 m-auto">
                 <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                     <h3 className="font-medium text-black dark:text-white">
-                        Create Staff
+                        Thêm nhân viên
                     </h3>
                 </div>
                 <div className="flex flex-col gap-5.5 p-6.5">
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
-                            Staff Name
+                            Tên
                         </label>
                         <input
                             value={name}
                             onChange={handleChangeName}
                             type="text"
-                            placeholder="Staff name"
+                            placeholder="Tên nhân viên"
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
                     </div>
 
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
-                            Position
+                            Vị trí
                         </label>
                         <input
                             value={position}
                             onChange={handleChangePosition}
                             type="text"
-                            placeholder="Staff position"
+                            placeholder="Vị trí hiện tại"
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
                     </div>
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
-                            Featured image
+                            Ảnh nổi bật
                         </label>
                         <input
                             type="file"
@@ -116,7 +109,7 @@ const Create = () => {
                             className="w-full"
                             isLoading={loading}
                         >
-                            Publish
+                            Lưu
                         </Button>
                     </div>
                 </div>

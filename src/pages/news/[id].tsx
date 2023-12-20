@@ -30,7 +30,7 @@ const News = () => {
 
     return (
         <MainLayout title="News">
-            <Breadcrumb pageName="News" link="/news">
+            <Breadcrumb pageName="Bài viết" link="/news">
                 <Button
                     color="success"
                     variant="rounded"

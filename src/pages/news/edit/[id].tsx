@@ -75,8 +75,8 @@ const Edit = () => {
     ) => {
         if (e.target.files) {
             const file = e.target.files[0];
-            const base64Image = await convertBase64(file);
-            setFeaturedImage(base64Image);
+            const url = URL.createObjectURL(file);
+            setFeaturedImage(url);
         }
     };
 
@@ -110,7 +110,7 @@ const Edit = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="News" link="/news" />
+            <Breadcrumb pageName="Bài viết" link="/news" />
             {!news ? (
                 <TableSkeleton
                     rows={4}
@@ -121,26 +121,26 @@ const Edit = () => {
                 <Box className="max-w-230 m-auto">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                         <h3 className="font-medium text-black dark:text-white">
-                            Update News
+                            Chỉnh sửa bài viết
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
-                        <div className="grid grid-cols-2 gap-2">
-                            <div>
+                        <div className="grid grid-cols-5 gap-2">
+                            <div className="col-span-3">
                                 <label className="mb-3 block text-black dark:text-white">
-                                    Title
+                                    Tiêu đề
                                 </label>
                                 <input
                                     value={title}
                                     onChange={handleChangeTitle}
                                     type="text"
-                                    placeholder="News title"
+                                    placeholder="Tiêu đề bài viết"
                                     className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                 />
                             </div>
-                            <div>
+                            <div className="col-span-2">
                                 <label className="mb-3 block text-black dark:text-white">
-                                    Category
+                                    Danh mục
                                 </label>
                                 <select
                                     onChange={handleChangeCategory}
@@ -160,19 +160,19 @@ const Edit = () => {
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Description
+                                Mô tả
                             </label>
                             <input
                                 value={description}
                                 onChange={handleChangeDescription}
                                 type="text"
-                                placeholder="News description"
+                                placeholder="Mô tả bài viết"
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Featured image
+                                Ảnh nổi bật
                             </label>
                             <input
                                 type="file"
@@ -190,7 +190,7 @@ const Edit = () => {
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Content
+                                Nội dung
                             </label>
                             <FroalaEditorComponent
                                 model={content}
@@ -205,7 +205,7 @@ const Edit = () => {
                                 isLoading={loading}
                                 className="w-full"
                             >
-                                Save & Publish
+                                Lưu
                             </Button>
                         </div>
                     </div>

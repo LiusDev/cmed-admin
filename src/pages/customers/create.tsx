@@ -2,7 +2,7 @@ import { Box, Button, Breadcrumb } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import withAuth from "@/hoc/withAuth";
 import {} from "@/types";
-import { convertBase64, instance } from "@/utils";
+import { instance } from "@/utils";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -20,8 +20,8 @@ const Create = () => {
     ) => {
         if (e.target.files) {
             const file = e.target.files[0];
-            const base64Image = await convertBase64(file);
-            setImage(base64Image);
+            const url = URL.createObjectURL(file);
+            setImage(url);
         }
     };
     const router = useRouter();
@@ -48,30 +48,31 @@ const Create = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="Customers" link="/customers" />
+            <Breadcrumb pageName="Khách hàng" link="/customers" />
             <Box className="max-w-230 m-auto">
                 <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                     <h3 className="font-medium text-black dark:text-white">
-                        Create Customer
+                        Thêm khách hàng
                     </h3>
                 </div>
                 <div className="flex flex-col gap-5.5 p-6.5">
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
-                            Name
+                            Tên
                         </label>
                         <input
                             value={name}
                             onChange={handleChangeName}
                             type="text"
-                            placeholder="Customer name"
+                            placeholder="Tên khách hàng"
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
                     </div>
 
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
-                            Image
+                            {" "}
+                            Ảnh
                         </label>
                         <input
                             type="file"
@@ -95,7 +96,7 @@ const Create = () => {
                             className="w-full"
                             isLoading={loading}
                         >
-                            Publish
+                            Thêm mới
                         </Button>
                     </div>
                 </div>

@@ -2,8 +2,13 @@ export enum UserRole {
     ADMIN = "admin",
     STAFF = "staff",
 }
+
+export const roleLabels: Record<UserRole, string> = {
+    [UserRole.ADMIN]: "Quản trị viên",
+    [UserRole.STAFF]: "Nhân viên",
+};
 export interface User {
-    id: string;
+    id: number;
     username: string;
     name: string;
     role: UserRole;

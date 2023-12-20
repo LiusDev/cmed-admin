@@ -51,6 +51,7 @@ export interface Customer {
     createdAt: string;
     modifiedAt: string;
     name: string;
+    description: string;
     image: string;
 }
 

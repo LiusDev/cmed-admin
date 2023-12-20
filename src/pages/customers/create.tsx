@@ -9,10 +9,17 @@ import { useEffect, useState } from "react";
 const Create = () => {
     const [name, setName] = useState("");
     const [image, setImage] = useState("");
+    const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
+    };
+
+    const handleChangeDescription = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setDescription(e.target.value);
     };
 
     const handleUploadImage = async (
@@ -31,6 +38,7 @@ const Create = () => {
         instance
             .post("/customers", {
                 name,
+                description,
                 image,
             })
             .then(() => {
@@ -68,7 +76,18 @@ const Create = () => {
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
                     </div>
-
+                    <div>
+                        <label className="mb-3 block text-black dark:text-white">
+                            Mô tả
+                        </label>
+                        <input
+                            value={description}
+                            onChange={handleChangeDescription}
+                            type="text"
+                            placeholder="Mô tả"
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                        />
+                    </div>
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
                             {" "}

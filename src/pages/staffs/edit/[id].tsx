@@ -48,6 +48,7 @@ const Edit = () => {
         setPosition(e.target.value);
     };
 
+    const [changeFeaturedImage, setChangeFeaturedImage] = useState(false);
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -55,18 +56,28 @@ const Edit = () => {
             const file = e.target.files[0];
             const base64Image = await convertBase64(file);
             setFeaturedImage(base64Image);
+            setChangeFeaturedImage(true);
         }
     };
 
     const handlePublish = async () => {
+        let body;
+        if (changeFeaturedImage) {
+            body = {
+                name,
+                position,
+                featuredImage,
+            };
+        } else {
+            body = {
+                name,
+                position,
+            };
+        }
         setLoading(true);
         if (staff) {
             await instance
-                .patch(`/staffs/${staff.id}`, {
-                    name,
-                    position,
-                    featuredImage,
-                })
+                .patch(`/staffs/${staff.id}`, body)
                 .then(() => {
                     window.location.href = "/staffs";
                 })

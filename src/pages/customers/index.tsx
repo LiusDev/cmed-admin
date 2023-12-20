@@ -60,6 +60,9 @@ const Customers = () => {
                                         Ảnh
                                     </th>
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                                        Mô tả
+                                    </th>
+                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                                         Ngày tạo
                                     </th>
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
@@ -83,6 +86,7 @@ const Customers = () => {
                                             id,
                                             name,
                                             image,
+                                            description,
                                             createdAt,
                                             modifiedAt,
                                         }) => (
@@ -100,6 +104,11 @@ const Customers = () => {
                                                             className="h-40 object-cover rounded-sm"
                                                         />
                                                     </div>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                    <p className="text-black dark:text-white">
+                                                        {description}
+                                                    </p>
                                                 </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <p className="text-black dark:text-white">

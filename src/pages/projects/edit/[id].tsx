@@ -52,6 +52,7 @@ const Edit = () => {
         setDescription(e.target.value);
     };
 
+    const [changeFeaturedImage, setChangeFeaturedImage] = useState(false);
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -59,19 +60,30 @@ const Edit = () => {
             const file = e.target.files[0];
             const base64image = await convertBase64(file);
             setFeaturedImage(base64image);
+            setChangeFeaturedImage(true);
         }
     };
 
     const router = useRouter();
     const handlePublish = async () => {
-        setLoading(true);
-        await instance
-            .patch(`/projects/${router.query.id}`, {
+        let body;
+        if (changeFeaturedImage) {
+            body = {
                 name,
                 description,
                 featuredImage,
                 content,
-            })
+            };
+        } else {
+            body = {
+                name,
+                description,
+                content,
+            };
+        }
+        setLoading(true);
+        await instance
+            .patch(`/projects/${router.query.id}`, body)
             .then(() => {
                 window.location.href = "/projects";
             })

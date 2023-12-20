@@ -34,6 +34,7 @@ const Update = () => {
         setName(e.target.value);
     };
 
+    const [changeImage, setChangeImage] = useState(false);
     const handleUploadImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -41,17 +42,26 @@ const Update = () => {
             const file = e.target.files[0];
             const base64Image = await convertBase64(file);
             setImage(base64Image);
+            setChangeImage(true);
         }
     };
     const router = useRouter();
 
     const handlePublish = async () => {
-        setLoading(true);
-        instance
-            .patch(`/partners/${path}`, {
+        let body;
+        if (changeImage) {
+            body = {
                 name,
                 image,
-            })
+            };
+        } else {
+            body = {
+                name,
+            };
+        }
+        setLoading(true);
+        instance
+            .patch(`/partners/${path}`, body)
             .then(() => {
                 router.push("/partners");
             })

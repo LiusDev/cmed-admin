@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 const Update = () => {
     const [mount, setMount] = useState(false);
     const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
     const [image, setImage] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -20,6 +21,7 @@ const Update = () => {
             .then((res) => {
                 setName(res.data.name);
                 setImage(res.data.image);
+                setDescription(res.data.description);
                 setMount(true);
             })
             .catch((err) => {
@@ -33,6 +35,13 @@ const Update = () => {
         setName(e.target.value);
     };
 
+    const handleChangeDescription = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setDescription(e.target.value);
+    };
+
+    const [changeImage, setChangeImage] = useState(false);
     const handleUploadImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -40,17 +49,27 @@ const Update = () => {
             const file = e.target.files[0];
             const base64 = await convertBase64(file);
             setImage(base64);
+            setChangeImage(true);
         }
     };
     const router = useRouter();
-
     const handlePublish = async () => {
+        let body;
+        if (changeImage) {
+            body = {
+                name,
+                description,
+                image,
+            };
+        } else {
+            body = {
+                name,
+                description,
+            };
+        }
         setLoading(true);
         instance
-            .patch(`/customers/${router.query.id}`, {
-                name,
-                image,
-            })
+            .patch(`/customers/${router.query.id}`, body)
             .then(() => {
                 router.push("/customers");
             })
@@ -93,7 +112,18 @@ const Update = () => {
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>
-
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">
+                                Mô tả
+                            </label>
+                            <input
+                                value={description}
+                                onChange={handleChangeDescription}
+                                type="text"
+                                placeholder="Tên khách hàng"
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            />
+                        </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
                                 Ảnh

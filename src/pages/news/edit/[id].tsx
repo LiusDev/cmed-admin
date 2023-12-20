@@ -70,6 +70,7 @@ const Edit = () => {
         setDescription(e.target.value);
     };
 
+    const [changeImage, setChangeImage] = useState(false);
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -82,16 +83,27 @@ const Edit = () => {
 
     const router = useRouter();
     const handlePublish = async () => {
+        let body;
+        if (changeImage) {
+            body = {
+                title,
+                categoryId: category,
+                description,
+                featuredImage,
+                content,
+            };
+        } else {
+            body = {
+                title,
+                categoryId: category,
+                description,
+                content,
+            };
+        }
         setLoading(true);
         if (news) {
             await instance
-                .patch(`/news/${news.id}`, {
-                    title,
-                    categoryId: category,
-                    description,
-                    featuredImage,
-                    content,
-                })
+                .patch(`/news/${news.id}`, body)
                 .then(() => {
                     window.location.href = "/news";
                 })

@@ -3,7 +3,7 @@ import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
 import type { Category, News } from "@/types";
-import { convertBase64, instance } from "@/utils";
+import { convertBase64, instance, parseContent } from "@/utils";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -70,7 +70,6 @@ const Edit = () => {
         setDescription(e.target.value);
     };
 
-    const [changeImage, setChangeImage] = useState(false);
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -81,25 +80,15 @@ const Edit = () => {
         }
     };
 
-    const router = useRouter();
     const handlePublish = async () => {
-        let body;
-        if (changeImage) {
-            body = {
-                title,
-                categoryId: category,
-                description,
-                featuredImage,
-                content,
-            };
-        } else {
-            body = {
-                title,
-                categoryId: category,
-                description,
-                content,
-            };
-        }
+        const newContent = await parseContent(content);
+        const body = {
+            title,
+            categoryId: category,
+            description,
+            featuredImage,
+            content: newContent,
+        };
         setLoading(true);
         if (news) {
             await instance

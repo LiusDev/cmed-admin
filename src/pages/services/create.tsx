@@ -3,7 +3,7 @@ import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
 import { Category } from "@/types";
-import { convertBase64, instance } from "@/utils";
+import { convertBase64, instance, parseContent } from "@/utils";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -45,8 +45,14 @@ const Create = () => {
 
     const handlePublish = async () => {
         setLoading(true);
+        const newContent = parseContent(content);
         instance
-            .post("/services", { name, description, featuredImage, content })
+            .post("/services", {
+                name,
+                description,
+                featuredImage,
+                content: newContent,
+            })
             .then(() => {
                 router.push("/services");
             })

@@ -4,7 +4,7 @@ import axios from "axios";
 export { twMerge as tw } from "tailwind-merge";
 
 export const instance = axios.create({
-    baseURL: "https://cmed-server.onrender.com/api/v1",
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 instance.interceptors.request.use(
     function (config) {
@@ -96,4 +96,42 @@ export const getUserData = (): User => {
     const user =
         typeof window !== "undefined" ? localStorage.getItem("user") : null;
     return user ? JSON.parse(user) : null;
+};
+
+export const parseContent = (content: string) => {
+    // content have string with html tag, also have img tag with src is blob url. Convert all blob url to base64 and return new content
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+    const images = doc.querySelectorAll("img");
+    const promises: Promise<void>[] = [];
+    images.forEach((image) => {
+        promises.push(
+            new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.onload = function () {
+                    const reader = new FileReader();
+                    reader.onloadend = function () {
+                        image.src = reader.result as string;
+                        resolve();
+                    };
+                    reader.readAsDataURL(xhr.response);
+                };
+                xhr.onerror = function () {
+                    reject();
+                };
+                xhr.open("GET", image.src);
+                xhr.responseType = "blob";
+                xhr.send();
+            })
+        );
+    });
+    return new Promise((resolve, reject) => {
+        Promise.all(promises)
+            .then(() => {
+                resolve(doc.body.innerHTML);
+            })
+            .catch(() => {
+                reject();
+            });
+    });
 };

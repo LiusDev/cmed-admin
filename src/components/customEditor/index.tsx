@@ -1,6 +1,7 @@
 import "froala-editor/js/plugins.pkgd.min.js";
 import FroalaEditor from "react-froala-wysiwyg";
 import "froala-editor/css/froala_editor.pkgd.min.css";
+import { instance } from "@/utils";
 
 // config for froala editor
 export const config = {
@@ -77,6 +78,7 @@ export const config = {
         "imageSize",
     ],
 
+    imageUpload: true,
     imageInsertButtons: ["imageBack", "|", "imageUpload", "imageByURL"],
     imageUploadMethod: "POST",
     // Validation

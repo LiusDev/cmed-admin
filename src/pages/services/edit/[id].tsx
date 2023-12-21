@@ -3,7 +3,7 @@ import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
 import type { Project, Service } from "@/types";
-import { convertBase64, instance } from "@/utils";
+import { convertBase64, instance, parseContent } from "@/utils";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -53,7 +53,6 @@ const Edit = () => {
         setDescription(e.target.value);
     };
 
-    const [changeFeaturedImage, setChangeFeaturedImage] = useState(false);
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -61,26 +60,18 @@ const Edit = () => {
             const file = e.target.files[0];
             const base64Image = await convertBase64(file);
             setFeaturedImage(base64Image);
-            setChangeFeaturedImage(true);
         }
     };
 
     const handlePublish = async () => {
-        let body;
-        if (changeFeaturedImage) {
-            body = {
-                name,
-                description,
-                featuredImage,
-                content,
-            };
-        } else {
-            body = {
-                name,
-                description,
-                content,
-            };
-        }
+        const newContent = parseContent(content);
+        const body = {
+            name,
+            description,
+            featuredImage,
+            content: newContent,
+        };
+
         setLoading(true);
         if (service) {
             await instance

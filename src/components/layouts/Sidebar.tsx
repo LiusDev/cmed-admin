@@ -1,13 +1,15 @@
+import useLocalStorage from "@/hooks/useLocalStorage";
 import { User, UserRole } from "@/types";
-import { getUserData } from "@/utils";
+import { getUserData, signout } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
     MdAccountCircle,
     MdArrowBack,
     MdCalendarMonth,
+    MdInfoOutline,
     MdLightbulbOutline,
     MdMenuOpen,
     MdMiscellaneousServices,
@@ -83,6 +85,12 @@ const menuItems = [
                 roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
+                label: "Thông tin công ty",
+                icon: <MdInfoOutline className="text-2xl" />,
+                link: "/metadata",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
+            },
+            {
                 label: "Quản lý tài khoản",
                 icon: <MdAccountCircle className="text-2xl" />,
                 link: "/users",
@@ -111,28 +119,33 @@ const MenuItem = ({ label, icon, link }: Omit<MenuItemProps, "roles">) => {
 };
 
 const MenuSection = ({ title, items }: MenuSectionProps) => {
-    let userData = getUserData();
+    const [userData, setUserData] = useState<User | null>(null);
+    useEffect(() => {
+        setUserData(getUserData());
+    }, []);
 
     return (
-        <div>
-            <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2 uppercase">
-                {title}
-            </h3>
+        userData && (
+            <div>
+                <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2 uppercase">
+                    {title}
+                </h3>
 
-            <ul className="mb-6 flex flex-col gap-1.5">
-                {items.map(
-                    (item) =>
-                        item.roles.includes(userData.role) && (
-                            <MenuItem
-                                key={item.link}
-                                label={item.label}
-                                icon={item.icon}
-                                link={item.link}
-                            />
-                        )
-                )}
-            </ul>
-        </div>
+                <ul className="mb-6 flex flex-col gap-1.5">
+                    {items.map(
+                        (item) =>
+                            item.roles.includes(userData!.role) && (
+                                <MenuItem
+                                    key={item.link}
+                                    label={item.label}
+                                    icon={item.icon}
+                                    link={item.link}
+                                />
+                            )
+                    )}
+                </ul>
+            </div>
+        )
     );
 };
 

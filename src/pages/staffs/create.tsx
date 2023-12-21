@@ -1,4 +1,4 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
+import { Box, Button, Breadcrumb, NotiModal } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import withAuth from "@/hoc/withAuth";
 import { convertBase64, instance } from "@/utils";
@@ -11,6 +11,7 @@ const Create = () => {
     const [position, setPosition] = useState("");
     const [featuredImage, setFeaturedImage] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
@@ -30,9 +31,26 @@ const Create = () => {
         }
     };
 
+    const validateData = (): boolean => {
+        if (
+            name.trim() === "" ||
+            position.trim() === "" ||
+            featuredImage === ""
+        ) {
+            return false;
+        }
+        return true;
+    };
+
     const router = useRouter();
     const handlePublish = async () => {
         setLoading(true);
+
+        if (!validateData()) {
+            setLoading(false);
+            setIsModalOpen(true);
+            return;
+        }
         instance
             .post("/staffs", { name, position, featuredImage })
             .then(() => {
@@ -111,6 +129,13 @@ const Create = () => {
                         >
                             Lưu
                         </Button>
+                        <NotiModal
+                            show={isModalOpen}
+                            setShow={setIsModalOpen}
+                            title="Lỗi"
+                            description="Vui lòng điền đầy đủ thông tin"
+                            type="error"
+                        />
                     </div>
                 </div>
             </Box>

@@ -1,4 +1,4 @@
-import { Box, Breadcrumb, Button } from "@/components/common";
+import { Box, Breadcrumb, Button, NotiModal } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 
 const EditCategory = () => {
     const [name, setName] = useState<string>("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     let path: string;
     useEffect(() => {
@@ -21,14 +22,23 @@ const EditCategory = () => {
             });
     }, []);
 
-    const [buttonLoading, setButtonLoading] = useState(false);
-
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
     };
-
+    const validateData = (): boolean => {
+        if (name.trim() === "") {
+            return false;
+        }
+        return true;
+    };
+    const [buttonLoading, setButtonLoading] = useState(false);
     const handleSaveCategory = async () => {
         setButtonLoading(true);
+        if (!validateData()) {
+            setButtonLoading(false);
+            setIsModalOpen(true);
+            return;
+        }
         await instance
             .patch(`/categories/${path}`, {
                 name,
@@ -89,6 +99,13 @@ const EditCategory = () => {
                             >
                                 Lưu
                             </Button>
+                            <NotiModal
+                                show={isModalOpen}
+                                setShow={setIsModalOpen}
+                                title="Lỗi"
+                                description="Vui lòng nhập đầy đủ thông tin"
+                                type="error"
+                            />
                         </div>
                     </div>
                 </Box>

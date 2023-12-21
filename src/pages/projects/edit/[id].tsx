@@ -1,4 +1,4 @@
-import { Box, Breadcrumb, Button } from "@/components/common";
+import { Box, Breadcrumb, Button, NotiModal } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
@@ -21,6 +21,7 @@ const Edit = () => {
     const [featuredImage, setFeaturedImage] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     let path: string;
     useEffect(() => {
@@ -62,8 +63,26 @@ const Edit = () => {
         }
     };
 
+    const validateData = (): boolean => {
+        if (
+            name.trim() === "" ||
+            description.trim() === "" ||
+            featuredImage === "" ||
+            content.trim() === ""
+        ) {
+            return false;
+        }
+        return true;
+    };
+
     const router = useRouter();
     const handlePublish = async () => {
+        setLoading(true);
+        if (!validateData()) {
+            setLoading(false);
+            setIsModalOpen(true);
+            return;
+        }
         const newContent = parseContent(content);
         const body = {
             name,
@@ -72,7 +91,6 @@ const Edit = () => {
             content: newContent,
         };
 
-        setLoading(true);
         await instance
             .patch(`/projects/${router.query.id}`, body)
             .then(() => {
@@ -167,6 +185,13 @@ const Edit = () => {
                             >
                                 Lưu
                             </Button>
+                            <NotiModal
+                                show={isModalOpen}
+                                setShow={setIsModalOpen}
+                                title="Lỗi"
+                                description="Vui lòng nhập đầy đủ thông tin"
+                                type="error"
+                            />
                         </div>
                     </div>
                 </Box>

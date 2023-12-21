@@ -1,4 +1,4 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
+import { Box, Button, Breadcrumb, NotiModal } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
@@ -12,6 +12,7 @@ const Update = () => {
     const [description, setDescription] = useState("");
     const [image, setImage] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     let path: string;
     useEffect(() => {
@@ -50,15 +51,28 @@ const Update = () => {
             setImage(base64);
         }
     };
+
+    const validateData = (): boolean => {
+        if (name.trim() === "" || description.trim() === "" || image === "") {
+            return false;
+        }
+        return true;
+    };
+
     const router = useRouter();
     const handlePublish = async () => {
+        setLoading(true);
+        if (!validateData()) {
+            setLoading(false);
+            setIsModalOpen(true);
+            return;
+        }
         const body = {
             name,
             description,
             image,
         };
 
-        setLoading(true);
         instance
             .patch(`/customers/${router.query.id}`, body)
             .then(() => {
@@ -143,6 +157,13 @@ const Update = () => {
                             >
                                 Lưu
                             </Button>
+                            <NotiModal
+                                show={isModalOpen}
+                                setShow={setIsModalOpen}
+                                title="Lỗi"
+                                description="Vui lòng nhập đầy đủ thông tin"
+                                type="error"
+                            />
                         </div>
                     </div>
                 </Box>

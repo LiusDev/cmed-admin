@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./header";
 import Head from "next/head";
+import { User } from "@/types";
+import { instance } from "@/utils";
 
 const MainLayout = ({
     title,

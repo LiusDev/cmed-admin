@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { User } from "@/types";
 import { MdLogout, MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { signout } from "@/utils";
 
 const DropdownUser = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -13,11 +14,7 @@ const DropdownUser = () => {
     const dropdown = useRef<any>(null);
 
     const router = useRouter();
-    const handleLogout = () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        router.push("/signin");
-    };
+
     useEffect(() => {
         const user = localStorage.getItem("user");
         if (user) {
@@ -162,7 +159,7 @@ const DropdownUser = () => {
                     </li>
                 </ul> */}
                 <button
-                    onClick={handleLogout}
+                    onClick={signout}
                     className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
                 >
                     <MdLogout />

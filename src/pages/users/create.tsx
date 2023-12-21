@@ -1,4 +1,4 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
+import { Box, Button, Breadcrumb, NotiModal } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import withAuth from "@/hoc/withAuth";
 import { UserRole, roleLabels } from "@/types";
@@ -12,6 +12,7 @@ const Create = () => {
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUsername(e.target.value);
@@ -28,10 +29,27 @@ const Create = () => {
     const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
     };
+
+    const validateData = (): boolean => {
+        if (
+            username.trim() === "" ||
+            password.trim() === "" ||
+            name.trim() === ""
+        ) {
+            return false;
+        }
+        return true;
+    };
+
     const router = useRouter();
 
     const handlePublish = async () => {
         setLoading(true);
+        if (!validateData()) {
+            setLoading(false);
+            setIsModalOpen(true);
+            return;
+        }
         instance
             .post("/users", {
                 username,
@@ -135,6 +153,13 @@ const Create = () => {
                         >
                             Tạo tài khoản
                         </Button>
+                        <NotiModal
+                            show={isModalOpen}
+                            setShow={setIsModalOpen}
+                            title="Lỗi"
+                            description="Vui lòng điền đầy đủ thông tin"
+                            type="error"
+                        />
                     </div>
                 </div>
             </Box>

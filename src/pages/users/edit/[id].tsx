@@ -1,4 +1,4 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
+import { Box, Button, Breadcrumb, NotiModal } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
@@ -13,6 +13,7 @@ const Update = () => {
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     let path: string;
     useEffect(() => {
@@ -42,6 +43,13 @@ const Update = () => {
 
     const handleChangeRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setRole(e.target.value);
+    };
+
+    const validateData = (): boolean => {
+        if (username.trim() === "" || name.trim() === "") {
+            return false;
+        }
+        return true;
     };
 
     const router = useRouter();
@@ -145,6 +153,13 @@ const Update = () => {
                             >
                                 Cập nhật
                             </Button>
+                            <NotiModal
+                                show={isModalOpen}
+                                setShow={setIsModalOpen}
+                                title="Lỗi"
+                                description="Vui lòng điền đầy đủ thông tin"
+                                type="error"
+                            />
                         </div>
                     </div>
                 </Box>

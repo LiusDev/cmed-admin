@@ -1,26 +1,30 @@
 import React from "react";
 import { Box, Button, Modal } from ".";
 import { ModalProps } from "./Modal";
-import { PiWarningCircle } from "react-icons/pi";
+import { PiCheckCircleLight, PiXCircleLight } from "react-icons/pi";
 
-interface ConfirmDeleteProps extends ModalProps {
+interface SuccessModalProps extends ModalProps {
     title: string;
     description?: string;
+    type: "success" | "error";
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
-    handleDelete: () => void;
 }
 
-const ConfirmDelete = ({
+const NotiModal = ({
     show,
     setShow,
     title,
     description,
-    handleDelete,
-}: ConfirmDeleteProps) => {
+    type,
+}: SuccessModalProps) => {
     return (
         <Modal show={show}>
             <Box className="w-full max-w-125 p-8 flex flex-col gap-6 items-center justify-center">
-                <PiWarningCircle className="text-8xl text-danger" />
+                {type === "success" ? (
+                    <PiCheckCircleLight className="text-8xl text-success" />
+                ) : (
+                    <PiXCircleLight className="text-8xl text-danger" />
+                )}
                 <div className="flex flex-col gap-4">
                     <h3 className="text-2xl font-semibold text-center">
                         {title}
@@ -33,23 +37,13 @@ const ConfirmDelete = ({
                 </div>
                 <div className="flex items-center justify-center gap-4">
                     <Button
-                        color="danger"
+                        color="primary"
                         variant="rounded"
                         onClick={() => {
                             setShow(false);
                         }}
                     >
-                        Huỷ
-                    </Button>
-                    <Button
-                        color="success"
-                        variant="rounded"
-                        onClick={() => {
-                            setShow(false);
-                            handleDelete();
-                        }}
-                    >
-                        Đồng ý
+                        OK
                     </Button>
                 </div>
             </Box>
@@ -57,4 +51,4 @@ const ConfirmDelete = ({
     );
 };
 
-export default ConfirmDelete;
+export default NotiModal;

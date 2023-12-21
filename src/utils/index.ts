@@ -3,6 +3,13 @@ import axios from "axios";
 
 export { twMerge as tw } from "tailwind-merge";
 
+export const signout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    window.location.reload();
+};
+
 export const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
@@ -95,7 +102,10 @@ export const convertDate = (date: string): string => {
 export const getUserData = (): User => {
     const user =
         typeof window !== "undefined" ? localStorage.getItem("user") : null;
-    return user ? JSON.parse(user) : null;
+    if (!user) {
+        window.location.href = "/signin";
+    }
+    return JSON.parse(user as string);
 };
 
 export const parseContent = (content: string) => {

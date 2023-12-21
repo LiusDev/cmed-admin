@@ -14,6 +14,7 @@ const Create = () => {
     const [description, setDescription] = useState("");
     const [documentUrl, setDocumentUrl] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         instance

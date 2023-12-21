@@ -1,4 +1,4 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
+import { Box, Button, Breadcrumb, NotiModal } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
@@ -23,6 +23,7 @@ const Create = () => {
     const [featuredImage, setFeaturedImage] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         instance
@@ -60,10 +61,28 @@ const Create = () => {
             setFeaturedImage(base64image);
         }
     };
+
+    const validateData = (): boolean => {
+        if (
+            title.trim() === "" ||
+            description.trim() === "" ||
+            featuredImage === "" ||
+            content.trim() === ""
+        ) {
+            return false;
+        }
+        return true;
+    };
+
     const router = useRouter();
 
     const handlePublish = async () => {
         setLoading(true);
+        if (!validateData()) {
+            setLoading(false);
+            setIsModalOpen(true);
+            return;
+        }
         const newContent = await parseContent(content);
         instance
             .post("/news", {
@@ -181,6 +200,13 @@ const Create = () => {
                             >
                                 Xuất bản
                             </Button>
+                            <NotiModal
+                                show={isModalOpen}
+                                setShow={setIsModalOpen}
+                                title="Lỗi"
+                                description="Vui lòng nhập đầy đủ thông tin"
+                                type="error"
+                            />
                         </div>
                     </div>
                 </Box>

@@ -91,3 +91,11 @@ export interface Staff {
     position: string;
     featuredImage: string;
 }
+
+export interface Metadata {
+    id: number;
+    companyName: string;
+    companyPhone: string;
+    companyEmail: string;
+    companyAddress: string;
+}

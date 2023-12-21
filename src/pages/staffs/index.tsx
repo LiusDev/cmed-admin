@@ -8,11 +8,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 
+const PAGE_SIZE = 500;
+
 const Staffs = () => {
     const [data, setData] = useState<Staff[] | null>(null);
     const [showModal, setShowModal] = useState(false);
     useEffect(() => {
-        instance.get(`/staffs`).then((res) => {
+        instance.get(`/staffs?perPage=${PAGE_SIZE}`).then((res) => {
             setData(res.data);
         });
     }, []);
@@ -25,6 +27,29 @@ const Staffs = () => {
                     (item) => item.id !== id
                 );
                 setData(filteredTableData);
+            })
+            .catch((err) => {
+                if (err.response.status === 401) {
+                    window.location.href = "/signin";
+                }
+            });
+    };
+
+    const [searchName, setSearchName] = useState("");
+
+    const handleSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchName(e.target.value);
+    };
+
+    const [searchLoading, setSearchLoading] = useState(false);
+    const handleSearch = () => {
+        setSearchLoading(true);
+
+        instance
+            .get(`/news?name=${searchName}&perPage=${PAGE_SIZE}`)
+            .then((res) => {
+                setData(res.data);
+                setSearchLoading(false);
             })
             .catch((err) => {
                 if (err.response.status === 401) {
@@ -54,7 +79,13 @@ const Staffs = () => {
                             <thead>
                                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Tên
+                                        <input
+                                            value={searchName}
+                                            onChange={handleSearchName}
+                                            type="text"
+                                            placeholder="Tên"
+                                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-1 px-2 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                        />
                                     </th>
 
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
@@ -69,7 +100,17 @@ const Staffs = () => {
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         Ngày chỉnh sửa
                                     </th>
-                                    <th className="py-4 px-4 font-medium text-black dark:text-white" />
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
+                                        <Button
+                                            size="small"
+                                            variant="rounded"
+                                            onClick={handleSearch}
+                                            isLoading={searchLoading}
+                                            className="w-36"
+                                        >
+                                            Tìm kiếm
+                                        </Button>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -80,7 +80,7 @@ const Button = ({
             {isLoading ? (
                 <div className="w-6 h-6 border-4 border-bodydark1 rounded-full flex items-center justify-center border-t-4 border-t-white animate-spin" />
             ) : (
-                `${children}`
+                children
             )}
         </button>
     );

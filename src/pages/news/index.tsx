@@ -7,16 +7,21 @@ import { convertDate, instance } from "@/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
+    MdArrowBackIosNew,
+    MdArrowForwardIos,
     MdOutlineDelete,
     MdOutlineEdit,
     MdOutlineRemoveRedEye,
 } from "react-icons/md";
 
+const PAGE_SIZE = 500;
+
 const News = () => {
     const [data, setData] = useState<News[] | null>(null);
+    // const [totalData, setTotalData] = useState(100);
     const [showModal, setShowModal] = useState(false);
     useEffect(() => {
-        instance.get(`/news`).then((res) => {
+        instance.get(`/news?perPage=${PAGE_SIZE}`).then((res) => {
             setData(res.data);
         });
     }, []);
@@ -29,6 +34,38 @@ const News = () => {
                     (item) => item.id !== id
                 );
                 setData(filteredTableData);
+            })
+            .catch((err) => {
+                if (err.response.status === 401) {
+                    window.location.href = "/signin";
+                }
+            });
+    };
+
+    const [searchTitle, setSearchTitle] = useState("");
+    const [searchDescription, setSearchDescription] = useState("");
+
+    const handleSearchTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTitle(e.target.value);
+    };
+
+    const handleSearchDescription = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setSearchDescription(e.target.value);
+    };
+
+    const [searchLoading, setSearchLoading] = useState(false);
+    const handleSearch = () => {
+        setSearchLoading(true);
+
+        instance
+            .get(
+                `/news?title=${searchTitle}&description=${searchDescription}&perPage=${PAGE_SIZE}`
+            )
+            .then((res) => {
+                setData(res.data);
+                setSearchLoading(false);
             })
             .catch((err) => {
                 if (err.response.status === 401) {
@@ -58,14 +95,25 @@ const News = () => {
                             <thead>
                                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Tiêu đề
+                                        <input
+                                            value={searchTitle}
+                                            onChange={handleSearchTitle}
+                                            type="text"
+                                            placeholder="Tiêu đề"
+                                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-1 px-2 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                        />
                                     </th>
-
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
+                                        <input
+                                            value={searchDescription}
+                                            onChange={handleSearchDescription}
+                                            type="text"
+                                            placeholder="Mô tả"
+                                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-1 px-2 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                        />
+                                    </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         Ảnh nổi bật
-                                    </th>
-                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
-                                        Mô tả
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         Danh mục
@@ -76,7 +124,17 @@ const News = () => {
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         Ngày chỉnh sửa
                                     </th>
-                                    <th className="py-4 px-4 font-medium text-black dark:text-white"></th>
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
+                                        <Button
+                                            size="small"
+                                            variant="rounded"
+                                            onClick={handleSearch}
+                                            isLoading={searchLoading}
+                                            className="w-36"
+                                        >
+                                            Tìm kiếm
+                                        </Button>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -106,6 +164,11 @@ const News = () => {
                                                     </h5>
                                                 </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                    <p className="text-black dark:text-white">
+                                                        {description}
+                                                    </p>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <div className="font-medium text-black dark:text-white">
                                                         <img
                                                             src={featuredImage}
@@ -113,11 +176,6 @@ const News = () => {
                                                             className="h-40 object-cover rounded-sm"
                                                         />
                                                     </div>
-                                                </td>
-                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                    <p className="text-black dark:text-white">
-                                                        {description}
-                                                    </p>
                                                 </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <p className="text-black dark:text-white">

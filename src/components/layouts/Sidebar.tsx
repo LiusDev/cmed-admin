@@ -4,16 +4,16 @@ import { getUserData, signout } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     MdAccountCircle,
     MdArrowBack,
-    MdCalendarMonth,
     MdInfoOutline,
     MdLightbulbOutline,
     MdMenuOpen,
     MdMiscellaneousServices,
     MdNewspaper,
+    MdOutlineContactMail,
     MdOutlineDocumentScanner,
     MdOutlineHandshake,
     MdOutlinePersonAddAlt,
@@ -88,6 +88,12 @@ const menuItems = [
                 label: "Thông tin công ty",
                 icon: <MdInfoOutline className="text-2xl" />,
                 link: "/metadata",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
+            },
+            {
+                label: "Liên hệ",
+                icon: <MdOutlineContactMail className="text-2xl" />,
+                link: "/contacts",
                 roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {

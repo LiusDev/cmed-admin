@@ -99,3 +99,19 @@ export interface Metadata {
     companyEmail: string;
     companyAddress: string;
 }
+
+export const isPersonalLabel = (isPersonal: boolean) => {
+    return isPersonal ? "Cá nhân" : "Tổ chức";
+};
+
+export interface Contact {
+    id: number;
+    createdAt: string;
+    modifiedAt: string;
+    name: string;
+    email: string;
+    phone: string;
+    company: string;
+    isPersonal: boolean;
+    content: string;
+}

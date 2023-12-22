@@ -1,6 +1,7 @@
 import { Box, Breadcrumb, Button, Modal, NotiModal } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
+import withAuth from "@/hoc/withAuth";
 import { instance } from "@/utils";
 import React, { useEffect, useState } from "react";
 import { PiCheckCircleLight } from "react-icons/pi";
@@ -181,4 +182,4 @@ const Metadata = () => {
     );
 };
 
-export default Metadata;
+export default withAuth(Metadata);

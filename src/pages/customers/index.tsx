@@ -1,4 +1,4 @@
-import { Button, Breadcrumb, ConfirmDelete } from "@/components/common";
+import { Button, Breadcrumb } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
@@ -7,19 +7,22 @@ import { convertDate, instance } from "@/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
+import Swal from "sweetalert2";
 
 const PAGE_SIZE = 500;
 
 const Customers = () => {
     const [data, setData] = useState<Customer[] | null>(null);
-    const [showModal, setShowModal] = useState(false);
+
     useEffect(() => {
-        instance.get(`/customers?perPage=${PAGE_SIZE}`).then((res) => {
-            setData(res.data);
-        });
+        instance
+            .get(`/customers?perPage=${PAGE_SIZE}&order=desc`)
+            .then((res) => {
+                setData(res.data);
+            });
     }, []);
 
-    const handleDelete = (id: number) => {
+    const deleteCustomer = (id: number) => {
         instance
             .delete(`/customers/${id}`)
             .then(() => {
@@ -33,6 +36,27 @@ const Customers = () => {
                     window.location.href = "/signin";
                 }
             });
+    };
+
+    const handleDelete = (id: number) => {
+        Swal.fire({
+            title: "Bạn có chắc chắn muốn xóa?",
+            text: "Hành động này không thể hoàn tác!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Chắc chắn!",
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteCustomer(id);
+                Swal.fire({
+                    title: "Đã xóa!",
+                    icon: "success",
+                });
+            }
+        });
     };
 
     const [searchName, setSearchName] = useState("");
@@ -173,25 +197,12 @@ const Customers = () => {
                                                         </Link>
                                                         <button
                                                             onClick={() =>
-                                                                setShowModal(
-                                                                    true
-                                                                )
+                                                                handleDelete(id)
                                                             }
                                                             className="hover:text-danger"
                                                         >
                                                             <MdOutlineDelete className="text-xl" />
                                                         </button>
-                                                        <ConfirmDelete
-                                                            title="Bạn có chắc chắn muốn xóa?"
-                                                            description="Hành động này không thể hoàn tác."
-                                                            show={showModal}
-                                                            setShow={
-                                                                setShowModal
-                                                            }
-                                                            handleDelete={() =>
-                                                                handleDelete(id)
-                                                            }
-                                                        />
                                                     </div>
                                                 </td>
                                             </tr>

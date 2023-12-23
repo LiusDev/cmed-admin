@@ -1,17 +1,17 @@
-import { Box, Button, Breadcrumb, NotiModal } from "@/components/common";
+import { Box, Button, Breadcrumb } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import withAuth from "@/hoc/withAuth";
 import {} from "@/types";
 import { convertBase64, instance } from "@/utils";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const Create = () => {
     const [name, setName] = useState("");
     const [image, setImage] = useState("");
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
@@ -46,7 +46,11 @@ const Create = () => {
         setLoading(true);
         if (!validateData()) {
             setLoading(false);
-            setIsModalOpen(true);
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi",
+                text: "Vui lòng điền đầy đủ thông tin!",
+            });
             return;
         }
         instance
@@ -131,13 +135,6 @@ const Create = () => {
                         >
                             Thêm mới
                         </Button>
-                        <NotiModal
-                            show={isModalOpen}
-                            setShow={setIsModalOpen}
-                            title="Lỗi"
-                            description="Vui lòng nhập đầy đủ thông tin"
-                            type="error"
-                        />
                     </div>
                 </div>
             </Box>

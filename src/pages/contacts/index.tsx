@@ -13,7 +13,7 @@ const Contacts = () => {
     const [data, setData] = useState<Contact[] | null>(null);
     useEffect(() => {
         instance
-            .get(`/contacts?perPage=${PAGE_SIZE}`)
+            .get(`/contacts?perPage=${PAGE_SIZE}&order=desc`)
             .then((res) => {
                 setData(res.data);
             })

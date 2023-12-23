@@ -1,18 +1,11 @@
-import { Box, Breadcrumb, Button, NotiModal } from "@/components/common";
+import { Box, Breadcrumb, Button } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
 import type { Staff } from "@/types";
 import { convertBase64, instance } from "@/utils";
-import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
-
-const FroalaEditorComponent = dynamic(
-    () => import("@/components/customEditor"),
-    {
-        ssr: false,
-    }
-);
+import Swal from "sweetalert2";
 
 const Edit = () => {
     const [staff, setStaff] = useState<Staff | null>(null);
@@ -21,7 +14,6 @@ const Edit = () => {
     const [position, setPosition] = useState("");
     const [featuredImage, setFeaturedImage] = useState("");
     const [loading, setLoading] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     let path: string;
     useEffect(() => {
@@ -49,7 +41,6 @@ const Edit = () => {
         setPosition(e.target.value);
     };
 
-    const [changeFeaturedImage, setChangeFeaturedImage] = useState(false);
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -57,7 +48,6 @@ const Edit = () => {
             const file = e.target.files[0];
             const base64Image = await convertBase64(file);
             setFeaturedImage(base64Image);
-            setChangeFeaturedImage(true);
         }
     };
 
@@ -72,7 +62,11 @@ const Edit = () => {
         setLoading(true);
         if (!validateData()) {
             setLoading(false);
-            setIsModalOpen(true);
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi",
+                text: "Vui lòng điền đầy đủ thông tin!",
+            });
             return;
         }
         const body = {
@@ -170,13 +164,6 @@ const Edit = () => {
                             >
                                 Lưu
                             </Button>
-                            <NotiModal
-                                show={isModalOpen}
-                                setShow={setIsModalOpen}
-                                title="Lỗi"
-                                description="Vui lòng điền đầy đủ thông tin"
-                                type="error"
-                            />
                         </div>
                     </div>
                 </Box>

@@ -1,10 +1,10 @@
-import { Box, Breadcrumb, Button, Modal, NotiModal } from "@/components/common";
+import { Box, Breadcrumb, Button } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
 import { instance } from "@/utils";
 import React, { useEffect, useState } from "react";
-import { PiCheckCircleLight } from "react-icons/pi";
+import Swal from "sweetalert2";
 
 const Metadata = () => {
     const [mounted, setMounted] = useState(false);
@@ -13,8 +13,6 @@ const Metadata = () => {
     const [email, setEmail] = useState("");
     const [address, setAddress] = useState("");
     const [buttonLoading, setButtonLoading] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
@@ -63,8 +61,11 @@ const Metadata = () => {
         setButtonLoading(true);
         if (!validateData()) {
             setButtonLoading(false);
-            setIsModalOpen(true);
-            setIsSuccess(false);
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi",
+                text: "Vui lòng điền đầy đủ thông tin!",
+            });
             return;
         }
         instance
@@ -75,12 +76,16 @@ const Metadata = () => {
                 companyAddress: address,
             })
             .then((res) => {
-                setButtonLoading(false);
-                setIsSuccess(true);
-                setIsModalOpen(true);
+                Swal.fire({
+                    icon: "success",
+                    title: "Cập nhật thành công",
+                });
             })
             .catch((err) => {
-                setIsSuccess(false);
+                Swal.fire({
+                    icon: "error",
+                    title: "Có lỗi xảy ra",
+                });
             });
     };
     return (
@@ -164,16 +169,6 @@ const Metadata = () => {
                             >
                                 Cập nhật
                             </Button>
-                            <NotiModal
-                                type={isSuccess ? "success" : "error"}
-                                title={
-                                    isSuccess
-                                        ? "Cập nhật thành công"
-                                        : "Cập nhật thất bại"
-                                }
-                                show={isModalOpen}
-                                setShow={setIsModalOpen}
-                            />
                         </div>
                     </div>
                 </Box>

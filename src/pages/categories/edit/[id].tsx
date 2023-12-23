@@ -1,13 +1,14 @@
-import { Box, Breadcrumb, Button, NotiModal } from "@/components/common";
+import { Box, Breadcrumb, Button } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
 import { instance } from "@/utils";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const EditCategory = () => {
     const [name, setName] = useState<string>("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     let path: string;
     useEffect(() => {
@@ -15,6 +16,7 @@ const EditCategory = () => {
         instance
             .get(`/categories/${path}`)
             .then((res) => {
+                setMounted(true);
                 setName(res.data.name);
             })
             .catch((err) => {
@@ -36,7 +38,11 @@ const EditCategory = () => {
         setButtonLoading(true);
         if (!validateData()) {
             setButtonLoading(false);
-            setIsModalOpen(true);
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi",
+                text: "Vui lòng điền đầy đủ thông tin!",
+            });
             return;
         }
         await instance
@@ -61,7 +67,7 @@ const EditCategory = () => {
     return (
         <MainLayout>
             <Breadcrumb pageName="Danh mục" link="/categories" />
-            {!name ? (
+            {!mounted ? (
                 <TableSkeleton
                     rows={3}
                     columns={1}
@@ -99,13 +105,6 @@ const EditCategory = () => {
                             >
                                 Lưu
                             </Button>
-                            <NotiModal
-                                show={isModalOpen}
-                                setShow={setIsModalOpen}
-                                title="Lỗi"
-                                description="Vui lòng nhập đầy đủ thông tin"
-                                type="error"
-                            />
                         </div>
                     </div>
                 </Box>

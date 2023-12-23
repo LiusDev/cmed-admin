@@ -1,4 +1,4 @@
-import { Breadcrumb, Button, ConfirmDelete } from "@/components/common";
+import { Breadcrumb, Button } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
@@ -7,21 +7,25 @@ import { convertDate, instance } from "@/utils";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
+import Swal from "sweetalert2";
+
+const PAGE_SIZE = 500;
 
 const Categories = () => {
     const [categoriesData, setCategoriesData] = useState<Category[] | null>(
         null
     );
-    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
-        instance.get(`/categories`).then((res) => {
-            setCategoriesData(res.data);
-        });
+        instance
+            .get(`/categories?perPage=${PAGE_SIZE}&order=desc`)
+            .then((res) => {
+                setCategoriesData(res.data);
+            });
     }, []);
 
-    const handleDelete = async (id: number) => {
-        await instance
+    const deleteCategory = (id: number) => {
+        instance
             .delete(`/categories/${id}`)
             .then(() => {
                 const newCategories = categoriesData!.filter(
@@ -34,6 +38,27 @@ const Categories = () => {
                     window.location.href = "/signin";
                 }
             });
+    };
+
+    const handleDelete = (id: number) => {
+        Swal.fire({
+            title: "Bạn có chắc chắn muốn xóa?",
+            text: "Hành động này không thể hoàn tác!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Chắc chắn!",
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteCategory(id);
+                Swal.fire({
+                    title: "Đã xóa!",
+                    icon: "success",
+                });
+            }
+        });
     };
 
     return (
@@ -112,21 +137,12 @@ const Categories = () => {
                                                     </Link>
                                                     <button
                                                         onClick={() =>
-                                                            setShowModal(true)
+                                                            handleDelete(id)
                                                         }
                                                         className="hover:text-danger"
                                                     >
                                                         <MdOutlineDelete className="text-xl" />
                                                     </button>
-                                                    <ConfirmDelete
-                                                        title="Bạn có chắc chắn muốn xóa?"
-                                                        description="Hành động này không thể hoàn tác."
-                                                        show={showModal}
-                                                        setShow={setShowModal}
-                                                        handleDelete={() =>
-                                                            handleDelete(id)
-                                                        }
-                                                    />
                                                 </div>
                                             </td>
                                         </tr>

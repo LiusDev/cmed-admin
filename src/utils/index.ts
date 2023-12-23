@@ -113,6 +113,7 @@ export const parseContent = (content: string) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(content, "text/html");
     const images = doc.querySelectorAll("img");
+    if (images.length === 0) return Promise.resolve(doc.body.innerHTML);
     const promises: Promise<void>[] = [];
     images.forEach((image) => {
         promises.push(

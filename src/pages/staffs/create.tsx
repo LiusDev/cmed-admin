@@ -1,17 +1,16 @@
-import { Box, Button, Breadcrumb, NotiModal } from "@/components/common";
+import { Box, Button, Breadcrumb } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import withAuth from "@/hoc/withAuth";
 import { convertBase64, instance } from "@/utils";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Swal from "sweetalert2";
 
 const Create = () => {
     const [name, setName] = useState("");
     const [position, setPosition] = useState("");
     const [featuredImage, setFeaturedImage] = useState("");
     const [loading, setLoading] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
@@ -26,8 +25,8 @@ const Create = () => {
     ) => {
         if (e.target.files) {
             const file = e.target.files[0];
-            const url = URL.createObjectURL(file);
-            setFeaturedImage(url);
+            const base64 = await convertBase64(file);
+            setFeaturedImage(base64);
         }
     };
 
@@ -48,7 +47,11 @@ const Create = () => {
 
         if (!validateData()) {
             setLoading(false);
-            setIsModalOpen(true);
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi",
+                text: "Vui lòng điền đầy đủ thông tin!",
+            });
             return;
         }
         instance
@@ -129,13 +132,6 @@ const Create = () => {
                         >
                             Lưu
                         </Button>
-                        <NotiModal
-                            show={isModalOpen}
-                            setShow={setIsModalOpen}
-                            title="Lỗi"
-                            description="Vui lòng điền đầy đủ thông tin"
-                            type="error"
-                        />
                     </div>
                 </div>
             </Box>

@@ -1,12 +1,12 @@
-import { Box, Breadcrumb, Button, NotiModal } from "@/components/common";
+import { Box, Breadcrumb, Button } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import { TableSkeleton } from "@/components/skeletons";
 import withAuth from "@/hoc/withAuth";
-import type { Project, Service } from "@/types";
+import type { Service } from "@/types";
 import { convertBase64, instance, parseContent } from "@/utils";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const FroalaEditorComponent = dynamic(
     () => import("@/components/customEditor"),
@@ -80,10 +80,14 @@ const Edit = () => {
         setLoading(true);
         if (!validateData()) {
             setLoading(false);
-            setIsModalOpen(true);
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi",
+                text: "Vui lòng điền đầy đủ thông tin!",
+            });
             return;
         }
-        const newContent = parseContent(content);
+        const newContent = await parseContent(content);
         const body = {
             name,
             description,
@@ -188,13 +192,6 @@ const Edit = () => {
                             >
                                 Lưu
                             </Button>
-                            <NotiModal
-                                show={isModalOpen}
-                                setShow={setIsModalOpen}
-                                title="Lỗi"
-                                description="Vui lòng nhập đủ thông tin"
-                                type="error"
-                            />
                         </div>
                     </div>
                 </Box>

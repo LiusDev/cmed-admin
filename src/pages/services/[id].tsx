@@ -1,32 +1,32 @@
-import { Box, Breadcrumb, Button } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import type { Service } from "@/types";
-import { convertDate, instance } from "@/utils";
-import { useRouter } from "next/router";
-import parse from "html-react-parser";
-import { useEffect, useState } from "react";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
+import { Box, Breadcrumb, Button } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import type { Service } from "@/types"
+import { convertDate, instance } from "@/utils"
+import { useRouter } from "next/router"
+import parse from "html-react-parser"
+import { useEffect, useState } from "react"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
 
 const Service = () => {
-    const [mounted, setMounted] = useState(false);
-    const [service, setService] = useState<Service | null>(null);
-    let path: string;
-    const router = useRouter();
+    const [mounted, setMounted] = useState(false)
+    const [service, setService] = useState<Service | null>(null)
+    let path: string
+    const router = useRouter()
     useEffect(() => {
-        path = window.location.pathname.split("/")[2];
+        path = window.location.pathname.split("/")[2]
         instance
             .get(`/services/${path}`)
             .then((res) => {
-                setMounted(true);
-                setService(res.data);
+                setMounted(true)
+                setService(res.data)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     return (
         <MainLayout title="Services">
@@ -67,14 +67,12 @@ const Service = () => {
                                 className="w-full object-cover"
                             />
                         </div>
-                        <div>
-                            <p>{mounted && parse(service.content)}</p>
-                        </div>
+                        <div>{mounted && parse(service.content)}</div>
                     </div>
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Service);
+export default withAuth(Service)

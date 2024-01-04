@@ -1,32 +1,32 @@
-import { Box, Breadcrumb, Button } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import type { Project } from "@/types";
-import { convertDate, instance } from "@/utils";
-import { useRouter } from "next/router";
-import parse from "html-react-parser";
-import { useEffect, useState } from "react";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
+import { Box, Breadcrumb, Button } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import type { Project } from "@/types"
+import { convertDate, instance } from "@/utils"
+import { useRouter } from "next/router"
+import parse from "html-react-parser"
+import { useEffect, useState } from "react"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
 
 const Project = () => {
-    const [mounted, setMounted] = useState(false);
-    const [projects, setProjects] = useState<Project | null>(null);
-    let path: string;
-    const router = useRouter();
+    const [mounted, setMounted] = useState(false)
+    const [projects, setProjects] = useState<Project | null>(null)
+    let path: string
+    const router = useRouter()
     useEffect(() => {
-        path = window.location.pathname.split("/")[2];
+        path = window.location.pathname.split("/")[2]
         instance
             .get(`/projects/${path}`)
             .then((res) => {
-                setMounted(true);
-                setProjects(res.data);
+                setMounted(true)
+                setProjects(res.data)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     return (
         <MainLayout>
@@ -60,14 +60,12 @@ const Project = () => {
                                 {projects.description}
                             </p>
                         </div>
-                        <div>
-                            <p>{mounted && parse(projects.content)}</p>
-                        </div>
+                        <div>{mounted && parse(projects.content)}</div>
                     </div>
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Project);
+export default withAuth(Project)

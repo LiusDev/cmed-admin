@@ -1,32 +1,32 @@
-import { Box, Breadcrumb, Button } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import type { News } from "@/types";
-import { convertDate, instance } from "@/utils";
-import { useRouter } from "next/router";
-import parse from "html-react-parser";
-import { useEffect, useState } from "react";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
+import { Box, Breadcrumb, Button } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import type { News } from "@/types"
+import { convertDate, instance } from "@/utils"
+import { useRouter } from "next/router"
+import parse from "html-react-parser"
+import { useEffect, useState } from "react"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
 
 const News = () => {
-    const [mounted, setMounted] = useState(false);
-    const [news, setNews] = useState<News | null>(null);
-    let path: string;
-    const router = useRouter();
+    const [mounted, setMounted] = useState(false)
+    const [news, setNews] = useState<News | null>(null)
+    let path: string
+    const router = useRouter()
     useEffect(() => {
-        path = window.location.pathname.split("/")[2];
+        path = window.location.pathname.split("/")[2]
         instance
             .get(`/news/${path}`)
             .then((res) => {
-                setMounted(true);
-                setNews(res.data);
+                setMounted(true)
+                setNews(res.data)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     return (
         <MainLayout title="News">
@@ -67,14 +67,12 @@ const News = () => {
                                 className="w-full object-cover"
                             />
                         </div>
-                        <div>
-                            <p>{mounted && parse(news.content)}</p>
-                        </div>
+                        <div>{mounted && parse(news.content)}</div>
                     </div>
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(News);
+export default withAuth(News)

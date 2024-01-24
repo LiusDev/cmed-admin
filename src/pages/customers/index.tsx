@@ -1,42 +1,40 @@
-import { Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import type { Customer } from "@/types";
-import { convertDate, instance } from "@/utils";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
-import Swal from "sweetalert2";
+import { Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import type { Customer } from "@/types"
+import { convertDate, instance } from "@/utils"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md"
+import Swal from "sweetalert2"
 
-const PAGE_SIZE = 500;
+const PAGE_SIZE = 500
 
 const Customers = () => {
-    const [data, setData] = useState<Customer[] | null>(null);
+    const [data, setData] = useState<Customer[] | null>(null)
 
     useEffect(() => {
         instance
             .get(`/customers?perPage=${PAGE_SIZE}&order=desc`)
             .then((res) => {
-                setData(res.data);
-            });
-    }, []);
+                setData(res.data)
+            })
+    }, [])
 
     const deleteCustomer = (id: number) => {
         instance
             .delete(`/customers/${id}`)
             .then(() => {
-                const filteredTableData = data!.filter(
-                    (item) => item.id !== id
-                );
-                setData(filteredTableData);
+                const filteredTableData = data!.filter((item) => item.id !== id)
+                setData(filteredTableData)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    };
+            })
+    }
 
     const handleDelete = (id: number) => {
         Swal.fire({
@@ -50,37 +48,37 @@ const Customers = () => {
             cancelButtonText: "Hủy",
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteCustomer(id);
+                deleteCustomer(id)
                 Swal.fire({
                     title: "Đã xóa!",
                     icon: "success",
-                });
+                })
             }
-        });
-    };
+        })
+    }
 
-    const [searchName, setSearchName] = useState("");
+    const [searchName, setSearchName] = useState("")
 
     const handleSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchName(e.target.value);
-    };
+        setSearchName(e.target.value)
+    }
 
-    const [searchLoading, setSearchLoading] = useState(false);
+    const [searchLoading, setSearchLoading] = useState(false)
     const handleSearch = () => {
-        setSearchLoading(true);
+        setSearchLoading(true)
 
         instance
-            .get(`/news?name=${searchName}&perPage=${PAGE_SIZE}`)
+            .get(`/customers?name=${searchName}&perPage=${PAGE_SIZE}`)
             .then((res) => {
-                setData(res.data);
-                setSearchLoading(false);
+                setData(res.data)
+                setSearchLoading(false)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    };
+            })
+    }
 
     return (
         <MainLayout>
@@ -215,6 +213,6 @@ const Customers = () => {
                 </div>
             )}
         </MainLayout>
-    );
-};
-export default withAuth(Customers);
+    )
+}
+export default withAuth(Customers)

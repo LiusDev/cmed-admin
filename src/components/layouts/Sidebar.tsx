@@ -1,10 +1,10 @@
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { User, UserRole } from "@/types";
-import { getUserData, signout } from "@/utils";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import useLocalStorage from "@/hooks/useLocalStorage"
+import { User, UserRole } from "@/types"
+import { getUserData, signout } from "@/utils"
+import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import React, { useEffect, useRef, useState } from "react"
 import {
     MdAccountCircle,
     MdArrowBack,
@@ -18,18 +18,19 @@ import {
     MdOutlineHandshake,
     MdOutlinePersonAddAlt,
     MdPersonOutline,
-} from "react-icons/md";
+    MdWorkOutline,
+} from "react-icons/md"
 
 interface MenuItemProps {
-    label: string;
-    icon: React.ReactNode;
-    link: string;
-    roles: UserRole[];
+    label: string
+    icon: React.ReactNode
+    link: string
+    roles: UserRole[]
 }
 
 interface MenuSectionProps {
-    title: string;
-    items: MenuItemProps[];
+    title: string
+    items: MenuItemProps[]
 }
 
 const menuItems = [
@@ -97,6 +98,12 @@ const menuItems = [
                 roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
+                label: "Tuyển dụng",
+                icon: <MdWorkOutline className="text-2xl" />,
+                link: "/recruitment",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
+            },
+            {
                 label: "Quản lý tài khoản",
                 icon: <MdAccountCircle className="text-2xl" />,
                 link: "/users",
@@ -104,10 +111,10 @@ const menuItems = [
             },
         ],
     },
-];
+]
 
 const MenuItem = ({ label, icon, link }: Omit<MenuItemProps, "roles">) => {
-    const pathname = useRouter().pathname;
+    const pathname = useRouter().pathname
 
     return (
         <li>
@@ -121,14 +128,14 @@ const MenuItem = ({ label, icon, link }: Omit<MenuItemProps, "roles">) => {
                 {label}
             </Link>
         </li>
-    );
-};
+    )
+}
 
 const MenuSection = ({ title, items }: MenuSectionProps) => {
-    const [userData, setUserData] = useState<User | null>(null);
+    const [userData, setUserData] = useState<User | null>(null)
     useEffect(() => {
-        setUserData(getUserData());
-    }, []);
+        setUserData(getUserData())
+    }, [])
 
     return (
         userData && (
@@ -152,18 +159,18 @@ const MenuSection = ({ title, items }: MenuSectionProps) => {
                 </ul>
             </div>
         )
-    );
-};
+    )
+}
 
 const Sidebar = ({
     sidebarOpen,
     setSidebarOpen,
 }: {
-    sidebarOpen: boolean;
-    setSidebarOpen: (arg: boolean) => void;
+    sidebarOpen: boolean
+    setSidebarOpen: (arg: boolean) => void
 }) => {
-    const sidebarRef = useRef<HTMLDivElement>(null);
-    const closeSidebarButtonRef = useRef<HTMLButtonElement>(null);
+    const sidebarRef = useRef<HTMLDivElement>(null)
+    const closeSidebarButtonRef = useRef<HTMLButtonElement>(null)
 
     // Handle closing sidebar when clicking outside of it
     useEffect(() => {
@@ -173,16 +180,16 @@ const Sidebar = ({
                 !sidebarRef.current.contains(e.target as Node) &&
                 !closeSidebarButtonRef.current?.contains(e.target as Node)
             ) {
-                setSidebarOpen(false);
+                setSidebarOpen(false)
             }
-        };
+        }
 
-        document.addEventListener("click", handleOutsideClick);
+        document.addEventListener("click", handleOutsideClick)
 
         return () => {
-            document.removeEventListener("click", handleOutsideClick);
-        };
-    }, []);
+            document.removeEventListener("click", handleOutsideClick)
+        }
+    }, [])
 
     return (
         <aside
@@ -222,7 +229,7 @@ const Sidebar = ({
                 </nav>
             </div>
         </aside>
-    );
-};
+    )
+}
 
-export default Sidebar;
+export default Sidebar

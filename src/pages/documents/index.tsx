@@ -1,46 +1,44 @@
-import { Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import type { Document } from "@/types";
-import { convertDate, instance } from "@/utils";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import type { Document } from "@/types"
+import { convertDate, instance } from "@/utils"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 import {
     MdOutlineDelete,
     MdOutlineEdit,
     MdOutlineRemoveRedEye,
-} from "react-icons/md";
-import Swal from "sweetalert2";
+} from "react-icons/md"
+import Swal from "sweetalert2"
 
-const PAGE_SIZE = 500;
+const PAGE_SIZE = 500
 
 const Documents = () => {
-    const [data, setData] = useState<Document[] | null>(null);
-    const [showModal, setShowModal] = useState(false);
+    const [data, setData] = useState<Document[] | null>(null)
+    const [showModal, setShowModal] = useState(false)
     useEffect(() => {
         instance
             .get(`/documents?perPage=${PAGE_SIZE}&order=desc`)
             .then((res) => {
-                setData(res.data);
-            });
-    }, []);
+                setData(res.data)
+            })
+    }, [])
 
     const deleteDocument = (id: number) => {
         instance
             .delete(`/documents/${id}`)
             .then(() => {
-                const filteredTableData = data!.filter(
-                    (item) => item.id !== id
-                );
-                setData(filteredTableData);
+                const filteredTableData = data!.filter((item) => item.id !== id)
+                setData(filteredTableData)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    };
+            })
+    }
 
     const handleDelete = (id: number) => {
         Swal.fire({
@@ -54,46 +52,46 @@ const Documents = () => {
             cancelButtonText: "Hủy",
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteDocument(id);
+                deleteDocument(id)
                 Swal.fire({
                     title: "Đã xóa!",
                     icon: "success",
-                });
+                })
             }
-        });
-    };
+        })
+    }
 
-    const [searchName, setSearchName] = useState("");
-    const [searchDescription, setSearchDescription] = useState("");
+    const [searchName, setSearchName] = useState("")
+    const [searchDescription, setSearchDescription] = useState("")
 
     const handleSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchName(e.target.value);
-    };
+        setSearchName(e.target.value)
+    }
 
     const handleSearchDescription = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setSearchDescription(e.target.value);
-    };
+        setSearchDescription(e.target.value)
+    }
 
-    const [searchLoading, setSearchLoading] = useState(false);
+    const [searchLoading, setSearchLoading] = useState(false)
     const handleSearch = () => {
-        setSearchLoading(true);
+        setSearchLoading(true)
 
         instance
             .get(
-                `/news?name=${searchName}&description=${searchDescription}&perPage=${PAGE_SIZE}`
+                `/documents?name=${searchName}&description=${searchDescription}&perPage=${PAGE_SIZE}`
             )
             .then((res) => {
-                setData(res.data);
-                setSearchLoading(false);
+                setData(res.data)
+                setSearchLoading(false)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    };
+            })
+    }
 
     return (
         <MainLayout>
@@ -246,6 +244,6 @@ const Documents = () => {
                 </div>
             )}
         </MainLayout>
-    );
-};
-export default withAuth(Documents);
+    )
+}
+export default withAuth(Documents)

@@ -1,28 +1,28 @@
-import { Breadcrumb, Button } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import { Category } from "@/types";
-import { convertDate, instance } from "@/utils";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
-import Swal from "sweetalert2";
+import { Breadcrumb, Button } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import { Category } from "@/types"
+import { convertDate, instance } from "@/utils"
+import Link from "next/link"
+import React, { useEffect, useState } from "react"
+import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md"
+import Swal from "sweetalert2"
 
-const PAGE_SIZE = 500;
+const PAGE_SIZE = 500
 
 const Categories = () => {
     const [categoriesData, setCategoriesData] = useState<Category[] | null>(
         null
-    );
+    )
 
     useEffect(() => {
         instance
             .get(`/categories?perPage=${PAGE_SIZE}&order=desc`)
             .then((res) => {
-                setCategoriesData(res.data);
-            });
-    }, []);
+                setCategoriesData(res.data)
+            })
+    }, [])
 
     const deleteCategory = (id: number) => {
         instance
@@ -30,15 +30,15 @@ const Categories = () => {
             .then(() => {
                 const newCategories = categoriesData!.filter(
                     (category) => category.id !== id
-                );
-                setCategoriesData(newCategories);
+                )
+                setCategoriesData(newCategories)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    };
+            })
+    }
 
     const handleDelete = (id: number) => {
         Swal.fire({
@@ -52,14 +52,14 @@ const Categories = () => {
             cancelButtonText: "Hủy",
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteCategory(id);
+                deleteCategory(id)
                 Swal.fire({
                     title: "Đã xóa!",
                     icon: "success",
-                });
+                })
             }
-        });
-    };
+        })
+    }
 
     return (
         <MainLayout>
@@ -98,54 +98,64 @@ const Categories = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {categoriesData.map(
-                                    ({
-                                        id,
-                                        name,
-                                        news,
-                                        documents,
-                                        createdAt,
-                                    }) => (
-                                        <tr key={id}>
-                                            <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                                                <h5 className="font-medium text-black dark:text-white">
-                                                    {name}
-                                                </h5>
-                                            </td>
-                                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
-                                                <p className="text-black dark:text-white">
-                                                    {news.length}
-                                                </p>
-                                            </td>
-                                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
-                                                <p className="text-black dark:text-white">
-                                                    {documents.length}
-                                                </p>
-                                            </td>
-                                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
-                                                <p className="text-black dark:text-white">
-                                                    {convertDate(createdAt)}
-                                                </p>
-                                            </td>
-                                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                <div className="flex items-center space-x-3.5">
-                                                    <Link
-                                                        href={`/categories/edit/${id}`}
-                                                        className="hover:text-success"
-                                                    >
-                                                        <MdOutlineEdit className="text-xl" />
-                                                    </Link>
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(id)
-                                                        }
-                                                        className="hover:text-danger"
-                                                    >
-                                                        <MdOutlineDelete className="text-xl" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                {categoriesData.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={10}>
+                                            <div className="text-black/70 dark:text-white/70 w-full flex items-center justify-center h-20 font-medium">
+                                                Không có dữ liệu
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    categoriesData.map(
+                                        ({
+                                            id,
+                                            name,
+                                            news,
+                                            documents,
+                                            createdAt,
+                                        }) => (
+                                            <tr key={id}>
+                                                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                                                    <h5 className="font-medium text-black dark:text-white">
+                                                        {name}
+                                                    </h5>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
+                                                    <p className="text-black dark:text-white">
+                                                        {news.length}
+                                                    </p>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
+                                                    <p className="text-black dark:text-white">
+                                                        {documents.length}
+                                                    </p>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
+                                                    <p className="text-black dark:text-white">
+                                                        {convertDate(createdAt)}
+                                                    </p>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                    <div className="flex items-center space-x-3.5">
+                                                        <Link
+                                                            href={`/categories/edit/${id}`}
+                                                            className="hover:text-success"
+                                                        >
+                                                            <MdOutlineEdit className="text-xl" />
+                                                        </Link>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDelete(id)
+                                                            }
+                                                            className="hover:text-danger"
+                                                        >
+                                                            <MdOutlineDelete className="text-xl" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
                                     )
                                 )}
                             </tbody>
@@ -154,7 +164,7 @@ const Categories = () => {
                 </div>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Categories);
+export default withAuth(Categories)

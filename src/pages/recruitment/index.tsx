@@ -2,29 +2,32 @@ import { Button, Breadcrumb } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
-import type { Partner } from "@/types"
+import type { Recruitment } from "@/types"
 import { convertDate, instance } from "@/utils"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md"
+import {
+    MdOutlineDelete,
+    MdOutlineEdit,
+    MdOutlineRemoveRedEye,
+} from "react-icons/md"
 import Swal from "sweetalert2"
 
 const PAGE_SIZE = 500
 
-const Partners = () => {
-    const [data, setData] = useState<Partner[] | null>(null)
-    const [showModal, setShowModal] = useState(false)
+const Recruitments = () => {
+    const [data, setData] = useState<Recruitment[] | null>(null)
     useEffect(() => {
         instance
-            .get(`/partners?perPage=${PAGE_SIZE}&order=desc`)
+            .get(`/recruitment?perPage=${PAGE_SIZE}&order=desc`)
             .then((res) => {
                 setData(res.data)
             })
     }, [])
 
-    const deletePartner = (id: number) => {
+    const deleteRecruitment = (id: number) => {
         instance
-            .delete(`/partners/${id}`)
+            .delete(`/recruitment/${id}`)
             .then(() => {
                 const filteredTableData = data!.filter((item) => item.id !== id)
                 setData(filteredTableData)
@@ -48,7 +51,7 @@ const Partners = () => {
             cancelButtonText: "Hủy",
         }).then((result) => {
             if (result.isConfirmed) {
-                deletePartner(id)
+                deleteRecruitment(id)
                 Swal.fire({
                     title: "Đã xóa!",
                     icon: "success",
@@ -62,13 +65,12 @@ const Partners = () => {
     const handleSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchName(e.target.value)
     }
-
     const [searchLoading, setSearchLoading] = useState(false)
     const handleSearch = () => {
         setSearchLoading(true)
 
         instance
-            .get(`/partners?name=${searchName}&perPage=${PAGE_SIZE}`)
+            .get(`/recruitment?title=${searchName}&perPage=${PAGE_SIZE}`)
             .then((res) => {
                 setData(res.data)
                 setSearchLoading(false)
@@ -82,18 +84,18 @@ const Partners = () => {
 
     return (
         <MainLayout>
-            <Breadcrumb pageName="Đối tác" link="">
+            <Breadcrumb pageName="Tuyển dụng" link="">
                 <Button
                     color="success"
                     variant="rounded"
                     size="large"
-                    href="/partners/create"
+                    href="/recruitment/create"
                 >
                     Thêm mới
                 </Button>
             </Breadcrumb>
             {!data ? (
-                <TableSkeleton rows={5} columns={3} />
+                <TableSkeleton rows={5} columns={4} />
             ) : (
                 <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
                     <div className="max-w-full overflow-x-auto">
@@ -109,13 +111,14 @@ const Partners = () => {
                                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-1 px-2 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                         />
                                     </th>
-                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Logo
+
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
+                                        Hạn nộp hồ sơ
                                     </th>
-                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         Ngày tạo
                                     </th>
-                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         Ngày chỉnh sửa
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
@@ -144,25 +147,21 @@ const Partners = () => {
                                     data.map(
                                         ({
                                             id,
-                                            name,
-                                            image,
+                                            title,
+                                            deadline,
                                             createdAt,
                                             modifiedAt,
                                         }) => (
                                             <tr key={id}>
                                                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                                                     <h5 className="font-medium text-black dark:text-white">
-                                                        {name}
+                                                        {title}
                                                     </h5>
                                                 </td>
-                                                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                                                    <div className="font-medium text-black dark:text-white">
-                                                        <img
-                                                            src={image}
-                                                            alt="featured image"
-                                                            className="h-40 object-cover rounded-sm"
-                                                        />
-                                                    </div>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                    <p className="text-black dark:text-white">
+                                                        {convertDate(deadline)}
+                                                    </p>
                                                 </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <p className="text-black dark:text-white">
@@ -179,7 +178,13 @@ const Partners = () => {
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <div className="flex items-center space-x-3.5">
                                                         <Link
-                                                            href={`/partners/edit/${id}`}
+                                                            href={`/recruitment/${id}`}
+                                                            className="hover:text-primary"
+                                                        >
+                                                            <MdOutlineRemoveRedEye className="text-xl" />
+                                                        </Link>
+                                                        <Link
+                                                            href={`/recruitment/edit/${id}`}
                                                             className="hover:text-success"
                                                         >
                                                             <MdOutlineEdit className="text-xl" />
@@ -206,4 +211,4 @@ const Partners = () => {
         </MainLayout>
     )
 }
-export default withAuth(Partners)
+export default withAuth(Recruitments)

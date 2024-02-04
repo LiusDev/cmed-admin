@@ -1,100 +1,107 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import { Category, Document } from "@/types";
-import { convertBase64, instance } from "@/utils";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Box, Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import { Category, Document } from "@/types"
+import { convertBase64, instance } from "@/utils"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
 
 const Create = () => {
-    const [categories, setCategories] = useState<Category[] | null>(null);
-    const [document, setDocument] = useState<Document | null>(null);
+    const [categories, setCategories] = useState<Category[] | null>(null)
+    const [document, setDocument] = useState<Document | null>(null)
 
-    const [name, setName] = useState("");
-    const [category, setCategory] = useState<Category["id"]>(1);
-    const [description, setDescription] = useState("");
-    const [documentUrl, setDocumentUrl] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [name, setName] = useState("")
+    const [category, setCategory] = useState<Category["id"]>(1)
+    const [description, setDescription] = useState("")
+    const [documentUrl, setDocumentUrl] = useState<File | null>(null)
+    const [loading, setLoading] = useState(false)
 
-    let path: string;
+    let path: string
     useEffect(() => {
-        path = window.location.pathname.split("/")[3];
+        path = window.location.pathname.split("/")[3]
         instance
             .get(`/categories`)
             .then((res) => {
-                setCategories(res.data);
+                setCategories(res.data)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
+            })
 
         instance
             .get(`/documents/${path}`)
             .then((res) => {
-                setDocument(res.data);
-                setName(res.data.name);
-                setCategory(res.data.category.id);
-                setDescription(res.data.description);
-                setDocumentUrl(res.data.documentUrl);
+                setDocument(res.data)
+                setName(res.data.name)
+                setCategory(res.data.category.id)
+                setDescription(res.data.description)
+                setDocumentUrl(res.data.documentUrl)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
+        setName(e.target.value)
+    }
 
     const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCategory(parseInt(e.target.value));
-    };
+        setCategory(parseInt(e.target.value))
+    }
 
     const handleChangeDescription = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setDescription(e.target.value);
-    };
+        setDescription(e.target.value)
+    }
 
     const handleUploadDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            const file = e.target.files[0];
-            const url = URL.createObjectURL(file);
-            setDocumentUrl(url);
+            const file = e.target.files[0]
+            setDocumentUrl(file)
         }
-    };
+    }
 
-    const router = useRouter();
+    const router = useRouter()
     const handlePublish = async () => {
-        setLoading(true);
+        setLoading(true)
         if (document) {
             instance
-                .patch(`/documents${document.id}`, {
-                    name,
-                    description,
-                    documentUrl,
-                    categoryId: category,
-                })
+                .patch(
+                    `/documents/${document.id}`,
+                    {
+                        name,
+                        description,
+                        document: documentUrl,
+                        categoryId: category,
+                    },
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                )
                 .then(() => {
-                    router.push("/documents");
+                    router.push("/documents")
                 })
                 .catch((err) => {
                     if (err.response.status === 401) {
-                        router.push("/signin");
+                        router.push("/signin")
                     }
                 })
                 .finally(() => {
-                    setLoading(false);
-                });
+                    setLoading(false)
+                })
         } else {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     return (
         <MainLayout>
@@ -183,7 +190,7 @@ const Create = () => {
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Create);
+export default withAuth(Create)

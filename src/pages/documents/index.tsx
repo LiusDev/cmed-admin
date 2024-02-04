@@ -20,7 +20,13 @@ const Documents = () => {
     const [showModal, setShowModal] = useState(false)
     useEffect(() => {
         instance
-            .get(`/documents?perPage=${PAGE_SIZE}&order=desc`)
+            .get(`/documents`, {
+                params: {
+                    perPage: PAGE_SIZE,
+                    page: 1,
+                    order: "desc",
+                },
+            })
             .then((res) => {
                 setData(res.data)
             })
@@ -79,9 +85,15 @@ const Documents = () => {
         setSearchLoading(true)
 
         instance
-            .get(
-                `/documents?name=${searchName}&description=${searchDescription}&perPage=${PAGE_SIZE}`
-            )
+            .get(`/documents`, {
+                params: {
+                    name: searchName,
+                    description: searchDescription,
+                    perPage: PAGE_SIZE,
+                    page: 1,
+                    order: "desc",
+                },
+            })
             .then((res) => {
                 setData(res.data)
                 setSearchLoading(false)
@@ -132,7 +144,7 @@ const Documents = () => {
                                         />
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
-                                        Tên file
+                                        File
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         Danh mục
@@ -170,7 +182,7 @@ const Documents = () => {
                                         ({
                                             id,
                                             name,
-                                            fileName,
+                                            document,
                                             description,
                                             createdAt,
                                             modifiedAt,
@@ -188,9 +200,14 @@ const Documents = () => {
                                                     </p>
                                                 </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                    <p className="text-black dark:text-white">
-                                                        {fileName}
-                                                    </p>
+                                                    <a
+                                                        href={document}
+                                                        className="text-black hover:text-primary cursor-pointer dark:text-white"
+                                                    >
+                                                        {document
+                                                            .split("/")
+                                                            .pop()}
+                                                    </a>
                                                 </td>
 
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

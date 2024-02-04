@@ -1,78 +1,85 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import { Category } from "@/types";
-import { convertBase64, instance } from "@/utils";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Box, Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import { Category } from "@/types"
+import { convertBase64, instance } from "@/utils"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
 
 const Create = () => {
-    const [categories, setCategories] = useState<Category[] | null>(null);
-    const [name, setName] = useState("");
-    const [category, setCategory] = useState<Category["id"]>(1);
-    const [description, setDescription] = useState("");
-    const [documentUrl, setDocumentUrl] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [categories, setCategories] = useState<Category[] | null>(null)
+    const [name, setName] = useState("")
+    const [category, setCategory] = useState<Category["id"]>(1)
+    const [description, setDescription] = useState("")
+    const [document, setDocument] = useState<File | null>(null)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         instance
             .get(`/categories`)
             .then((res) => {
-                setCategories(res.data);
+                setCategories(res.data)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
+        setName(e.target.value)
+    }
 
     const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCategory(parseInt(e.target.value));
-    };
+        setCategory(parseInt(e.target.value))
+    }
 
     const handleChangeDescription = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setDescription(e.target.value);
-    };
+        setDescription(e.target.value)
+    }
 
     const handleUploadDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            const file = e.target.files[0];
-            const url = URL.createObjectURL(file);
-            setDocumentUrl(url);
+            const file = e.target.files[0]
+            setDocument(file)
         }
-    };
+    }
 
-    const router = useRouter();
+    const router = useRouter()
 
     const handlePublish = async () => {
-        setLoading(true);
+        setLoading(true)
         instance
-            .post("/documents", {
-                name,
-                description,
-                documentUrl,
-                categoryId: category,
-            })
+            .post(
+                "/documents",
+                {
+                    name,
+                    description,
+                    document,
+                    categoryId: category,
+                },
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            )
             .then(() => {
-                router.push("/documents");
+                router.push("/documents")
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    router.push("/signin");
+                    router.push("/signin")
                 }
             })
             .finally(() => {
-                setLoading(false);
-            });
-    };
+                setLoading(false)
+            })
+    }
 
     return (
         <MainLayout>
@@ -161,7 +168,7 @@ const Create = () => {
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Create);
+export default withAuth(Create)

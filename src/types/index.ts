@@ -39,9 +39,8 @@ export interface Document {
     createdAt: string
     modifiedAt: string
     name: string
-    fileName: string
     description: string
-    documentUrl: string
+    document: string
     view: number
     category: Exclude<Category, "documents" | "news">
 }

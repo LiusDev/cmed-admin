@@ -1,36 +1,32 @@
-import { Box, Breadcrumb, Button } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import type { Document } from "@/types";
-import { convertDate, instance } from "@/utils";
-import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import dynamic from "next/dynamic";
-
-const PDFViewer = dynamic(() => import("@/components/pdfViewer"), {
-    ssr: false,
-});
+import { Box, Breadcrumb, Button } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import type { Document } from "@/types"
+import { convertDate, instance } from "@/utils"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import PdfViewer from "@/components/pdfViewer/PdfViewer"
 
 const Documents = () => {
-    const [mounted, setMounted] = useState(false);
-    const [document, setDocument] = useState<Document | null>(null);
-    let path: string;
-    const router = useRouter();
+    const [mounted, setMounted] = useState(false)
+    const [document, setDocument] = useState<Document | null>(null)
+    let path: string
+    const router = useRouter()
     useEffect(() => {
-        path = window.location.pathname.split("/")[2];
+        path = window.location.pathname.split("/")[2]
         instance
             .get(`/documents/${path}`)
             .then((res) => {
-                setMounted(true);
-                setDocument(res.data);
+                setMounted(true)
+                setDocument(res.data)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     return (
         <MainLayout>
@@ -65,13 +61,13 @@ const Documents = () => {
                             </p>
                         </div>
                         <div>
-                            <PDFViewer />
+                            <PdfViewer url={document.document} />
                         </div>
                     </div>
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Documents);
+export default withAuth(Documents)

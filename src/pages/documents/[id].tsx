@@ -61,6 +61,13 @@ const Documents = () => {
                             </p>
                         </div>
                         <div>
+                            <img
+                                src={document.featuredImage}
+                                alt={document.name}
+                                className="w-full object-cover"
+                            />
+                        </div>
+                        <div>
                             <PdfViewer url={document.document} />
                         </div>
                     </div>

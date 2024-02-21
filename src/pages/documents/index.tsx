@@ -144,6 +144,9 @@ const Documents = () => {
                                         />
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
+                                        Ảnh nổi bật
+                                    </th>
+                                    <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         File
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
@@ -184,6 +187,7 @@ const Documents = () => {
                                             name,
                                             document,
                                             description,
+                                            featuredImage,
                                             createdAt,
                                             modifiedAt,
                                             category,
@@ -198,6 +202,15 @@ const Documents = () => {
                                                     <p className="text-black dark:text-white">
                                                         {description}
                                                     </p>
+                                                </td>
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                    <div className="font-medium text-black dark:text-white">
+                                                        <img
+                                                            src={featuredImage}
+                                                            alt="featured image"
+                                                            className="h-40 object-cover rounded-sm"
+                                                        />
+                                                    </div>
                                                 </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <a

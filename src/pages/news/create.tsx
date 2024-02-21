@@ -1,66 +1,67 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import { Category } from "@/types";
-import { convertBase64, instance, parseContent } from "@/utils";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { Box, Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import { Category } from "@/types"
+import { convertBase64, instance, parseContent } from "@/utils"
+import dynamic from "next/dynamic"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
+import Swal from "sweetalert2"
 
 const FroalaEditorComponent = dynamic(
     () => import("@/components/customEditor"),
     {
         ssr: false,
     }
-);
+)
 
 const Create = () => {
-    const [categories, setCategories] = useState<Category[] | null>(null);
-    const [title, setTitle] = useState("");
-    const [category, setCategory] = useState<Category["id"]>(1);
-    const [description, setDescription] = useState("");
-    const [featuredImage, setFeaturedImage] = useState("");
-    const [content, setContent] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [categories, setCategories] = useState<Category[] | null>(null)
+    const [title, setTitle] = useState("")
+    const [category, setCategory] = useState<Category["id"]>()
+    const [description, setDescription] = useState("")
+    const [featuredImage, setFeaturedImage] = useState("")
+    const [content, setContent] = useState("")
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         instance
             .get(`/categories`)
             .then((res) => {
-                setCategories(res.data);
+                setCategories(res.data)
+                setCategory(res.data[0].id)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value);
-    };
+        setTitle(e.target.value)
+    }
 
     const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCategory(parseInt(e.target.value));
-    };
+        setCategory(parseInt(e.target.value))
+    }
 
     const handleChangeDescription = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setDescription(e.target.value);
-    };
+        setDescription(e.target.value)
+    }
 
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
-            const file = e.target.files[0];
-            const base64image = await convertBase64(file);
-            setFeaturedImage(base64image);
+            const file = e.target.files[0]
+            const base64image = await convertBase64(file)
+            setFeaturedImage(base64image)
         }
-    };
+    }
 
     const validateData = (): boolean => {
         if (
@@ -69,25 +70,25 @@ const Create = () => {
             featuredImage === "" ||
             content.trim() === ""
         ) {
-            return false;
+            return false
         }
-        return true;
-    };
+        return true
+    }
 
-    const router = useRouter();
+    const router = useRouter()
 
     const handlePublish = async () => {
-        setLoading(true);
+        setLoading(true)
         if (!validateData()) {
-            setLoading(false);
+            setLoading(false)
             Swal.fire({
                 icon: "error",
                 title: "Lỗi",
                 text: "Vui lòng điền đầy đủ thông tin!",
-            });
-            return;
+            })
+            return
         }
-        const newContent = await parseContent(content);
+        const newContent = await parseContent(content)
         instance
             .post("/news", {
                 title,
@@ -97,17 +98,17 @@ const Create = () => {
                 categoryId: category,
             })
             .then(() => {
-                router.push("/news");
+                router.push("/news")
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    router.push("/signin");
+                    router.push("/signin")
                 }
             })
             .finally(() => {
-                setLoading(false);
-            });
-    };
+                setLoading(false)
+            })
+    }
 
     return (
         <MainLayout>
@@ -209,7 +210,7 @@ const Create = () => {
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Create);
+export default withAuth(Create)

@@ -40,6 +40,7 @@ export interface Document {
     modifiedAt: string
     name: string
     description: string
+    featuredImage: string
     document: string
     view: number
     category: Exclude<Category, "documents" | "news">

@@ -1,68 +1,69 @@
-import { Box, Breadcrumb, Button } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import { instance } from "@/utils";
-import React, { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { Box, Breadcrumb, Button } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import { instance } from "@/utils"
+import React, { useEffect, useState } from "react"
+import Swal from "sweetalert2"
 
 const EditCategory = () => {
-    const [name, setName] = useState<string>("");
-    const [mounted, setMounted] = useState(false);
+    const [name, setName] = useState<string>("")
+    const [mounted, setMounted] = useState(false)
 
-    let path: string;
+    let path: string
     useEffect(() => {
-        path = window.location.pathname.split("/")[3];
+        path = window.location.pathname.split("/")[3]
         instance
             .get(`/categories/${path}`)
             .then((res) => {
-                setMounted(true);
-                setName(res.data.name);
+                setMounted(true)
+                setName(res.data.name)
             })
             .catch((err) => {
-                console.log(err);
-            });
-    }, []);
+                console.log(err)
+            })
+    }, [])
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
+        setName(e.target.value)
+    }
     const validateData = (): boolean => {
         if (name.trim() === "") {
-            return false;
+            return false
         }
-        return true;
-    };
-    const [buttonLoading, setButtonLoading] = useState(false);
+        return true
+    }
+    const [buttonLoading, setButtonLoading] = useState(false)
     const handleSaveCategory = async () => {
-        setButtonLoading(true);
+        setButtonLoading(true)
         if (!validateData()) {
-            setButtonLoading(false);
+            setButtonLoading(false)
             Swal.fire({
                 icon: "error",
                 title: "Lỗi",
                 text: "Vui lòng điền đầy đủ thông tin!",
-            });
-            return;
+            })
+            return
         }
+        path = window.location.pathname.split("/")[3]
         await instance
             .patch(`/categories/${path}`, {
                 name,
             })
             .then((res) => {
                 if (res.status === 200) {
-                    window.location.href = "/categories";
+                    window.location.href = "/categories"
                 }
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
             })
             .finally(() => {
-                setButtonLoading(false);
-            });
-    };
+                setButtonLoading(false)
+            })
+    }
 
     return (
         <MainLayout>
@@ -110,7 +111,7 @@ const EditCategory = () => {
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(EditCategory);
+export default withAuth(EditCategory)

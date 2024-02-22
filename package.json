@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ckeditor/ckeditor5-react": "^6.2.0",
+    "@ckeditor/ckeditor5-upload": "^41.1.0",
     "@mantine/core": "^7.4.2",
     "@mantine/dates": "^7.4.2",
     "@mantine/hooks": "^7.4.2",

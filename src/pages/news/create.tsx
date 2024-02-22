@@ -9,12 +9,9 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 
-const FroalaEditorComponent = dynamic(
-    () => import("@/components/customEditor"),
-    {
-        ssr: false,
-    }
-)
+const CustomEditor = dynamic(() => import("@/components/customEditor"), {
+    ssr: false,
+})
 
 const Create = () => {
     const [categories, setCategories] = useState<Category[] | null>(null)
@@ -193,7 +190,7 @@ const Create = () => {
                             <label className="mb-3 block text-black dark:text-white">
                                 Nội dung
                             </label>
-                            <FroalaEditorComponent setModel={setContent} />
+                            <CustomEditor onEditorChange={setContent} />
                         </div>
                         <div>
                             <Button

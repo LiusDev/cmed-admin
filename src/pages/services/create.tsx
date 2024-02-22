@@ -1,47 +1,44 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import { Category } from "@/types";
-import { convertBase64, instance, parseContent } from "@/utils";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { Box, Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import { Category } from "@/types"
+import { convertBase64, instance, parseContent } from "@/utils"
+import dynamic from "next/dynamic"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
+import Swal from "sweetalert2"
 
-const FroalaEditorComponent = dynamic(
-    () => import("@/components/customEditor"),
-    {
-        ssr: false,
-    }
-);
+const CustomEditor = dynamic(() => import("@/components/customEditor"), {
+    ssr: false,
+})
 
 const Create = () => {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [featuredImage, setFeaturedImage] = useState("");
-    const [content, setContent] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [name, setName] = useState("")
+    const [description, setDescription] = useState("")
+    const [featuredImage, setFeaturedImage] = useState("")
+    const [content, setContent] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
+        setName(e.target.value)
+    }
 
     const handleChangeDescription = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setDescription(e.target.value);
-    };
+        setDescription(e.target.value)
+    }
 
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
-            const file = e.target.files[0];
-            const base64Image = await convertBase64(file);
-            setFeaturedImage(base64Image);
+            const file = e.target.files[0]
+            const base64Image = await convertBase64(file)
+            setFeaturedImage(base64Image)
         }
-    };
+    }
     const validateData = (): boolean => {
         if (
             name.trim() === "" ||
@@ -49,25 +46,25 @@ const Create = () => {
             featuredImage === "" ||
             content.trim() === ""
         ) {
-            return false;
+            return false
         }
-        return true;
-    };
+        return true
+    }
 
-    const router = useRouter();
+    const router = useRouter()
 
     const handlePublish = async () => {
-        setLoading(true);
+        setLoading(true)
         if (!validateData()) {
-            setLoading(false);
+            setLoading(false)
             Swal.fire({
                 icon: "error",
                 title: "Lỗi",
                 text: "Vui lòng điền đầy đủ thông tin!",
-            });
-            return;
+            })
+            return
         }
-        const newContent = await parseContent(content);
+        const newContent = await parseContent(content)
 
         instance
             .post("/services", {
@@ -77,19 +74,17 @@ const Create = () => {
                 content: newContent,
             })
             .then(() => {
-                router.push("/services");
+                router.push("/services")
             })
             .catch((err) => {
-                console.log(err.response.data);
-
                 if (err.response.status === 401) {
-                    router.push("/signin");
+                    router.push("/signin")
                 }
             })
             .finally(() => {
-                setLoading(false);
-            });
-    };
+                setLoading(false)
+            })
+    }
 
     return (
         <MainLayout>
@@ -148,7 +143,7 @@ const Create = () => {
                         <label className="mb-3 block text-black dark:text-white">
                             Nội dung
                         </label>
-                        <FroalaEditorComponent setModel={setContent} />
+                        <CustomEditor onEditorChange={setContent} />
                     </div>
                     <div>
                         <Button
@@ -164,7 +159,7 @@ const Create = () => {
                 </div>
             </Box>
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Create);
+export default withAuth(Create)

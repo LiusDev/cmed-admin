@@ -160,7 +160,7 @@ const Partners = () => {
                                                         <img
                                                             src={image}
                                                             alt="featured image"
-                                                            className="h-40 object-cover rounded-sm"
+                                                            className="h-40 w-full object-cover object-center rounded-sm"
                                                         />
                                                     </div>
                                                 </td>

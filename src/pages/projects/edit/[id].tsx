@@ -2,6 +2,7 @@ import { Box, Breadcrumb, Button } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
+import { ProjectImage } from "@/types"
 import { convertBase64, instance, parseContent } from "@/utils"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
@@ -18,6 +19,7 @@ const Edit = () => {
     const [description, setDescription] = useState("")
     const [featuredImage, setFeaturedImage] = useState("")
     const [content, setContent] = useState("")
+    const [images, setImages] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
 
     let path: string
@@ -31,6 +33,12 @@ const Edit = () => {
                 setDescription(res.data.description)
                 setFeaturedImage(res.data.featuredImage)
                 setContent(res.data.content)
+                const fetchImages = res.data.images.map(
+                    (image: ProjectImage) => {
+                        return image.image
+                    }
+                )
+                setImages(fetchImages)
                 setMounted(true)
             })
             .catch((err) => {
@@ -60,12 +68,27 @@ const Edit = () => {
         }
     }
 
+    const handleUploadImages = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        if (e.target.files) {
+            const files = e.target.files
+            const base64Images = await Promise.all(
+                Array.from(files).map(async (file) => {
+                    return await convertBase64(file)
+                })
+            )
+            setImages([...images, ...base64Images])
+        }
+    }
+
     const validateData = (): boolean => {
         if (
             name.trim() === "" ||
             description.trim() === "" ||
             featuredImage === "" ||
-            content.trim() === ""
+            content.trim() === "" ||
+            images.length === 0
         ) {
             return false
         }
@@ -90,6 +113,7 @@ const Edit = () => {
             description,
             featuredImage,
             content: newContent,
+            images,
         }
 
         await instance
@@ -166,6 +190,28 @@ const Edit = () => {
                                     className="h-40 object-cover rounded-sm"
                                 />
                             )}
+                        </div>
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">
+                                Hình ảnh khác
+                            </label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleUploadImages}
+                                multiple
+                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
+                            />
+                            <div className="flex gap-3">
+                                {images.map((image, index) => (
+                                    <img
+                                        key={index}
+                                        src={image}
+                                        alt="image"
+                                        className="h-40 object-cover rounded-sm"
+                                    />
+                                ))}
+                            </div>
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">

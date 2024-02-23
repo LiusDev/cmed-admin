@@ -5,6 +5,7 @@ import type { AppProps } from "next/app"
 import { MantineProvider, createTheme } from "@mantine/core"
 import { DatesProvider } from "@mantine/dates"
 import "dayjs/locale/vi"
+import "@mantine/carousel/styles.css"
 
 const App = ({ Component, pageProps }: AppProps) => {
     const theme = createTheme({

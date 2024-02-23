@@ -71,6 +71,14 @@ export interface Project {
     featuredImage: string
     description: string
     content: string
+    images: ProjectImage[]
+}
+
+export interface ProjectImage {
+    id: number
+    createdAt: string
+    modifiedAt: string
+    image: string
 }
 
 export interface Service {

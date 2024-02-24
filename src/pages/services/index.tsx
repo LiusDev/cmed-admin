@@ -1,46 +1,44 @@
-import { Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import type { Service } from "@/types";
-import { convertDate, instance } from "@/utils";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import type { Service } from "@/types"
+import { convertDate, instance } from "@/utils"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 import {
     MdOutlineDelete,
     MdOutlineEdit,
     MdOutlineRemoveRedEye,
-} from "react-icons/md";
-import Swal from "sweetalert2";
+} from "react-icons/md"
+import Swal from "sweetalert2"
 
-const PAGE_SIZE = 500;
+const PAGE_SIZE = 500
 
 const Services = () => {
-    const [data, setData] = useState<Service[] | null>(null);
+    const [data, setData] = useState<Service[] | null>(null)
 
     useEffect(() => {
         instance
             .get(`/services?perPage=${PAGE_SIZE}&order=desc`)
             .then((res) => {
-                setData(res.data);
-            });
-    }, []);
+                setData(res.data)
+            })
+    }, [])
 
     const deleteService = (id: number) => {
         instance
             .delete(`/services/${id}`)
             .then(() => {
-                const filteredTableData = data!.filter(
-                    (item) => item.id !== id
-                );
-                setData(filteredTableData);
+                const filteredTableData = data!.filter((item) => item.id !== id)
+                setData(filteredTableData)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    };
+            })
+    }
 
     const handleDelete = (id: number) => {
         Swal.fire({
@@ -54,14 +52,14 @@ const Services = () => {
             cancelButtonText: "Hủy",
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteService(id);
+                deleteService(id)
                 Swal.fire({
                     title: "Đã xóa!",
                     icon: "success",
-                });
+                })
             }
-        });
-    };
+        })
+    }
 
     return (
         <MainLayout>
@@ -131,7 +129,7 @@ const Services = () => {
                                                         <img
                                                             src={featuredImage}
                                                             alt="featured image"
-                                                            className="h-40 object-cover rounded-sm"
+                                                            className="h-40 object-cover object-center rounded-sm w-full"
                                                         />
                                                     </div>
                                                 </td>
@@ -186,6 +184,6 @@ const Services = () => {
                 </div>
             )}
         </MainLayout>
-    );
-};
-export default withAuth(Services);
+    )
+}
+export default withAuth(Services)

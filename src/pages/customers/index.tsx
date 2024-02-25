@@ -164,12 +164,12 @@ const Customers = () => {
                                                         <img
                                                             src={image}
                                                             alt="featured image"
-                                                            className="h-40 object-cover rounded-sm"
+                                                            className="h-40 object-cover rounded-sm w-60"
                                                         />
                                                     </div>
                                                 </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                    <p className="text-black dark:text-white">
+                                                    <p className="text-black dark:text-white line-clamp-4">
                                                         {description}
                                                     </p>
                                                 </td>

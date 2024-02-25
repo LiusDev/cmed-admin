@@ -215,6 +215,7 @@ const Documents = () => {
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <a
                                                         href={document}
+                                                        target="_blank"
                                                         className="text-black hover:text-primary cursor-pointer dark:text-white"
                                                     >
                                                         {document

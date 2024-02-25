@@ -1,44 +1,42 @@
-import { Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import type { News } from "@/types";
-import { convertDate, instance } from "@/utils";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import type { News } from "@/types"
+import { convertDate, instance } from "@/utils"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 import {
     MdOutlineDelete,
     MdOutlineEdit,
     MdOutlineRemoveRedEye,
-} from "react-icons/md";
-import Swal from "sweetalert2";
+} from "react-icons/md"
+import Swal from "sweetalert2"
 
-const PAGE_SIZE = 500;
+const PAGE_SIZE = 500
 
 const News = () => {
-    const [data, setData] = useState<News[] | null>(null);
+    const [data, setData] = useState<News[] | null>(null)
 
     useEffect(() => {
         instance.get(`/news?perPage=${PAGE_SIZE}&order=desc`).then((res) => {
-            setData(res.data);
-        });
-    }, []);
+            setData(res.data)
+        })
+    }, [])
 
     const deleteNews = (id: number) => {
         instance
             .delete(`/news/${id}`)
             .then(() => {
-                const filteredTableData = data!.filter(
-                    (item) => item.id !== id
-                );
-                setData(filteredTableData);
+                const filteredTableData = data!.filter((item) => item.id !== id)
+                setData(filteredTableData)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    };
+            })
+    }
 
     const handleDelete = (id: number) => {
         Swal.fire({
@@ -52,46 +50,46 @@ const News = () => {
             cancelButtonText: "Hủy",
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteNews(id);
+                deleteNews(id)
                 Swal.fire({
                     title: "Đã xóa!",
                     icon: "success",
-                });
+                })
             }
-        });
-    };
+        })
+    }
 
-    const [searchTitle, setSearchTitle] = useState("");
-    const [searchDescription, setSearchDescription] = useState("");
+    const [searchTitle, setSearchTitle] = useState("")
+    const [searchDescription, setSearchDescription] = useState("")
 
     const handleSearchTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTitle(e.target.value);
-    };
+        setSearchTitle(e.target.value)
+    }
 
     const handleSearchDescription = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setSearchDescription(e.target.value);
-    };
+        setSearchDescription(e.target.value)
+    }
 
-    const [searchLoading, setSearchLoading] = useState(false);
+    const [searchLoading, setSearchLoading] = useState(false)
     const handleSearch = () => {
-        setSearchLoading(true);
+        setSearchLoading(true)
 
         instance
             .get(
                 `/news?title=${searchTitle}&description=${searchDescription}&perPage=${PAGE_SIZE}`
             )
             .then((res) => {
-                setData(res.data);
-                setSearchLoading(false);
+                setData(res.data)
+                setSearchLoading(false)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    };
+            })
+    }
 
     return (
         <MainLayout>
@@ -177,13 +175,13 @@ const News = () => {
                                             category,
                                         }) => (
                                             <tr key={id}>
-                                                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                                                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11 max-w-34">
                                                     <h5 className="font-medium text-black dark:text-white">
                                                         {title}
                                                     </h5>
                                                 </td>
-                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                    <p className="text-black dark:text-white">
+                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark max-w-34">
+                                                    <p className="text-black dark:text-white line-clamp-4">
                                                         {description}
                                                     </p>
                                                 </td>
@@ -192,7 +190,7 @@ const News = () => {
                                                         <img
                                                             src={featuredImage}
                                                             alt="featured image"
-                                                            className="h-40 object-cover rounded-sm"
+                                                            className="h-40 object-cover rounded-sm w-60"
                                                         />
                                                     </div>
                                                 </td>
@@ -247,6 +245,6 @@ const News = () => {
                 </div>
             )}
         </MainLayout>
-    );
-};
-export default withAuth(News);
+    )
+}
+export default withAuth(News)

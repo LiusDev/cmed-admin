@@ -17,6 +17,7 @@ const Create = () => {
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
     const [featuredImage, setFeaturedImage] = useState("")
+    const [featuredImage2, setFeaturedImage2] = useState("")
     const [content, setContent] = useState("")
     const [loading, setLoading] = useState(false)
 
@@ -39,11 +40,23 @@ const Create = () => {
             setFeaturedImage(base64Image)
         }
     }
+
+    const handleUploadFeaturedImage2 = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        if (e.target.files) {
+            const file = e.target.files[0]
+            const base64Image = await convertBase64(file)
+            setFeaturedImage2(base64Image)
+        }
+    }
+
     const validateData = (): boolean => {
         if (
             name.trim() === "" ||
             description.trim() === "" ||
             featuredImage === "" ||
+            featuredImage2 === "" ||
             content.trim() === ""
         ) {
             return false
@@ -71,6 +84,7 @@ const Create = () => {
                 name,
                 description,
                 featuredImage,
+                featuredImage2,
                 content: newContent,
             })
             .then(() => {
@@ -129,6 +143,24 @@ const Create = () => {
                             type="file"
                             accept="image/*"
                             onChange={handleUploadFeaturedImage}
+                            className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
+                        />
+                        {featuredImage && (
+                            <img
+                                src={featuredImage}
+                                alt="featured image"
+                                className="h-40 object-cover rounded-sm"
+                            />
+                        )}
+                    </div>
+                    <div>
+                        <label className="mb-3 block text-black dark:text-white">
+                            Ảnh nền nổi bật
+                        </label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleUploadFeaturedImage2}
                             className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
                         />
                         {featuredImage && (

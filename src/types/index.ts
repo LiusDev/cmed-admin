@@ -98,6 +98,7 @@ export interface Staff {
     modifiedAt: string
     name: string
     position: string
+    description: string
     featuredImage: string
 }
 

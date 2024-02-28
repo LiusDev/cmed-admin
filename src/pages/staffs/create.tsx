@@ -1,73 +1,81 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import withAuth from "@/hoc/withAuth";
-import { convertBase64, instance } from "@/utils";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import Swal from "sweetalert2";
+import { Box, Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import withAuth from "@/hoc/withAuth"
+import { convertBase64, instance } from "@/utils"
+import { useRouter } from "next/router"
+import { useState } from "react"
+import Swal from "sweetalert2"
 
 const Create = () => {
-    const [name, setName] = useState("");
-    const [position, setPosition] = useState("");
-    const [featuredImage, setFeaturedImage] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [name, setName] = useState("")
+    const [position, setPosition] = useState("")
+    const [featuredImage, setFeaturedImage] = useState("")
+    const [description, setDescription] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
+        setName(e.target.value)
+    }
 
     const handleChangePosition = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPosition(e.target.value);
-    };
+        setPosition(e.target.value)
+    }
+
+    const handleChangeDescription = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setDescription(e.target.value)
+    }
 
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
-            const file = e.target.files[0];
-            const base64 = await convertBase64(file);
-            setFeaturedImage(base64);
+            const file = e.target.files[0]
+            const base64 = await convertBase64(file)
+            setFeaturedImage(base64)
         }
-    };
+    }
 
     const validateData = (): boolean => {
         if (
             name.trim() === "" ||
             position.trim() === "" ||
+            description.trim() === "" ||
             featuredImage === ""
         ) {
-            return false;
+            return false
         }
-        return true;
-    };
+        return true
+    }
 
-    const router = useRouter();
+    const router = useRouter()
     const handlePublish = async () => {
-        setLoading(true);
+        setLoading(true)
 
         if (!validateData()) {
-            setLoading(false);
+            setLoading(false)
             Swal.fire({
                 icon: "error",
                 title: "Lỗi",
                 text: "Vui lòng điền đầy đủ thông tin!",
-            });
-            return;
+            })
+            return
         }
         instance
-            .post("/staffs", { name, position, featuredImage })
+            .post("/staffs", { name, position, description, featuredImage })
             .then(() => {
-                router.push("/staffs");
+                router.push("/staffs")
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    router.push("/signin");
+                    router.push("/signin")
                 }
             })
             .finally(() => {
-                setLoading(false);
-            });
-    };
+                setLoading(false)
+            })
+    }
 
     return (
         <MainLayout>
@@ -106,6 +114,18 @@ const Create = () => {
                     </div>
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
+                            Mô tả
+                        </label>
+                        <input
+                            value={description}
+                            onChange={handleChangeDescription}
+                            type="text"
+                            placeholder="Mô tả nhân viên"
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                        />
+                    </div>
+                    <div>
+                        <label className="mb-3 block text-black dark:text-white">
                             Ảnh nổi bật
                         </label>
                         <input
@@ -136,7 +156,7 @@ const Create = () => {
                 </div>
             </Box>
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Create);
+export default withAuth(Create)

@@ -1,98 +1,111 @@
-import { Box, Breadcrumb, Button } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import type { Staff } from "@/types";
-import { convertBase64, instance } from "@/utils";
-import React, { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { Box, Breadcrumb, Button } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import type { Staff } from "@/types"
+import { convertBase64, instance } from "@/utils"
+import React, { useEffect, useState } from "react"
+import Swal from "sweetalert2"
 
 const Edit = () => {
-    const [staff, setStaff] = useState<Staff | null>(null);
+    const [staff, setStaff] = useState<Staff | null>(null)
 
-    const [name, setName] = useState("");
-    const [position, setPosition] = useState("");
-    const [featuredImage, setFeaturedImage] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [name, setName] = useState("")
+    const [position, setPosition] = useState("")
+    const [featuredImage, setFeaturedImage] = useState("")
+    const [description, setDescription] = useState("")
+    const [loading, setLoading] = useState(false)
 
-    let path: string;
+    let path: string
     useEffect(() => {
-        path = window.location.pathname.split("/")[3];
+        path = window.location.pathname.split("/")[3]
         instance
             .get(`/staffs/${path}`)
             .then((res) => {
-                setStaff(res.data);
-                setName(res.data.name);
-                setPosition(res.data.position);
-                setFeaturedImage(res.data.featuredImage);
+                setStaff(res.data)
+                setName(res.data.name)
+                setPosition(res.data.position)
+                setDescription(res.data.description)
+                setFeaturedImage(res.data.featuredImage)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
+        setName(e.target.value)
+    }
 
     const handleChangePosition = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPosition(e.target.value);
-    };
+        setPosition(e.target.value)
+    }
+
+    const handleChangeDescription = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setDescription(e.target.value)
+    }
 
     const handleUploadFeaturedImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
-            const file = e.target.files[0];
-            const base64Image = await convertBase64(file);
-            setFeaturedImage(base64Image);
+            const file = e.target.files[0]
+            const base64Image = await convertBase64(file)
+            setFeaturedImage(base64Image)
         }
-    };
+    }
 
     const validateData = (): boolean => {
-        if (name.trim() === "" || position.trim() === "") {
-            return false;
+        if (
+            name.trim() === "" ||
+            position.trim() === "" ||
+            description.trim() === ""
+        ) {
+            return false
         }
-        return true;
-    };
+        return true
+    }
 
     const handlePublish = async () => {
-        setLoading(true);
+        setLoading(true)
         if (!validateData()) {
-            setLoading(false);
+            setLoading(false)
             Swal.fire({
                 icon: "error",
                 title: "Lỗi",
                 text: "Vui lòng điền đầy đủ thông tin!",
-            });
-            return;
+            })
+            return
         }
         const body = {
             name,
             position,
+            description,
             featuredImage,
-        };
+        }
 
         if (staff) {
             await instance
                 .patch(`/staffs/${staff.id}`, body)
                 .then(() => {
-                    window.location.href = "/staffs";
+                    window.location.href = "/staffs"
                 })
                 .catch((err) => {
                     if (err.response.status === 401) {
-                        window.location.href = "/signin";
+                        window.location.href = "/signin"
                     }
                 })
                 .finally(() => {
-                    setLoading(false);
-                });
+                    setLoading(false)
+                })
         } else {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     return (
         <MainLayout>
@@ -137,6 +150,18 @@ const Edit = () => {
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
+                                Mô tả
+                            </label>
+                            <input
+                                value={description}
+                                onChange={handleChangeDescription}
+                                type="text"
+                                placeholder="Mô tả nhân viên"
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            />
+                        </div>
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">
                                 Ảnh nổi bật
                             </label>
                             <input
@@ -169,7 +194,7 @@ const Edit = () => {
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Edit);
+export default withAuth(Edit)

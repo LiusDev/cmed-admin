@@ -4,8 +4,13 @@ import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import type { Staff } from "@/types"
 import { convertBase64, instance } from "@/utils"
+import dynamic from "next/dynamic"
 import React, { useEffect, useState } from "react"
 import Swal from "sweetalert2"
+
+const CustomEditor = dynamic(() => import("@/components/customEditor"), {
+    ssr: false,
+})
 
 const Edit = () => {
     const [staff, setStaff] = useState<Staff | null>(null)
@@ -41,12 +46,6 @@ const Edit = () => {
 
     const handleChangePosition = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPosition(e.target.value)
-    }
-
-    const handleChangeDescription = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setDescription(e.target.value)
     }
 
     const handleUploadFeaturedImage = async (
@@ -152,12 +151,9 @@ const Edit = () => {
                             <label className="mb-3 block text-black dark:text-white">
                                 Mô tả
                             </label>
-                            <input
-                                value={description}
-                                onChange={handleChangeDescription}
-                                type="text"
-                                placeholder="Mô tả nhân viên"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            <CustomEditor
+                                initialData={description}
+                                onEditorChange={setDescription}
                             />
                         </div>
                         <div>

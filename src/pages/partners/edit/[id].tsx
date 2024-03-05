@@ -1,89 +1,90 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import { Partner } from "@/types";
-import { convertBase64, instance } from "@/utils";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { Box, Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import { Partner } from "@/types"
+import { convertBase64, instance } from "@/utils"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
+import Swal from "sweetalert2"
 
 const Update = () => {
-    const [mount, setMount] = useState(false);
-    const [name, setName] = useState("");
-    const [image, setImage] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [mount, setMount] = useState(false)
+    const [name, setName] = useState("")
+    const [image, setImage] = useState("")
+    const [loading, setLoading] = useState(false)
 
-    let path: string;
+    let path: string
     useEffect(() => {
-        path = window.location.pathname.split("/")[3];
+        path = window.location.pathname.split("/")[3]
         instance
             .get(`/partners/${path}`)
             .then((res) => {
-                setName(res.data.name);
-                setImage(res.data.image);
-                setMount(true);
+                setName(res.data.name)
+                setImage(res.data.image)
+                setMount(true)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
+        setName(e.target.value)
+    }
 
     const handleUploadImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
-            const file = e.target.files[0];
-            const base64Image = await convertBase64(file);
-            setImage(base64Image);
+            const file = e.target.files[0]
+            const base64Image = await convertBase64(file)
+            setImage(base64Image)
         }
-    };
+    }
 
     const validateData = (): boolean => {
         if (name.trim() === "" || image === "") {
-            return false;
+            return false
         }
-        return true;
-    };
+        return true
+    }
 
-    const router = useRouter();
+    const router = useRouter()
 
     const handlePublish = async () => {
-        setLoading(true);
+        path = window.location.pathname.split("/")[3]
+        setLoading(true)
         if (!validateData()) {
-            setLoading(false);
+            setLoading(false)
             Swal.fire({
                 icon: "error",
                 title: "Lỗi",
                 text: "Vui lòng điền đầy đủ thông tin!",
-            });
-            return;
+            })
+            return
         }
         const body = {
             name,
             image,
-        };
+        }
 
         instance
             .patch(`/partners/${path}`, body)
             .then(() => {
-                router.push("/partners");
+                router.push("/partners")
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    router.push("/signin");
+                    router.push("/signin")
                 }
             })
             .finally(() => {
-                setLoading(false);
-            });
-    };
+                setLoading(false)
+            })
+    }
 
     return (
         <MainLayout>
@@ -148,7 +149,7 @@ const Update = () => {
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Update);
+export default withAuth(Update)

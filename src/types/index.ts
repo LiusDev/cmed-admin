@@ -7,6 +7,12 @@ export const roleLabels: Record<UserRole, string> = {
     [UserRole.ADMIN]: "Quản trị viên",
     [UserRole.STAFF]: "Nhân viên",
 }
+
+export interface Banner {
+    id: number
+    name: string
+    image: string
+}
 export interface User {
     id: number
     username: string
@@ -53,6 +59,8 @@ export interface Customer {
     name: string
     description: string
     image: string
+    logo: string
+    icon: string
 }
 
 export interface Partner {
@@ -110,10 +118,6 @@ export interface Metadata {
     companyAddress: string
 }
 
-export const isPersonalLabel = (isPersonal: boolean) => {
-    return isPersonal ? "Cá nhân" : "Tổ chức"
-}
-
 export interface Contact {
     id: number
     createdAt: string
@@ -122,7 +126,7 @@ export interface Contact {
     email: string
     phone: string
     company: string
-    isPersonal: boolean
+    customerType: string
     content: string
 }
 

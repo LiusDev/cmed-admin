@@ -1,67 +1,67 @@
-import { Breadcrumb, Button } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import { Contact, isPersonalLabel } from "@/types";
-import { convertDate, instance } from "@/utils";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
+import { Breadcrumb, Button } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import { Contact } from "@/types"
+import { convertDate, instance } from "@/utils"
+import Link from "next/link"
+import React, { useEffect, useState } from "react"
+import { MdOutlineRemoveRedEye } from "react-icons/md"
 
-const PAGE_SIZE = 500;
+const PAGE_SIZE = 500
 
 const Contacts = () => {
-    const [data, setData] = useState<Contact[] | null>(null);
+    const [data, setData] = useState<Contact[] | null>(null)
     useEffect(() => {
         instance
             .get(`/contacts?perPage=${PAGE_SIZE}&order=desc`)
             .then((res) => {
-                setData(res.data);
+                setData(res.data)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
-    const [searchName, setSearchName] = useState<string>("");
-    const [searchEmail, setSearchEmail] = useState<string>("");
-    const [searchPhone, setSearchPhone] = useState<string>("");
-    const [searchCompany, setSearchCompany] = useState<string>("");
+    const [searchName, setSearchName] = useState<string>("")
+    const [searchEmail, setSearchEmail] = useState<string>("")
+    const [searchPhone, setSearchPhone] = useState<string>("")
+    const [searchCompany, setSearchCompany] = useState<string>("")
 
     const handleSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchName(e.target.value);
-    };
+        setSearchName(e.target.value)
+    }
 
     const handleSearchEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchEmail(e.target.value);
-    };
+        setSearchEmail(e.target.value)
+    }
 
     const handleSearchPhone = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchPhone(e.target.value);
-    };
+        setSearchPhone(e.target.value)
+    }
 
     const handleSearchCompany = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchCompany(e.target.value);
-    };
+        setSearchCompany(e.target.value)
+    }
 
-    const [searchLoading, setSearchLoading] = useState<boolean>(false);
+    const [searchLoading, setSearchLoading] = useState<boolean>(false)
     const handleSearch = () => {
-        setSearchLoading(true);
+        setSearchLoading(true)
         instance
             .get(
                 `/contacts?perPage=${PAGE_SIZE}&name=${searchName}&email=${searchEmail}&phone=${searchPhone}&company=${searchCompany}`
             )
             .then((res) => {
-                setData(res.data);
-                setSearchLoading(false);
+                setData(res.data)
+                setSearchLoading(false)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    };
+            })
+    }
     return (
         <MainLayout>
             <Breadcrumb pageName="Liên hệ" link="" />
@@ -145,7 +145,7 @@ const Contacts = () => {
                                             email,
                                             phone,
                                             company,
-                                            isPersonal,
+                                            customerType,
                                             createdAt,
                                         }) => (
                                             <tr key={id}>
@@ -172,9 +172,7 @@ const Contacts = () => {
                                                 </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <p className="text-black dark:text-white">
-                                                        {isPersonalLabel(
-                                                            isPersonal
-                                                        )}
+                                                        {customerType}
                                                     </p>
                                                 </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -202,7 +200,7 @@ const Contacts = () => {
                 </div>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default Contacts;
+export default Contacts

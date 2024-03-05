@@ -1,68 +1,69 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import { TableSkeleton } from "@/components/skeletons";
-import withAuth from "@/hoc/withAuth";
-import { UserRole, roleLabels } from "@/types";
-import { instance } from "@/utils";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { Box, Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import { TableSkeleton } from "@/components/skeletons"
+import withAuth from "@/hoc/withAuth"
+import { UserRole, roleLabels } from "@/types"
+import { instance } from "@/utils"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
+import Swal from "sweetalert2"
 
 const Update = () => {
-    const [mount, setMount] = useState(false);
-    const [username, setUsername] = useState("");
-    const [name, setName] = useState("");
-    const [role, setRole] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [mount, setMount] = useState(false)
+    const [username, setUsername] = useState("")
+    const [name, setName] = useState("")
+    const [role, setRole] = useState("")
+    const [loading, setLoading] = useState(false)
 
-    let path: string;
+    let path: string
     useEffect(() => {
-        path = window.location.pathname.split("/")[3];
+        path = window.location.pathname.split("/")[3]
         instance
             .get(`/users/${path}`)
             .then((res) => {
-                setUsername(res.data.username);
-                setName(res.data.name);
-                setRole(res.data.role);
-                setMount(true);
+                setUsername(res.data.username)
+                setName(res.data.name)
+                setRole(res.data.role)
+                setMount(true)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    window.location.href = "/signin";
+                    window.location.href = "/signin"
                 }
-            });
-    }, []);
+            })
+    }, [])
 
     const handleChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUsername(e.target.value);
-    };
+        setUsername(e.target.value)
+    }
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
+        setName(e.target.value)
+    }
 
     const handleChangeRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setRole(e.target.value);
-    };
+        setRole(e.target.value)
+    }
 
     const validateData = (): boolean => {
         if (username.trim() === "" || name.trim() === "") {
-            return false;
+            return false
         }
-        return true;
-    };
+        return true
+    }
 
-    const router = useRouter();
+    const router = useRouter()
     const handlePublish = async () => {
-        setLoading(true);
+        path = window.location.pathname.split("/")[3]
+        setLoading(true)
         if (!validateData()) {
-            setLoading(false);
+            setLoading(false)
             Swal.fire({
                 icon: "error",
                 title: "Lỗi",
                 text: "Vui lòng điền đầy đủ thông tin!",
-            });
-            return;
+            })
+            return
         }
         instance
             .patch(`/users/${path}`, {
@@ -71,20 +72,20 @@ const Update = () => {
                 role,
             })
             .then(() => {
-                router.push("/users");
+                router.push("/users")
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    router.push("/signin");
+                    router.push("/signin")
                 }
                 if (err.response.status === 403) {
-                    window.location.href = "/";
+                    window.location.href = "/"
                 }
             })
             .finally(() => {
-                setLoading(false);
-            });
-    };
+                setLoading(false)
+            })
+    }
 
     return (
         <MainLayout>
@@ -167,7 +168,7 @@ const Update = () => {
                 </Box>
             )}
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Update);
+export default withAuth(Update)

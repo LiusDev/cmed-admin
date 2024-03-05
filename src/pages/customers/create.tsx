@@ -1,76 +1,102 @@
-import { Box, Button, Breadcrumb } from "@/components/common";
-import MainLayout from "@/components/layouts/MainLayout";
-import withAuth from "@/hoc/withAuth";
-import {} from "@/types";
-import { convertBase64, instance } from "@/utils";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { Box, Button, Breadcrumb } from "@/components/common"
+import MainLayout from "@/components/layouts/MainLayout"
+import withAuth from "@/hoc/withAuth"
+import {} from "@/types"
+import { convertBase64, instance } from "@/utils"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
+import Swal from "sweetalert2"
 
 const Create = () => {
-    const [name, setName] = useState("");
-    const [image, setImage] = useState("");
-    const [description, setDescription] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [name, setName] = useState("")
+    const [image, setImage] = useState("")
+    const [logo, setLogo] = useState("")
+    const [icon, setIcon] = useState("")
+    const [description, setDescription] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
+        setName(e.target.value)
+    }
 
     const handleChangeDescription = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setDescription(e.target.value);
-    };
+        setDescription(e.target.value)
+    }
 
     const handleUploadImage = async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
-            const file = e.target.files[0];
-            const base64 = await convertBase64(file);
-            setImage(base64);
+            const file = e.target.files[0]
+            const base64 = await convertBase64(file)
+            setImage(base64)
         }
-    };
+    }
+
+    const handleUploadLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const file = e.target.files[0]
+            const base64 = await convertBase64(file)
+            setLogo(base64)
+        }
+    }
+
+    const handleUploadIcon = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const file = e.target.files[0]
+            const base64 = await convertBase64(file)
+            setIcon(base64)
+        }
+    }
 
     const validateData = (): boolean => {
-        if (name.trim() === "" || description.trim() === "" || image === "") {
-            return false;
+        if (
+            name.trim() === "" ||
+            description.trim() === "" ||
+            image === "" ||
+            logo === "" ||
+            icon === ""
+        ) {
+            return false
         }
-        return true;
-    };
+        return true
+    }
 
-    const router = useRouter();
+    const router = useRouter()
 
     const handlePublish = async () => {
-        setLoading(true);
+        setLoading(true)
         if (!validateData()) {
-            setLoading(false);
+            setLoading(false)
             Swal.fire({
                 icon: "error",
                 title: "Lỗi",
                 text: "Vui lòng điền đầy đủ thông tin!",
-            });
-            return;
+            })
+            return
         }
         instance
             .post("/customers", {
                 name,
                 description,
                 image,
+                logo,
+                icon,
             })
             .then(() => {
-                router.push("/customers");
+                router.push("/customers")
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    router.push("/signin");
+                    router.push("/signin")
                 }
             })
             .finally(() => {
-                setLoading(false);
-            });
-    };
+                setLoading(false)
+            })
+    }
 
     return (
         <MainLayout>
@@ -108,7 +134,6 @@ const Create = () => {
                     </div>
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
-                            {" "}
                             Ảnh
                         </label>
                         <input
@@ -121,6 +146,42 @@ const Create = () => {
                             <img
                                 src={image}
                                 alt="featured image"
+                                className="h-40 object-cover rounded-sm"
+                            />
+                        )}
+                    </div>
+                    <div>
+                        <label className="mb-3 block text-black dark:text-white">
+                            Logo
+                        </label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleUploadLogo}
+                            className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
+                        />
+                        {logo && (
+                            <img
+                                src={logo}
+                                alt="Logo"
+                                className="h-40 object-cover rounded-sm"
+                            />
+                        )}
+                    </div>
+                    <div>
+                        <label className="mb-3 block text-black dark:text-white">
+                            Icon
+                        </label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleUploadIcon}
+                            className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
+                        />
+                        {icon && (
+                            <img
+                                src={icon}
+                                alt="Icon"
                                 className="h-40 object-cover rounded-sm"
                             />
                         )}
@@ -139,7 +200,7 @@ const Create = () => {
                 </div>
             </Box>
         </MainLayout>
-    );
-};
+    )
+}
 
-export default withAuth(Create);
+export default withAuth(Create)

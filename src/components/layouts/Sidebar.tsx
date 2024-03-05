@@ -1,6 +1,5 @@
-import useLocalStorage from "@/hooks/useLocalStorage"
 import { User, UserRole } from "@/types"
-import { getUserData, signout } from "@/utils"
+import { getUserData } from "@/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -8,6 +7,7 @@ import React, { useEffect, useRef, useState } from "react"
 import {
     MdAccountCircle,
     MdArrowBack,
+    MdImage,
     MdInfoOutline,
     MdLightbulbOutline,
     MdMenuOpen,
@@ -37,6 +37,12 @@ const menuItems = [
     {
         title: "Quản lý",
         items: [
+            {
+                label: "Banner",
+                icon: <MdImage className="text-2xl" />,
+                link: "/banners",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
+            },
             {
                 label: "Danh Mục",
                 icon: <MdMenuOpen className="text-2xl" />,

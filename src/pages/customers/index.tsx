@@ -113,13 +113,13 @@ const Customers = () => {
                                         Ảnh
                                     </th>
                                     <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                                        Logo
+                                    </th>
+                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                                        Icon
+                                    </th>
+                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                                         Mô tả
-                                    </th>
-                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Ngày tạo
-                                    </th>
-                                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                                        Ngày chỉnh sửa
                                     </th>
                                     <th className="py-4 px-4 font-medium text-black dark:text-white">
                                         <Button
@@ -149,9 +149,9 @@ const Customers = () => {
                                             id,
                                             name,
                                             image,
+                                            logo,
+                                            icon,
                                             description,
-                                            createdAt,
-                                            modifiedAt,
                                         }) => (
                                             <tr key={id}>
                                                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
@@ -168,23 +168,32 @@ const Customers = () => {
                                                         />
                                                     </div>
                                                 </td>
+
+                                                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                                                    <div className="font-medium text-black dark:text-white">
+                                                        <img
+                                                            src={logo}
+                                                            alt="featured image"
+                                                            className="h-40 object-cover rounded-sm w-60"
+                                                        />
+                                                    </div>
+                                                </td>
+
+                                                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                                                    <div className="font-medium text-black dark:text-white">
+                                                        <img
+                                                            src={icon}
+                                                            alt="featured image"
+                                                            className="h-40 object-cover rounded-sm w-60"
+                                                        />
+                                                    </div>
+                                                </td>
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <p className="text-black dark:text-white line-clamp-4">
                                                         {description}
                                                     </p>
                                                 </td>
-                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                    <p className="text-black dark:text-white">
-                                                        {convertDate(createdAt)}
-                                                    </p>
-                                                </td>
-                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                    <p className="text-black dark:text-white">
-                                                        {convertDate(
-                                                            modifiedAt
-                                                        )}
-                                                    </p>
-                                                </td>
+
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <div className="flex items-center space-x-3.5">
                                                         <Link

@@ -2,7 +2,8 @@ import { Box, Breadcrumb, Button } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
-import { instance } from "@/utils"
+import { convertBase64, instance } from "@/utils"
+import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 
@@ -12,6 +13,8 @@ const Metadata = () => {
     const [phone, setPhone] = useState("")
     const [email, setEmail] = useState("")
     const [address, setAddress] = useState("")
+    const [ceoImage, setCeoImage] = useState("")
+    const [quoteImage, setQuoteImage] = useState("")
     const [buttonLoading, setButtonLoading] = useState(false)
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +33,26 @@ const Metadata = () => {
         setAddress(e.target.value)
     }
 
+    const handleChangeCeoImage = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        if (e.target.files) {
+            const file = e.target.files[0]
+            const base64Image = await convertBase64(file)
+            setCeoImage(base64Image)
+        }
+    }
+
+    const handleChangeQuoteImage = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        if (e.target.files) {
+            const file = e.target.files[0]
+            const base64Image = await convertBase64(file)
+            setQuoteImage(base64Image)
+        }
+    }
+
     useEffect(() => {
         instance
             .get("/metadata")
@@ -38,6 +61,8 @@ const Metadata = () => {
                 setPhone(res.data.companyPhone)
                 setEmail(res.data.companyEmail)
                 setAddress(res.data.companyAddress)
+                setCeoImage(res.data.ceoImage)
+                setQuoteImage(res.data.quoteImage)
                 setMounted(true)
             })
             .catch((err) => {
@@ -50,13 +75,16 @@ const Metadata = () => {
             name.trim() === "" ||
             phone.trim() === "" ||
             email.trim() === "" ||
-            address.trim() === ""
+            address.trim() === "" ||
+            ceoImage === "" ||
+            quoteImage === ""
         ) {
             return false
         }
         return true
     }
 
+    const router = useRouter()
     const handleUpdateData = () => {
         setButtonLoading(true)
         if (!validateData()) {
@@ -74,12 +102,15 @@ const Metadata = () => {
                 companyPhone: phone,
                 companyEmail: email,
                 companyAddress: address,
+                ceoImage,
+                quoteImage,
             })
             .then((res) => {
                 Swal.fire({
                     icon: "success",
                     title: "Cập nhật thành công",
                 })
+                router.push("/")
             })
             .catch((err) => {
                 Swal.fire({
@@ -158,6 +189,42 @@ const Metadata = () => {
                                 name="categoryName"
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
+                        </div>
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">
+                                Ảnh CEO
+                            </label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleChangeCeoImage}
+                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
+                            />
+                            {ceoImage && (
+                                <img
+                                    src={ceoImage}
+                                    alt="CEO Image"
+                                    className="h-40 object-cover rounded-sm"
+                                />
+                            )}
+                        </div>
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">
+                                Ảnh nền Quote
+                            </label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleChangeQuoteImage}
+                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
+                            />
+                            {quoteImage && (
+                                <img
+                                    src={quoteImage}
+                                    alt="Quote Image"
+                                    className="h-40 object-cover rounded-sm"
+                                />
+                            )}
                         </div>
                         <div>
                             <Button

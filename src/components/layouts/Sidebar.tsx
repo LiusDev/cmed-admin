@@ -38,6 +38,12 @@ const menuItems = [
         title: "Quản lý",
         items: [
             {
+                label: "Slide về chúng tôi",
+                icon: <MdImage className="text-2xl" />,
+                link: "/about",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
+            },
+            {
                 label: "Banner",
                 icon: <MdImage className="text-2xl" />,
                 link: "/banners",

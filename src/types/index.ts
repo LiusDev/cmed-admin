@@ -116,6 +116,8 @@ export interface Metadata {
     companyPhone: string
     companyEmail: string
     companyAddress: string
+    ceoImage: string
+    quoteImage: string
 }
 
 export interface Contact {

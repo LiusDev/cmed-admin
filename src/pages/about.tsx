@@ -2,42 +2,42 @@ import { Box, Breadcrumb, Button } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
-import { instance } from "@/utils"
+import { convertBase64, instance } from "@/utils"
 import React, { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 
-const Metadata = () => {
+const About = () => {
     const [mounted, setMounted] = useState(false)
-    const [name, setName] = useState("")
-    const [phone, setPhone] = useState("")
-    const [email, setEmail] = useState("")
-    const [address, setAddress] = useState("")
+    const [ceoImage, setCeoImage] = useState("")
+    const [quoteImage, setQuoteImage] = useState("")
     const [buttonLoading, setButtonLoading] = useState(false)
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value)
+    const handleUploadCeoImage = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        if (e.target.files) {
+            const file = e.target.files[0]
+            const base64Image = await convertBase64(file)
+            setCeoImage(base64Image)
+        }
     }
 
-    const handleChangePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPhone(e.target.value)
-    }
-
-    const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value)
-    }
-
-    const handleChangeAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAddress(e.target.value)
+    const handleUploadQuoteImage = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        if (e.target.files) {
+            const file = e.target.files[0]
+            const base64Image = await convertBase64(file)
+            setQuoteImage(base64Image)
+        }
     }
 
     useEffect(() => {
         instance
             .get("/metadata")
             .then((res) => {
-                setName(res.data.companyName)
-                setPhone(res.data.companyPhone)
-                setEmail(res.data.companyEmail)
-                setAddress(res.data.companyAddress)
+                setCeoImage(res.data.ceoImage)
+                setQuoteImage(res.data.quoteImage)
                 setMounted(true)
             })
             .catch((err) => {
@@ -46,12 +46,7 @@ const Metadata = () => {
     }, [])
 
     const validateData = (): boolean => {
-        if (
-            name.trim() === "" ||
-            phone.trim() === "" ||
-            email.trim() === "" ||
-            address.trim() === ""
-        ) {
+        if (ceoImage === "" || quoteImage === "") {
             return false
         }
         return true
@@ -177,4 +172,4 @@ const Metadata = () => {
     )
 }
 
-export default withAuth(Metadata)
+export default withAuth(About)

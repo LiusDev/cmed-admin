@@ -7,6 +7,7 @@ import { convertBase64, instance, parseContent } from "@/utils"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
+import { MdClose } from "react-icons/md"
 import Swal from "sweetalert2"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
@@ -78,8 +79,13 @@ const Edit = () => {
                     return await convertBase64(file)
                 })
             )
-            setImages([...base64Images])
+            setImages([...images, ...base64Images])
         }
+    }
+
+    const handleDeleteImage = (index: number) => {
+        const newImages = images.filter((_, i) => i !== index)
+        setImages(newImages)
     }
 
     const validateData = (): boolean => {
@@ -204,12 +210,20 @@ const Edit = () => {
                             />
                             <div className="flex gap-3 flex-wrap">
                                 {images.map((image, index) => (
-                                    <img
+                                    <button
                                         key={index}
-                                        src={image}
-                                        alt="image"
-                                        className="h-40 object-cover rounded-sm"
-                                    />
+                                        className="group relative"
+                                        onClick={() => handleDeleteImage(index)}
+                                    >
+                                        <div className="absolute w-full h-full opacity-0 group-hover:opacity-100 bg-black/50 transition-all duration-100 flex items-center justify-center">
+                                            <MdClose className="text-5xl text-white" />
+                                        </div>
+                                        <img
+                                            src={image}
+                                            alt="image"
+                                            className="h-40 object-cover rounded-sm"
+                                        />
+                                    </button>
                                 ))}
                             </div>
                         </div>

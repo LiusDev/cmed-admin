@@ -140,3 +140,10 @@ export interface Recruitment {
     deadline: string
     content: string
 }
+
+export interface AboutSlide {
+    id: number
+    title: string
+    description: string
+    image: string
+}

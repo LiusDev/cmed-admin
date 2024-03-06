@@ -86,6 +86,12 @@ const menuItems = [
                 roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
+                label: "Dịch vụ trang chủ",
+                icon: <MdMiscellaneousServices className="text-2xl" />,
+                link: "/homepage-services",
+                roles: [UserRole.ADMIN, UserRole.STAFF],
+            },
+            {
                 label: "Dịch vụ",
                 icon: <MdMiscellaneousServices className="text-2xl" />,
                 link: "/services",

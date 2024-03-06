@@ -10,23 +10,23 @@ const services = [
         data: [
             {
                 description: "Đầu tư hạ tầng",
-                id: 2,
+                id: 1,
             },
             {
                 description: "Tư vấn vận hành",
-                id: 3,
+                id: 2,
             },
             {
                 description: "Tư vấn pháp lý",
-                id: 4,
+                id: 3,
             },
             {
                 description: "Tư vấn nhân sự",
-                id: 5,
+                id: 4,
             },
             {
                 description: "Công nghệ thông tin",
-                id: 6,
+                id: 5,
             },
         ],
     },
@@ -35,23 +35,23 @@ const services = [
         data: [
             {
                 description: "Đầu tư hạ tầng",
-                id: 7,
+                id: 6,
             },
             {
                 description: "Tư vấn vận hành",
-                id: 8,
+                id: 7,
             },
             {
                 description: "Tư vấn pháp lý",
-                id: 9,
+                id: 8,
             },
             {
                 description: "Tư vấn nhân sự",
-                id: 10,
+                id: 9,
             },
             {
                 description: "Công nghệ thông tin",
-                id: 11,
+                id: 10,
             },
         ],
     },
@@ -60,23 +60,23 @@ const services = [
         data: [
             {
                 description: "Đầu tư hạ tầng",
-                id: 12,
+                id: 11,
             },
             {
                 description: "Tư vấn vận hành",
-                id: 13,
+                id: 12,
             },
             {
                 description: "Tư vấn pháp lý",
-                id: 14,
+                id: 13,
             },
             {
                 description: "Tư vấn nhân sự",
-                id: 15,
+                id: 14,
             },
             {
                 description: "Công nghệ thông tin",
-                id: 16,
+                id: 15,
             },
         ],
     },
@@ -85,23 +85,23 @@ const services = [
         data: [
             {
                 description: "Đầu tư hạ tầng",
-                id: 17,
+                id: 16,
             },
             {
                 description: "Tư vấn vận hành",
-                id: 18,
+                id: 17,
             },
             {
                 description: "Tư vấn pháp lý",
-                id: 19,
+                id: 18,
             },
             {
                 description: "Tư vấn nhân sự",
-                id: 20,
+                id: 19,
             },
             {
                 description: "Công nghệ thông tin",
-                id: 21,
+                id: 20,
             },
         ],
     },

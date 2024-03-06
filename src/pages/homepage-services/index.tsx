@@ -5,15 +5,15 @@ import React from "react"
 const homepageServices = [
     {
         label: "Dịch vụ 1",
-        id: 21,
+        id: 10,
     },
     {
         label: "Dịch vụ 2",
-        id: 22,
+        id: 11,
     },
     {
         label: "Dịch vụ 3",
-        id: 23,
+        id: 12,
     },
 ]
 

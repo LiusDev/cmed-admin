@@ -9,24 +9,16 @@ const services = [
         value: "Phòng khám đa khoa",
         data: [
             {
-                description: "Đầu tư hạ tầng",
+                description: "Tư vấn tổng thể",
                 id: 1,
             },
             {
-                description: "Tư vấn vận hành",
+                description: "Pháp lý",
                 id: 2,
             },
             {
-                description: "Tư vấn pháp lý",
+                description: "Nhân sự",
                 id: 3,
-            },
-            {
-                description: "Tư vấn nhân sự",
-                id: 4,
-            },
-            {
-                description: "Công nghệ thông tin",
-                id: 5,
             },
         ],
     },
@@ -34,24 +26,16 @@ const services = [
         value: "Phòng khám chuyên khoa",
         data: [
             {
-                description: "Đầu tư hạ tầng",
+                description: "Tư vấn tổng thể",
+                id: 4,
+            },
+            {
+                description: "Pháp lý",
+                id: 5,
+            },
+            {
+                description: "Nhân sự",
                 id: 6,
-            },
-            {
-                description: "Tư vấn vận hành",
-                id: 7,
-            },
-            {
-                description: "Tư vấn pháp lý",
-                id: 8,
-            },
-            {
-                description: "Tư vấn nhân sự",
-                id: 9,
-            },
-            {
-                description: "Công nghệ thông tin",
-                id: 10,
             },
         ],
     },
@@ -59,24 +43,16 @@ const services = [
         value: "Viện dưỡng lão",
         data: [
             {
-                description: "Đầu tư hạ tầng",
-                id: 11,
+                description: "Tư vấn tổng thể",
+                id: 7,
             },
             {
-                description: "Tư vấn vận hành",
-                id: 12,
+                description: "Pháp lý",
+                id: 8,
             },
             {
-                description: "Tư vấn pháp lý",
-                id: 13,
-            },
-            {
-                description: "Tư vấn nhân sự",
-                id: 14,
-            },
-            {
-                description: "Công nghệ thông tin",
-                id: 15,
+                description: "Nhân sự",
+                id: 9,
             },
         ],
     },
@@ -84,24 +60,16 @@ const services = [
         value: "Bệnh viện",
         data: [
             {
-                description: "Đầu tư hạ tầng",
-                id: 16,
+                description: "Tư vấn tổng thể",
+                id: 7,
             },
             {
-                description: "Tư vấn vận hành",
-                id: 17,
+                description: "Pháp lý",
+                id: 8,
             },
             {
-                description: "Tư vấn pháp lý",
-                id: 18,
-            },
-            {
-                description: "Tư vấn nhân sự",
-                id: 19,
-            },
-            {
-                description: "Công nghệ thông tin",
-                id: 20,
+                description: "Nhân sự",
+                id: 9,
             },
         ],
     },

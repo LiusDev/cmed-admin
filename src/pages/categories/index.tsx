@@ -4,8 +4,9 @@ import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import { Category } from "@/types"
 import { convertDate, instance } from "@/utils"
+import { HttpStatusCode } from "axios"
 import Link from "next/link"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md"
 import Swal from "sweetalert2"
 
@@ -24,23 +25,38 @@ const Categories = () => {
             })
     }, [])
 
-    const deleteCategory = (id: number) => {
+    const deleteCategory = useCallback((id: number, done?: Function, deny?: Function, error?: Function) => {
         instance
             .delete(`/categories/${id}`)
-            .then(() => {
-                const newCategories = categoriesData!.filter(
-                    (category) => category.id !== id
-                )
-                setCategoriesData(newCategories)
-            })
-            .catch((err) => {
-                if (err.response.status === 401) {
-                    window.location.href = "/signin"
+            .then((res) => {
+                switch (res.status) {
+                    case HttpStatusCode.NoContent:
+                        setCategoriesData(r => r!.filter(
+                            (category) => category.id !== id
+                        ))
+                        done?.()
+                        break
+                    case HttpStatusCode.UnprocessableEntity:
+                        deny?.()
+                        break
                 }
             })
-    }
+            .catch((err) => {
+                switch (err.response.status) {
+                    case HttpStatusCode.UnprocessableEntity:
+                        deny?.()
+                        break
+                    case HttpStatusCode.Unauthorized:
+                        window.location.href = "/signin"
+                        break
+                    default:
+                        error?.()
+                }
 
-    const handleDelete = (id: number) => {
+            })
+    }, [instance])
+
+    const handleDelete = useCallback((id: number) => {
         Swal.fire({
             title: "Bạn có chắc chắn muốn xóa?",
             text: "Hành động này không thể hoàn tác!",
@@ -52,14 +68,26 @@ const Categories = () => {
             cancelButtonText: "Hủy",
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteCategory(id)
-                Swal.fire({
-                    title: "Đã xóa!",
-                    icon: "success",
+                deleteCategory(id, () => {
+                    Swal.fire({
+                        title: "Đã xóa!",
+                        icon: "success",
+                    })
+                }, () => {
+                    Swal.fire({
+                        title: "Không xoá được",
+                        icon: "warning",
+                    })
+                }, () => {
+                    Swal.fire({
+                        title: "Lỗi máy chủ",
+                        icon: "error",
+                    })
                 })
+
             }
         })
-    }
+    }, [deleteCategory])
 
     return (
         <MainLayout>

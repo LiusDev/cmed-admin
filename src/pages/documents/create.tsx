@@ -5,7 +5,7 @@ import withAuth from "@/hoc/withAuth"
 import { Category } from "@/types"
 import { convertBase64, instance } from "@/utils"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 const Create = () => {
     const [categories, setCategories] = useState<Category[] | null>(null)
@@ -30,21 +30,21 @@ const Create = () => {
             })
     }, [])
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
-    }
+    }, [])
 
-    const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChangeCategory = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
         setCategory(parseInt(e.target.value))
     }
-
-    const handleChangeDescription = (
+        , [])
+    const handleChangeDescription = useCallback((
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setDescription(e.target.value)
-    }
+    }, [])
 
-    const handleUploadFeaturedImage = async (
+    const handleUploadFeaturedImage = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
@@ -52,18 +52,18 @@ const Create = () => {
             const base64image = await convertBase64(file)
             setFeaturedImage(base64image)
         }
-    }
+    }, [])
 
-    const handleUploadDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUploadDocument = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const file = e.target.files[0]
             setDocument(file)
         }
-    }
+    }, [])
 
     const router = useRouter()
 
-    const handlePublish = async () => {
+    const handlePublish = useCallback(async () => {
         setLoading(true)
         instance
             .post(
@@ -92,7 +92,7 @@ const Create = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }
+    }, [])
 
     return (
         <MainLayout>
@@ -129,6 +129,8 @@ const Create = () => {
                                     Danh mục
                                 </label>
                                 <select
+                                    title="category"
+                                    name="category"
                                     onChange={handleChangeCategory}
                                     className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                 >
@@ -160,6 +162,7 @@ const Create = () => {
                                 Ảnh nổi bật
                             </label>
                             <input
+                                title="featuredImage"
                                 type="file"
                                 accept="image/*"
                                 onChange={handleUploadFeaturedImage}
@@ -178,6 +181,7 @@ const Create = () => {
                                 Upload tài liệu
                             </label>
                             <input
+                                title="document"
                                 type="file"
                                 accept="application/pdf"
                                 onChange={handleUploadDocument}

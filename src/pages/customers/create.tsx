@@ -1,10 +1,10 @@
 import { Box, Button, Breadcrumb } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import withAuth from "@/hoc/withAuth"
-import {} from "@/types"
+import { } from "@/types"
 import { convertBase64, instance } from "@/utils"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Swal from "sweetalert2"
 
 const Create = () => {
@@ -15,17 +15,17 @@ const Create = () => {
     const [description, setDescription] = useState("")
     const [loading, setLoading] = useState(false)
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
-    }
+    }, [])
 
-    const handleChangeDescription = (
+    const handleChangeDescription = useCallback((
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setDescription(e.target.value)
-    }
+    }, [])
 
-    const handleUploadImage = async (
+    const handleUploadImage = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
@@ -33,25 +33,25 @@ const Create = () => {
             const base64 = await convertBase64(file)
             setImage(base64)
         }
-    }
+    }, [])
 
-    const handleUploadLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUploadLogo = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const file = e.target.files[0]
             const base64 = await convertBase64(file)
             setLogo(base64)
         }
-    }
+    }, [])
 
-    const handleUploadIcon = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUploadIcon = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const file = e.target.files[0]
             const base64 = await convertBase64(file)
             setIcon(base64)
         }
-    }
+    }, [])
 
-    const validateData = (): boolean => {
+    const validateData = useCallback((): boolean => {
         if (
             name.trim() === "" ||
             description.trim() === "" ||
@@ -62,11 +62,11 @@ const Create = () => {
             return false
         }
         return true
-    }
+    }, [name, description, image, logo, icon])
 
     const router = useRouter()
 
-    const handlePublish = async () => {
+    const handlePublish = useCallback(async () => {
         setLoading(true)
         if (!validateData()) {
             setLoading(false)
@@ -96,7 +96,7 @@ const Create = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }
+    }, [validateData, name, description, image, logo, icon])
 
     return (
         <MainLayout>

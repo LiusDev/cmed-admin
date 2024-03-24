@@ -1,7 +1,6 @@
 import { Box, Button, Breadcrumb } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import withAuth from "@/hoc/withAuth"
-import {} from "@/types"
 import { convertBase64, instance } from "@/utils"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -90,6 +89,7 @@ const Create = () => {
                             Ảnh
                         </label>
                         <input
+                            title="image"
                             type="file"
                             accept="image/*"
                             onChange={handleUploadImage}

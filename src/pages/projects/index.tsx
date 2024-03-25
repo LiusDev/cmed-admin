@@ -4,6 +4,7 @@ import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import type { Project } from "@/types"
 import { convertDate, instance } from "@/utils"
+import { AxiosError } from "axios"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 import {
@@ -33,7 +34,7 @@ const Projects = () => {
                 setData(filteredTableData)
             })
             .catch((err) => {
-                if (err.response.status === 401) {
+                if (err instanceof AxiosError && err.response?.status === 401) {
                     window.location.href = "/signin"
                 }
             })
@@ -86,7 +87,7 @@ const Projects = () => {
                 setSearchLoading(false)
             })
             .catch((err) => {
-                if (err.response.status === 401) {
+                if (err instanceof AxiosError && err.response?.status === 401) {
                     window.location.href = "/signin"
                 }
             })
@@ -218,6 +219,7 @@ const Projects = () => {
                                                             <MdOutlineEdit className="text-xl" />
                                                         </Link>
                                                         <button
+                                                            title="delete button"
                                                             onClick={() =>
                                                                 handleDelete(id)
                                                             }

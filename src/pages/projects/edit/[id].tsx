@@ -15,7 +15,8 @@ const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
 })
 
-const Edit = () => {
+const Edit = (props: any) => {
+    console.log(JSON.stringify(props))
     const [mounted, setMounted] = useState(false)
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
@@ -23,31 +24,26 @@ const Edit = () => {
     const [content, setContent] = useState("")
     const [images, setImages] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
-
+    const router = useRouter()
     useEffect(() => {
-        const path = window.location.pathname.split("/")[3]
-
-        instance
-            .get(`/projects/${path}`)
-            .then((res) => {
-                setName(res.data.name)
-                setDescription(res.data.description)
-                setFeaturedImage(res.data.featuredImage)
-                setContent(res.data.content)
-                const fetchImages = res.data.images.map(
-                    (image: ProjectImage) => {
-                        return image.image
+        const path = router.query.id
+        if (path)
+            instance
+                .get(`/projects/${path}`)
+                .then((res) => {
+                    setName(res.data.name)
+                    setDescription(res.data.description)
+                    setFeaturedImage(res.data.featuredImage)
+                    setContent(res.data.content)
+                    setImages(res.data.images)
+                    setMounted(true)
+                })
+                .catch((err) => {
+                    if (err instanceof AxiosError && err.response?.status === 401) {
+                        window.location.href = "/signin"
                     }
-                )
-                setImages(fetchImages)
-                setMounted(true)
-            })
-            .catch((err) => {
-                if (err instanceof AxiosError && err.response?.status === 401) {
-                    window.location.href = "/signin"
-                }
-            })
-    }, [])
+                })
+    }, [router.query.id])
 
     const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
@@ -93,15 +89,13 @@ const Edit = () => {
             name.trim() === "" ||
             description.trim() === "" ||
             featuredImage === "" ||
-            content.trim() === "" ||
-            images.length === 0
+            content.trim() === ""
         ) {
             return false
         }
         return true
     }, [name, description, featuredImage, content, images])
 
-    const router = useRouter()
     const handlePublish = useCallback(async () => {
         setLoading(true)
         if (!validateData()) {
@@ -184,6 +178,7 @@ const Edit = () => {
                                 Ảnh nổi bật
                             </label>
                             <input
+                                title="image upload"
                                 type="file"
                                 accept="image/*"
                                 onChange={handleUploadFeaturedImage}
@@ -202,6 +197,7 @@ const Edit = () => {
                                 Hình ảnh khác
                             </label>
                             <input
+                                title="image upload"
                                 type="file"
                                 accept="image/*"
                                 onChange={handleUploadImages}

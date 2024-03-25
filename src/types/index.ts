@@ -79,7 +79,7 @@ export interface Project {
     featuredImage: string
     description: string
     content: string
-    images: ProjectImage[]
+    // images: ProjectImage[]
 }
 
 export interface ProjectImage {

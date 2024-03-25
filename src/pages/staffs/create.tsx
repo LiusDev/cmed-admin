@@ -4,7 +4,7 @@ import withAuth from "@/hoc/withAuth"
 import { convertBase64, instance } from "@/utils"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import Swal from "sweetalert2"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
@@ -18,15 +18,15 @@ const Create = () => {
     const [description, setDescription] = useState("")
     const [loading, setLoading] = useState(false)
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
-    }
+    }, [])
 
-    const handleChangePosition = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangePosition = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setPosition(e.target.value)
-    }
+    }, [])
 
-    const handleUploadFeaturedImage = async (
+    const handleUploadFeaturedImage = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
@@ -34,9 +34,9 @@ const Create = () => {
             const base64 = await convertBase64(file)
             setFeaturedImage(base64)
         }
-    }
+    }, [])
 
-    const validateData = (): boolean => {
+    const validateData = useCallback((): boolean => {
         if (
             name.trim() === "" ||
             position.trim() === "" ||
@@ -46,10 +46,10 @@ const Create = () => {
             return false
         }
         return true
-    }
+    }, [name, position, description, featuredImage])
 
     const router = useRouter()
-    const handlePublish = async () => {
+    const handlePublish = useCallback(async () => {
         setLoading(true)
 
         if (!validateData()) {
@@ -74,7 +74,7 @@ const Create = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }
+    }, [name, position, description, featuredImage])
 
     return (
         <MainLayout>

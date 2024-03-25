@@ -12,10 +12,9 @@ import withAuth from "@/hoc/withAuth"
 const Project = () => {
     const [mounted, setMounted] = useState(false)
     const [projects, setProjects] = useState<Project | null>(null)
-    let path: string
     const router = useRouter()
     useEffect(() => {
-        path = window.location.pathname.split("/")[2]
+        const path = window.location.pathname.split("/")[2]
         instance
             .get(`/projects/${path}`)
             .then((res) => {
@@ -68,7 +67,7 @@ const Project = () => {
                                 alt={projects.name}
                             />
                         </div>
-                        <div>
+                        {/* <div>
                             <h3 className="text-xl mb-4">Ảnh dự án</h3>
                             <Carousel
                                 loop
@@ -87,7 +86,7 @@ const Project = () => {
                                     </Carousel.Slide>
                                 ))}
                             </Carousel>
-                        </div>
+                        </div> */}
 
                         <div>{mounted && parse(projects.content)}</div>
                     </div>

@@ -4,9 +4,10 @@ import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import { ProjectImage } from "@/types"
 import { convertBase64, instance, parseContent } from "@/utils"
+import { AxiosError } from "axios"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { MdClose } from "react-icons/md"
 import Swal from "sweetalert2"
 
@@ -23,9 +24,8 @@ const Edit = () => {
     const [images, setImages] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
 
-    let path: string
     useEffect(() => {
-        path = window.location.pathname.split("/")[3]
+        const path = window.location.pathname.split("/")[3]
 
         instance
             .get(`/projects/${path}`)
@@ -43,23 +43,23 @@ const Edit = () => {
                 setMounted(true)
             })
             .catch((err) => {
-                if (err.response.status === 401) {
+                if (err instanceof AxiosError && err.response?.status === 401) {
                     window.location.href = "/signin"
                 }
             })
     }, [])
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
-    }
+    }, [])
 
-    const handleChangeDescription = (
+    const handleChangeDescription = useCallback((
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setDescription(e.target.value)
-    }
+    }, [])
 
-    const handleUploadFeaturedImage = async (
+    const handleUploadFeaturedImage = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
@@ -67,9 +67,9 @@ const Edit = () => {
             const base64image = await convertBase64(file)
             setFeaturedImage(base64image)
         }
-    }
+    }, [])
 
-    const handleUploadImages = async (
+    const handleUploadImages = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
@@ -81,14 +81,14 @@ const Edit = () => {
             )
             setImages([...images, ...base64Images])
         }
-    }
+    }, [])
 
-    const handleDeleteImage = (index: number) => {
+    const handleDeleteImage = useCallback((index: number) => {
         const newImages = images.filter((_, i) => i !== index)
         setImages(newImages)
-    }
+    }, [])
 
-    const validateData = (): boolean => {
+    const validateData = useCallback((): boolean => {
         if (
             name.trim() === "" ||
             description.trim() === "" ||
@@ -99,10 +99,10 @@ const Edit = () => {
             return false
         }
         return true
-    }
+    }, [name, description, featuredImage, content, images])
 
     const router = useRouter()
-    const handlePublish = async () => {
+    const handlePublish = useCallback(async () => {
         setLoading(true)
         if (!validateData()) {
             setLoading(false)
@@ -135,7 +135,7 @@ const Edit = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }
+    }, [name, description, featuredImage, content, images])
 
     return (
         <MainLayout>

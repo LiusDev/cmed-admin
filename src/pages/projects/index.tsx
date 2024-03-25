@@ -5,7 +5,7 @@ import withAuth from "@/hoc/withAuth"
 import type { Project } from "@/types"
 import { convertDate, instance } from "@/utils"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
     MdOutlineDelete,
     MdOutlineEdit,
@@ -25,7 +25,7 @@ const Projects = () => {
             })
     }, [])
 
-    const deleteProject = (id: number) => {
+    const deleteProject = useCallback((id: number) => {
         instance
             .delete(`/projects/${id}`)
             .then(() => {
@@ -37,9 +37,9 @@ const Projects = () => {
                     window.location.href = "/signin"
                 }
             })
-    }
+    }, [])
 
-    const handleDelete = (id: number) => {
+    const handleDelete = useCallback((id: number) => {
         Swal.fire({
             title: "Bạn có chắc chắn muốn xóa?",
             text: "Hành động này không thể hoàn tác!",
@@ -58,23 +58,23 @@ const Projects = () => {
                 })
             }
         })
-    }
+    }, [])
 
     const [searchName, setSearchName] = useState("")
     const [searchDescription, setSearchDescription] = useState("")
 
-    const handleSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearchName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchName(e.target.value)
-    }
+    }, [])
 
-    const handleSearchDescription = (
+    const handleSearchDescription = useCallback((
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setSearchDescription(e.target.value)
-    }
+    }, [])
 
     const [searchLoading, setSearchLoading] = useState(false)
-    const handleSearch = () => {
+    const handleSearch = useCallback(() => {
         setSearchLoading(true)
 
         instance
@@ -90,7 +90,7 @@ const Projects = () => {
                     window.location.href = "/signin"
                 }
             })
-    }
+    }, [])
 
     return (
         <MainLayout>

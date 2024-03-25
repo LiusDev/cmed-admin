@@ -203,6 +203,7 @@ const Customers = () => {
                                                             <MdOutlineEdit className="text-xl" />
                                                         </Link>
                                                         <button
+                                                            title="delete button"
                                                             onClick={() =>
                                                                 handleDelete(id)
                                                             }

@@ -35,3 +35,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+ckeditor5/node_modules/
+ckeditor5/build/

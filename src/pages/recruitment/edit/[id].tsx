@@ -2,11 +2,11 @@ import { Box, Breadcrumb, Button } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
-import { convertBase64, instance, parseContent } from "@/utils"
-import { DatePickerInput } from "@mantine/dates"
+import { instance, parseContent } from "@/utils"
+import { DateTimePicker } from "@mantine/dates"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import Swal from "sweetalert2"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
@@ -16,7 +16,11 @@ const CustomEditor = dynamic(() => import("@/components/customEditor"), {
 const Edit = () => {
     const [mounted, setMounted] = useState(false)
     const [title, setTitle] = useState("")
-    const [deadline, setDeadline] = useState<Date | null>(new Date())
+    const [deadline, setDeadline] = useState<Date | null>(() => {
+        const d = new Date()
+        d.setHours(1)
+        return d
+    })
     const [content, setContent] = useState("")
     const [loading, setLoading] = useState(false)
 
@@ -39,19 +43,19 @@ const Edit = () => {
             })
     }, [])
 
-    const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value)
-    }
+    }, [])
 
-    const validateData = (): boolean => {
+    const validateData = useCallback((): boolean => {
         if (title.trim() === "" || deadline === null || content.trim() === "") {
             return false
         }
         return true
-    }
+    }, [title, deadline, content])
 
     const router = useRouter()
-    const handlePublish = async () => {
+    const handlePublish = useCallback(async () => {
         setLoading(true)
         if (!validateData()) {
             setLoading(false)
@@ -81,7 +85,7 @@ const Edit = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }
+    }, [title, deadline, content])
 
     return (
         <MainLayout>
@@ -117,9 +121,12 @@ const Edit = () => {
                             <label className="mb-3 block text-black dark:text-white">
                                 Hạn nộp hồ sơ
                             </label>
-                            <DatePickerInput
-                                placeholder="Pick date"
+                            <DateTimePicker
+                                placeholder="Chọn thời hạn"
+                                monthsListFormat="mm"
+                                locale="vn"
                                 value={deadline}
+
                                 onChange={setDeadline}
                             />
                         </div>

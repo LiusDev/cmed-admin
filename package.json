@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-decoupled-document": "^41.2.1",
     "@ckeditor/ckeditor5-react": "^6.2.0",
     "@ckeditor/ckeditor5-upload": "^41.1.0",
     "@mantine/carousel": "^7.4.2",

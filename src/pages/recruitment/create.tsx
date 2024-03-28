@@ -4,9 +4,9 @@ import withAuth from "@/hoc/withAuth"
 import { instance, parseContent } from "@/utils"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import Swal from "sweetalert2"
-import { DatePickerInput } from "@mantine/dates"
+import { DateTimePicker } from "@mantine/dates"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
@@ -14,23 +14,27 @@ const CustomEditor = dynamic(() => import("@/components/customEditor"), {
 
 const Create = () => {
     const [title, setTitle] = useState("")
-    const [deadline, setDeadline] = useState<Date | null>(new Date())
+    const [deadline, setDeadline] = useState<Date | null>(() => {
+        const d = new Date()
+        d.setHours(0, 0, 0, 0)
+        return d
+    })
     const [content, setContent] = useState("")
     const [loading, setLoading] = useState(false)
 
-    const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value)
     }
-
-    const validateData = (): boolean => {
+        , [])
+    const validateData = useCallback((): boolean => {
         if (title === "" || deadline === null || content === "") {
             return false
         }
         return true
-    }
+    }, [title, deadline, content])
 
     const router = useRouter()
-    const handlePublish = async () => {
+    const handlePublish = useCallback(async () => {
         setLoading(true)
         if (!validateData()) {
             setLoading(false)
@@ -59,7 +63,7 @@ const Create = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }
+    }, [validateData])
 
     return (
         <MainLayout>
@@ -88,7 +92,7 @@ const Create = () => {
                         <label className="mb-3 block text-black dark:text-white">
                             Hạn nộp hồ sơ
                         </label>
-                        <DatePickerInput
+                        <DateTimePicker
                             placeholder="Pick date"
                             value={deadline}
                             onChange={setDeadline}

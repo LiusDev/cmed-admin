@@ -92,7 +92,7 @@ const Create = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }, [])
+    }, [name, description, featuredImage, document, category])
 
     return (
         <MainLayout>

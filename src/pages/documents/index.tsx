@@ -4,8 +4,9 @@ import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import type { Document } from "@/types"
 import { convertDate, instance } from "@/utils"
+import { AxiosError } from "axios"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
     MdOutlineDelete,
     MdOutlineEdit,
@@ -32,21 +33,21 @@ const Documents = () => {
             })
     }, [])
 
-    const deleteDocument = (id: number) => {
-        instance
+    const deleteDocument = useCallback((id: number) => {
+        return instance
             .delete(`/documents/${id}`)
             .then(() => {
                 const filteredTableData = data!.filter((item) => item.id !== id)
                 setData(filteredTableData)
             })
-            .catch((err) => {
-                if (err.response.status === 401) {
+            .catch((err: AxiosError) => {
+                if (err.response?.status === 401) {
                     window.location.href = "/signin"
                 }
             })
-    }
+    }, [data])
 
-    const handleDelete = (id: number) => {
+    const handleDelete = useCallback((id: number) => {
         Swal.fire({
             title: "Bạn có chắc chắn muốn xóa?",
             text: "Hành động này không thể hoàn tác!",
@@ -58,14 +59,16 @@ const Documents = () => {
             cancelButtonText: "Hủy",
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteDocument(id)
-                Swal.fire({
-                    title: "Đã xóa!",
-                    icon: "success",
+                deleteDocument(id).then(() => {
+                    Swal.fire({
+                        title: "Đã xóa!",
+                        icon: "success",
+                    })
                 })
+
             }
         })
-    }
+    }, [deleteDocument])
 
     const [searchName, setSearchName] = useState("")
     const [searchDescription, setSearchDescription] = useState("")
@@ -256,6 +259,7 @@ const Documents = () => {
                                                             <MdOutlineEdit className="text-xl" />
                                                         </Link>
                                                         <button
+                                                            title="Xóa"
                                                             onClick={() =>
                                                                 handleDelete(id)
                                                             }

@@ -93,9 +93,8 @@ export const convertBase64 = (file: File): Promise<string> => {
 // eg recive date format: 2023-12-19T04:49:45.000Z, output is 19/12/2023 - 11:49:45
 export const convertDate = (date: string): string => {
     const d = new Date(date);
-    return `${d.getDate()}/${
-        d.getMonth() + 1
-    }/${d.getFullYear()} - ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+    return `${d.getDate()}/${d.getMonth() + 1
+        }/${d.getFullYear()} - ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
 };
 
 // get user object from localStorage, also check type of window

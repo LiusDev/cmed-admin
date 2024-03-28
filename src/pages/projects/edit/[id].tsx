@@ -75,13 +75,12 @@ const Edit = (props: any) => {
                     return await convertBase64(file)
                 })
             )
-            setImages([...images, ...base64Images])
+            setImages(old => [...old, ...base64Images])
         }
     }, [])
 
     const handleDeleteImage = useCallback((index: number) => {
-        const newImages = images.filter((_, i) => i !== index)
-        setImages(newImages)
+        setImages(old => old.filter((_, i) => i !== index))
     }, [])
 
     const validateData = useCallback((): boolean => {

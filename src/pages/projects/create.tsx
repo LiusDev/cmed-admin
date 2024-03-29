@@ -4,7 +4,7 @@ import withAuth from "@/hoc/withAuth"
 import { convertBase64, instance, parseContent } from "@/utils"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import Swal from "sweetalert2"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
@@ -14,22 +14,29 @@ const CustomEditor = dynamic(() => import("@/components/customEditor"), {
 const Create = () => {
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
+    const [subtitle, setSubtitle] = useState("")
     const [featuredImage, setFeaturedImage] = useState("")
     const [content, setContent] = useState("")
     const [images, setImages] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
-    }
+    }, [])
 
-    const handleChangeDescription = (
+    const handleChangeSubtitle = useCallback((
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setSubtitle(e.target.value)
+    }, [])
+
+    const handleChangeDescription = useCallback((
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setDescription(e.target.value)
-    }
+    }, [])
 
-    const handleUploadFeaturedImage = async (
+    const handleUploadFeaturedImage = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
@@ -37,9 +44,9 @@ const Create = () => {
             const base64image = await convertBase64(file)
             setFeaturedImage(base64image)
         }
-    }
+    }, [])
 
-    const handleUploadImages = async (
+    const handleUploadImages = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
@@ -51,23 +58,24 @@ const Create = () => {
             )
             setImages([...base64Images])
         }
-    }
+    }, [])
 
-    const validateData = (): boolean => {
+    const validateData = useCallback((): boolean => {
         if (
             name.trim() === "" ||
             description.trim() === "" ||
             featuredImage === "" ||
             content.trim() === "" ||
+            subtitle.trim() === "" ||
             images.length === 0
         ) {
             return false
         }
         return true
-    }
+    }, [name, description, featuredImage, content, images, subtitle])
 
     const router = useRouter()
-    const handlePublish = async () => {
+    const handlePublish = useCallback(async () => {
         setLoading(true)
         if (!validateData()) {
             setLoading(false)
@@ -86,6 +94,7 @@ const Create = () => {
                 featuredImage,
                 content: newContent,
                 images,
+                subtitle
             })
             .then(() => {
                 router.push("/projects")
@@ -98,7 +107,7 @@ const Create = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }
+    }, [name, description, featuredImage, content, images, subtitle, validateData, router])
 
     return (
         <MainLayout>
@@ -121,7 +130,18 @@ const Create = () => {
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
                     </div>
-
+                    <div>
+                        <label className="mb-3 block text-black dark:text-white">
+                            Tiêu đề phụ
+                        </label>
+                        <input
+                            value={subtitle}
+                            onChange={handleChangeSubtitle}
+                            type="text"
+                            placeholder="Mô tả dự án"
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                        />
+                    </div>
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
                             Mô tả
@@ -139,6 +159,7 @@ const Create = () => {
                             Ảnh nổi bật
                         </label>
                         <input
+                            title="featured image"
                             type="file"
                             accept="image/*"
                             onChange={handleUploadFeaturedImage}
@@ -157,6 +178,7 @@ const Create = () => {
                             Hình ảnh khác
                         </label>
                         <input
+                            title="images"
                             type="file"
                             accept="image/*"
                             onChange={handleUploadImages}

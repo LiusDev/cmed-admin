@@ -53,9 +53,11 @@ const Project = () => {
                             <h2 className="text-4xl font-semibold text-black dark:text-white mb-2">
                                 {projects.name}
                             </h2>
+                            <h3>
+                                {projects.subtitle}
+                            </h3>
                             <p>{convertDate(projects.createdAt)}</p>
                         </div>
-
                         <div>
                             <p className="text-base text-black dark:text-white">
                                 {projects.description}
@@ -67,7 +69,7 @@ const Project = () => {
                                 alt={projects.name}
                             />
                         </div>
-                        {/* <div>
+                        <div>
                             <h3 className="text-xl mb-4">Ảnh dự án</h3>
                             <Carousel
                                 loop
@@ -75,18 +77,17 @@ const Project = () => {
                                 slideSize="33.333333333%"
                                 slidesToScroll={3}
                             >
-                                {projects.images.map((image) => (
-                                    <Carousel.Slide key={image.id}>
+                                {projects.images.map((image, index) => (
+                                    <Carousel.Slide key={index}>
                                         <img
-                                            key={image.id}
-                                            src={image.image}
+                                            src={image}
                                             alt={projects.name}
-                                            className="w-full object-cover object-center"
+                                            className="h-[300px] object-cover"
                                         />
                                     </Carousel.Slide>
                                 ))}
                             </Carousel>
-                        </div> */}
+                        </div>
 
                         <div>{mounted && parse(projects.content)}</div>
                     </div>

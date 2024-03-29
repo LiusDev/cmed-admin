@@ -78,8 +78,9 @@ export interface Project {
     name: string
     featuredImage: string
     description: string
+    subtitle: string
     content: string
-    // images: ProjectImage[]
+    images: string[]
 }
 
 export interface ProjectImage {

@@ -19,6 +19,7 @@ const Edit = (props: any) => {
     console.log(JSON.stringify(props))
     const [mounted, setMounted] = useState(false)
     const [name, setName] = useState("")
+    const [subtitle, setSubtitle] = useState("")
     const [description, setDescription] = useState("")
     const [featuredImage, setFeaturedImage] = useState("")
     const [content, setContent] = useState("")
@@ -37,6 +38,7 @@ const Edit = (props: any) => {
                     setContent(res.data.content)
                     setImages(res.data.images)
                     setMounted(true)
+                    setSubtitle(res.data.subtitle)
                 })
                 .catch((err) => {
                     if (err instanceof AxiosError && err.response?.status === 401) {
@@ -53,6 +55,12 @@ const Edit = (props: any) => {
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setDescription(e.target.value)
+    }, [])
+
+    const handleChangeSubtitle = useCallback((
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setSubtitle(e.target.value)
     }, [])
 
     const handleUploadFeaturedImage = useCallback(async (
@@ -88,6 +96,7 @@ const Edit = (props: any) => {
             name.trim() === "" ||
             description.trim() === "" ||
             featuredImage === "" ||
+            subtitle.trim() === "" ||
             content.trim() === ""
         ) {
             return false
@@ -112,7 +121,7 @@ const Edit = (props: any) => {
             description,
             featuredImage,
             content: newContent,
-            images,
+            images, subtitle
         }
 
         await instance
@@ -128,7 +137,7 @@ const Edit = (props: any) => {
             .finally(() => {
                 setLoading(false)
             })
-    }, [name, description, featuredImage, content, images])
+    }, [name, description, featuredImage, content, images, subtitle])
 
     return (
         <MainLayout>
@@ -159,7 +168,18 @@ const Edit = (props: any) => {
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                             />
                         </div>
-
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">
+                                Tiêu đề phụ
+                            </label>
+                            <input
+                                value={subtitle}
+                                onChange={handleChangeSubtitle}
+                                type="text"
+                                placeholder="Tiêu đề phụ của dự án"
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            />
+                        </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
                                 Mô tả

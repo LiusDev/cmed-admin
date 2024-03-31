@@ -4,6 +4,7 @@ import Header from "./header";
 import Head from "next/head";
 import { User } from "@/types";
 import { instance } from "@/utils";
+import { ColorSchemeScript } from "@mantine/core";
 
 const MainLayout = ({
     title,
@@ -30,6 +31,7 @@ const MainLayout = ({
                     }
                 />
                 <link rel="icon" href="/favicon.ico" />
+                <ColorSchemeScript />
             </Head>
             <div className="flex h-screen overflow-hidden">
                 <Sidebar

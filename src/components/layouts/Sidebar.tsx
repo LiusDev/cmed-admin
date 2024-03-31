@@ -16,7 +16,9 @@ import {
     MdOutlineContactMail,
     MdOutlineDocumentScanner,
     MdOutlineHandshake,
+    MdOutlinePages,
     MdOutlinePersonAddAlt,
+    MdPages,
     MdPersonOutline,
     MdWorkOutline,
 } from "react-icons/md"
@@ -37,12 +39,12 @@ const menuItems = [
     {
         title: "Quản lý",
         items: [
-            {
-                label: "Slide về chúng tôi",
-                icon: <MdImage className="text-2xl" />,
-                link: "/about",
-                roles: [UserRole.ADMIN, UserRole.STAFF],
-            },
+            // {
+            //     label: "Slide về chúng tôi",
+            //     icon: <MdImage className="text-2xl" />,
+            //     link: "/about",
+            //     roles: [UserRole.ADMIN, UserRole.STAFF],
+            // },
             {
                 label: "Banner",
                 icon: <MdImage className="text-2xl" />,
@@ -125,6 +127,12 @@ const menuItems = [
                 label: "Quản lý tài khoản",
                 icon: <MdAccountCircle className="text-2xl" />,
                 link: "/users",
+                roles: [UserRole.ADMIN],
+            },
+            {
+                label: "Trang \"Về chúng tôi\"",
+                icon: <MdOutlinePages className="text-2xl" />,
+                link: "/setting/about-page",
                 roles: [UserRole.ADMIN],
             },
         ],

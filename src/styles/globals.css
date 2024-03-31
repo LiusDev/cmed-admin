@@ -1,14 +1,9 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"); */
 
-@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    body {
-        @apply font-normal text-base text-body bg-whiten relative z-1;
-    }
-}
+@layer { @tailwind base; }
 
 @layer utilities {
     /* Chrome, Safari and Opera */

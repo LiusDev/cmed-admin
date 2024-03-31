@@ -3,6 +3,7 @@ import MainLayout from "@/components/layouts/MainLayout";
 import withAuth from "@/hoc/withAuth";
 import { UserRole, roleLabels } from "@/types";
 import { convertBase64, instance } from "@/utils";
+import { Select } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
@@ -18,8 +19,9 @@ const Create = () => {
         setUsername(e.target.value);
     };
 
-    const handleChangeRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setRole(e.target.value);
+    const handleChangeRole = (v: string | null) => {
+        if (v)
+            setRole(v);
     };
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,23 +106,21 @@ const Create = () => {
                             <label className="mb-3 block text-black dark:text-white">
                                 Phân quyền
                             </label>
-                            <select
+                            <Select
+                                styles={{
+                                    input: {
+                                        height: 50
+                                    }
+                                }}
+                                value={role}
                                 onChange={handleChangeRole}
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            >
-                                <option
-                                    key={UserRole.ADMIN}
-                                    value={UserRole.ADMIN}
-                                >
-                                    {roleLabels[UserRole.ADMIN]}
-                                </option>
-                                <option
-                                    key={UserRole.STAFF}
-                                    value={UserRole.STAFF}
-                                >
-                                    {roleLabels[UserRole.STAFF]}
-                                </option>
-                            </select>
+                                data={
+                                    [
+                                        { label: roleLabels[UserRole.ADMIN], value: UserRole.ADMIN },
+                                        { label: roleLabels[UserRole.STAFF], value: UserRole.STAFF }
+                                    ]
+
+                                } />
                         </div>
                     </div>
                     <div>

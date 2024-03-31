@@ -101,6 +101,19 @@ export interface Service {
     content: string
 }
 
+export interface HomeService {
+    id: number
+    createdAt: string
+    modifiedAt: string
+    name: string
+    index: number
+    categoryId: string
+    description: string
+    featuredImage: string
+    featuredImage2: string
+    content: string
+}
+
 export interface Staff {
     id: number
     createdAt: string
@@ -109,6 +122,31 @@ export interface Staff {
     position: string
     description: string
     featuredImage: string
+}
+
+export interface AboutPage {
+    title1: string;
+    subtitle: string;
+    featuredImage: string;
+    featuredButtonTitle: string;
+    featuredButtonTitle2: string;
+    tabTitle1: string;
+    tabTitle2: string;
+    tabTitle3: string;
+    title2: string;
+    content2: string[] | string;
+    image2: string;
+    quotes1: {
+        content: string;
+        author: string;
+        background: string;
+    }
+    quotes2: {
+        title: string;
+        content: string;
+        image: string;
+    }[]
+
 }
 
 export interface Metadata {
@@ -148,3 +186,5 @@ export interface AboutSlide {
     description: string
     image: string
 }
+
+export type ElementOf<T> = T extends Array<infer U> ? U : never

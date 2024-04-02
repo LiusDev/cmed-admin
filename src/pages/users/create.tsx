@@ -12,7 +12,7 @@ const Create = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState<string>(UserRole.STAFF);
     const [loading, setLoading] = useState(false);
 
     const handleChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {

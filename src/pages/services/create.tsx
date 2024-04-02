@@ -1,13 +1,13 @@
 import { Box, Button, Breadcrumb } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
-import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
-import { Category } from "@/types"
 import { convertBase64, instance, parseContent } from "@/utils"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import Swal from "sweetalert2"
+import ImageInput from "../../components/ImageInput"
+import { useInput } from "../../hooks/useInput"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
@@ -15,23 +15,18 @@ const CustomEditor = dynamic(() => import("@/components/customEditor"), {
 
 const Create = () => {
     const [name, setName] = useState("")
-    const [description, setDescription] = useState("")
+    const [description, _setDescription, handleChangeDescription] = useInput("")
     const [featuredImage, setFeaturedImage] = useState("")
     const [featuredImage2, setFeaturedImage2] = useState("")
     const [content, setContent] = useState("")
     const [loading, setLoading] = useState(false)
+    const [logo, setLogo] = useState("")
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
     }
 
-    const handleChangeDescription = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setDescription(e.target.value)
-    }
-
-    const handleUploadFeaturedImage = async (
+    const handleUploadFeaturedImage = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
@@ -39,9 +34,9 @@ const Create = () => {
             const base64Image = await convertBase64(file)
             setFeaturedImage(base64Image)
         }
-    }
+    }, [])
 
-    const handleUploadFeaturedImage2 = async (
+    const handleUploadFeaturedImage2 = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (e.target.files) {
@@ -49,7 +44,7 @@ const Create = () => {
             const base64Image = await convertBase64(file)
             setFeaturedImage2(base64Image)
         }
-    }
+    }, [])
 
     const validateData = (): boolean => {
         if (
@@ -57,12 +52,19 @@ const Create = () => {
             description.trim() === "" ||
             featuredImage === "" ||
             featuredImage2 === "" ||
-            content.trim() === ""
+            content.trim() === "" ||
+            logo.trim() === ""
         ) {
             return false
         }
         return true
     }
+
+    const handleLogo = useCallback((v?: string) => {
+        if (v) {
+            setLogo(v)
+        }
+    }, [])
 
     const router = useRouter()
 
@@ -85,6 +87,7 @@ const Create = () => {
                 description,
                 featuredImage,
                 featuredImage2,
+                logo,
                 content: newContent,
             })
             .then(() => {
@@ -135,11 +138,13 @@ const Create = () => {
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
                     </div>
+                    <ImageInput title="Logo" value={logo} onChange={handleLogo} />
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
                             Ảnh nổi bật
                         </label>
                         <input
+                            title="Ảnh nổi bật"
                             type="file"
                             accept="image/*"
                             onChange={handleUploadFeaturedImage}
@@ -158,6 +163,7 @@ const Create = () => {
                             Ảnh nền nổi bật
                         </label>
                         <input
+                            title="Ảnh nền nổi bật"
                             type="file"
                             accept="image/*"
                             onChange={handleUploadFeaturedImage2}
@@ -165,7 +171,7 @@ const Create = () => {
                         />
                         {featuredImage && (
                             <img
-                                src={featuredImage}
+                                src={featuredImage2}
                                 alt="featured image"
                                 className="h-40 object-cover rounded-sm"
                             />

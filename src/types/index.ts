@@ -98,6 +98,7 @@ export interface Service {
     description: string
     featuredImage: string
     featuredImage2: string
+    logo: string
     content: string
 }
 

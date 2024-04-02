@@ -25,14 +25,19 @@ const editorConfiguration: EditorConfig = {
     ],
 }
 
-function CustomEditor({ initialData, onEditorChange }: any) {
+type Props = {
+    data?: string
+    onChange: (value?: string) => void
+}
+
+function CustomEditor({ data, onChange }: Props) {
     return (
         <CKEditor
             editor={Editor as any}
-            data={initialData}
+            data={data}
             onChange={(event, editor: any) => {
                 const data = editor.getData()
-                onEditorChange(data)
+                onChange(data)
             }}
         />
     )

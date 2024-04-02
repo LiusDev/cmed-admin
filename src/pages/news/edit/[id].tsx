@@ -212,8 +212,8 @@ const Edit = () => {
                                 Nội dung
                             </label>
                             <CustomEditor
-                                initialData={content}
-                                onEditorChange={setContent}
+                                data={content}
+                                onChange={setContent}
                             />
                         </div>
                         <div>

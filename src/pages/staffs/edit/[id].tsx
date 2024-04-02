@@ -152,8 +152,8 @@ const Edit = () => {
                                 Mô tả
                             </label>
                             <CustomEditor
-                                initialData={description}
-                                onEditorChange={setDescription}
+                                data={description}
+                                onChange={setDescription}
                             />
                         </div>
                         <div>

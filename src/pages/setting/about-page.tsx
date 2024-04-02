@@ -7,9 +7,9 @@ import { convertBase64, instance } from "@/utils"
 import dynamic from "next/dynamic"
 import React, { ChangeEventHandler, forwardRef, useCallback, useEffect, useMemo, useState, type ForwardedRef, useImperativeHandle, useRef } from "react"
 import Swal from "sweetalert2"
-import { Text } from "../../components/Text"
-import { useInput } from "../../hooks/useInput"
-import ImageInput from "../../components/ImageInput"
+import { Text } from "@/components/Text"
+import { useInput } from "@/hooks/useInput"
+import ImageInput from "@/components/ImageInput"
 import { useForm, type UseFormReturnType } from '@mantine/form';
 import { Button, Divider, Flex, Group, Image, Modal, SegmentedControl, Skeleton, Table, TextInput, Textarea } from '@mantine/core';
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
@@ -50,10 +50,10 @@ const Qutes2Modal = forwardRef((props: {
         },
         close: () => setOpen(false)
     }), [])
-    return <Modal yOffset={"200px"} opened={open} onClose={() => setOpen(false)}>
+    return <Modal size={"50%"} yOffset={"200px"} opened={open} onClose={() => setOpen(false)}>
         <Flex direction={"column"} gap={"15px"}>
             <TextInput label="Tiêu đề" {...props.form.getInputProps(`quotes2.${index}.title`)} />
-            <Textarea label="Nội dung" {...props.form.getInputProps(`quotes2.${index}.content`)} />
+            <CustomEditor  data={props.form.getInputProps(`quotes2.${index}.content`).value} onChange={props.form.getInputProps(`quotes2.${index}.content`).onChange}  />
             <ImageInput title="Ảnh" {...props.form.getInputProps(`quotes2.${index}.image`)} />
             <Group>
                 <Button color="green" onClick={handleSave}>Lưu</Button>
@@ -109,9 +109,9 @@ const Quotes2Table = (props: {
         <Qutes2Modal form={props.form} ref={quote2Ref} />
         <Table.Thead>
             <Table.Tr>
-                <Table.Th>Ảnh</Table.Th>
+                <Table.Th>Tên</Table.Th>
                 <Table.Th>Nội dung</Table.Th>
-                <Table.Th>Tác giả</Table.Th>
+                <Table.Th>Ảnh</Table.Th>
                 <Table.Th>Chức năng</Table.Th>
             </Table.Tr>
         </Table.Thead>
@@ -220,7 +220,7 @@ const Edit = () => {
                         <Text title="Tiêu đề tab 3" {...form.getInputProps("tabTitle3")} />
                         <Divider my="md" />
                         <Text title="Tiêu đề 2" {...form.getInputProps("title2")} />
-                        <CustomEditor title="Nội dung 2" initialData={form.getInputProps("content2").value} onEditorChange={form.getInputProps("content2").onChange} />
+                        <CustomEditor title="Nội dung 2" data={form.getInputProps("content2").value}  onChange={form.getInputProps("content2").onChange} />
                         <ImageInput title="Ảnh 2" {...form.getInputProps("image2")} />
                         <Divider my="md" />
                         <Text title="Nội dung quote" {...form.getInputProps("quotes1.content")} />

@@ -200,7 +200,7 @@ const Create = () => {
                         <label className="mb-3 block text-black dark:text-white">
                             Nội dung
                         </label>
-                        <CustomEditor onEditorChange={setContent} />
+                        <CustomEditor onChange={setContent} />
                     </div>
                     <div>
                         <Button

@@ -115,7 +115,7 @@ const Create = () => {
                         <label className="mb-3 block text-black dark:text-white">
                             Mô tả
                         </label>
-                        <CustomEditor onEditorChange={setDescription} />
+                        <CustomEditor onChange={setDescription} />
                     </div>
                     <div>
                         <label className="mb-3 block text-black dark:text-white">

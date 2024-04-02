@@ -10,6 +10,7 @@ import { useRouter } from "next/router"
 import React, { useCallback, useEffect, useState } from "react"
 import { MdClose } from "react-icons/md"
 import Swal from "sweetalert2"
+import { useInput } from "../../../hooks/useInput"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
@@ -18,9 +19,9 @@ const CustomEditor = dynamic(() => import("@/components/customEditor"), {
 const Edit = (props: any) => {
     console.log(JSON.stringify(props))
     const [mounted, setMounted] = useState(false)
-    const [name, setName] = useState("")
-    const [subtitle, setSubtitle] = useState("")
-    const [description, setDescription] = useState("")
+    const [name, setName, handleChangeName] = useInput("")
+    const [subtitle, setSubtitle, handleChangeSubtitle] = useInput("")
+    const [description, setDescription, handleChangeDescription] = useInput("")
     const [featuredImage, setFeaturedImage] = useState("")
     const [content, setContent] = useState("")
     const [images, setImages] = useState<string[]>([])
@@ -46,22 +47,6 @@ const Edit = (props: any) => {
                     }
                 })
     }, [router.query.id])
-
-    const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value)
-    }, [])
-
-    const handleChangeDescription = useCallback((
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setDescription(e.target.value)
-    }, [])
-
-    const handleChangeSubtitle = useCallback((
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setSubtitle(e.target.value)
-    }, [])
 
     const handleUploadFeaturedImage = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
@@ -102,7 +87,7 @@ const Edit = (props: any) => {
             return false
         }
         return true
-    }, [name, description, featuredImage, content, images])
+    }, [name, description, featuredImage, content])
 
     const handlePublish = useCallback(async () => {
         setLoading(true)

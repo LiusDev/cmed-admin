@@ -18,7 +18,7 @@ const Create = () => {
     const [description, _setDescription, handleChangeDescription] = useInput("")
     const [featuredImage, setFeaturedImage] = useState("")
     const [featuredImage2, setFeaturedImage2] = useState("")
-    const [content, setContent] = useState("")
+    const [content, setContent] = useState<string | undefined>("")
     const [loading, setLoading] = useState(false)
     const [logo, setLogo] = useState("")
 
@@ -52,6 +52,7 @@ const Create = () => {
             description.trim() === "" ||
             featuredImage === "" ||
             featuredImage2 === "" ||
+            content == null ||
             content.trim() === "" ||
             logo.trim() === ""
         ) {
@@ -79,7 +80,7 @@ const Create = () => {
             })
             return
         }
-        const newContent = await parseContent(content)
+        const newContent = await parseContent(content ?? "")
 
         instance
             .post("/services", {

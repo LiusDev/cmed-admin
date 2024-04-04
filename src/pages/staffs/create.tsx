@@ -15,7 +15,7 @@ const Create = () => {
     const [name, setName] = useState("")
     const [position, setPosition] = useState("")
     const [featuredImage, setFeaturedImage] = useState("")
-    const [description, setDescription] = useState("")
+    const [description, setDescription] = useState<string | undefined>("")
     const [loading, setLoading] = useState(false)
 
     const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,6 +40,7 @@ const Create = () => {
         if (
             name.trim() === "" ||
             position.trim() === "" ||
+            description == null ||
             description.trim() === "" ||
             featuredImage === ""
         ) {
@@ -122,6 +123,7 @@ const Create = () => {
                             Ảnh nổi bật
                         </label>
                         <input
+                            title="Chọn ảnh nổi bật"
                             type="file"
                             accept="image/*"
                             onChange={handleUploadFeaturedImage}

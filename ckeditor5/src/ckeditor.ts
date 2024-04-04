@@ -86,7 +86,7 @@ import { Base64UploadAdapter } from '@ckeditor/ckeditor5-upload';
 // See https://ckeditor.com/docs/ckeditor5/latest/installation/plugins/installing-plugins.html for details.
 
 class Editor extends ClassicEditor {
-	public static override builtinPlugins = [
+	public   builtinPlugins = [
 		AccessibilityHelp,
 		Alignment,
 		Base64UploadAdapter,
@@ -212,23 +212,23 @@ class Editor extends ClassicEditor {
 			]
 		},
 		language: 'vi',
-		image: {
-			toolbar: [
-				'imageTextAlternative',
-				'toggleImageCaption',
-				'imageStyle:inline',
-				'imageStyle:block',
-				'imageStyle:side'
-			]
-		},
-		table: {
-			contentToolbar: [
-				'tableColumn',
-				'tableRow',
-				'mergeTableCells',
-				'tableProperties'
-			]
-		}
+		// image: {
+		// 	toolbar: [
+		// 		'imageTextAlternative',
+		// 		'toggleImageCaption',
+		// 		'imageStyle:inline',
+		// 		'imageStyle:block',
+		// 		'imageStyle:side'
+		// 	]
+		// },
+		// table: {
+		// 	contentToolbar: [
+		// 		'tableColumn',
+		// 		'tableRow',
+		// 		'mergeTableCells',
+		// 		'tableProperties'
+		// 	]
+		// }
 	};
 }
 

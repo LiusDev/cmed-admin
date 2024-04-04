@@ -220,7 +220,7 @@ const Edit = () => {
                         <Text title="Tiêu đề tab 3" {...form.getInputProps("tabTitle3")} />
                         <Divider my="md" />
                         <Text title="Tiêu đề 2" {...form.getInputProps("title2")} />
-                        <CustomEditor title="Nội dung 2" data={form.getInputProps("content2").value}  onChange={form.getInputProps("content2").onChange} />
+                        <CustomEditor  data={form.getInputProps("content2").value}  onChange={form.getInputProps("content2").onChange} />
                         <ImageInput title="Ảnh 2" {...form.getInputProps("image2")} />
                         <Divider my="md" />
                         <Text title="Nội dung quote" {...form.getInputProps("quotes1.content")} />

@@ -21,7 +21,7 @@ const Edit = () => {
         d.setHours(1)
         return d
     })
-    const [content, setContent] = useState("")
+    const [content, setContent] = useState<string | undefined>("")
     const [loading, setLoading] = useState(false)
 
     let path: string
@@ -48,7 +48,7 @@ const Edit = () => {
     }, [])
 
     const validateData = useCallback((): boolean => {
-        if (title.trim() === "" || deadline === null || content.trim() === "") {
+        if (title.trim() === "" || deadline === null || content == null || content.trim() === "") {
             return false
         }
         return true
@@ -66,7 +66,7 @@ const Edit = () => {
             })
             return
         }
-        const newContent = await parseContent(content)
+        const newContent = await parseContent(content ?? "")
 
         await instance
             .patch(`/recruitment/${router.query.id}`, {

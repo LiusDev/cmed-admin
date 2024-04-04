@@ -23,7 +23,7 @@ const Edit = (props: any) => {
     const [subtitle, setSubtitle, handleChangeSubtitle] = useInput("")
     const [description, setDescription, handleChangeDescription] = useInput("")
     const [featuredImage, setFeaturedImage] = useState("")
-    const [content, setContent] = useState("")
+    const [content, setContent] = useState<string | undefined>("")
     const [images, setImages] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -82,6 +82,7 @@ const Edit = (props: any) => {
             description.trim() === "" ||
             featuredImage === "" ||
             subtitle.trim() === "" ||
+            content == null ||
             content.trim() === ""
         ) {
             return false
@@ -100,7 +101,7 @@ const Edit = (props: any) => {
             })
             return
         }
-        const newContent = await parseContent(content)
+        const newContent = await parseContent(content ?? "")
         const body = {
             name,
             description,

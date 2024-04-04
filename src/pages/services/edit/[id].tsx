@@ -21,7 +21,7 @@ const Edit = () => {
     const [featuredImage, setFeaturedImage] = useState("")
     const [featuredImage2, setFeaturedImage2] = useState("")
     const [logo ,setLogo] = useState("")
-    const [content, setContent] = useState("")
+    const [content, setContent] = useState<string | undefined>("")
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
@@ -90,6 +90,7 @@ const Edit = () => {
             description.trim() === "" ||
             featuredImage === "" ||
             featuredImage2 === "" ||
+            content == null ||
             content.trim() === "" ||
             logo.trim() === ""
         ) {
@@ -109,7 +110,7 @@ const Edit = () => {
             })
             return
         }
-        const newContent = await parseContent(content)
+        const newContent = await parseContent(content ?? "")
         const body = {
             name,
             description,

@@ -19,7 +19,7 @@ const Create = () => {
         d.setHours(0, 0, 0, 0)
         return d
     })
-    const [content, setContent] = useState("")
+    const [content, setContent] = useState<string | undefined>("")
     const [loading, setLoading] = useState(false)
 
     const handleChangeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +45,7 @@ const Create = () => {
             })
             return
         }
-        const newContent = await parseContent(content)
+        const newContent = await parseContent(content ?? "")
         instance
             .post("/recruitment", {
                 title,

@@ -16,7 +16,7 @@ const Create = () => {
     const [description, setDescription] = useState("")
     const [subtitle, setSubtitle] = useState("")
     const [featuredImage, setFeaturedImage] = useState("")
-    const [content, setContent] = useState("")
+    const [content, setContent] = useState<string | undefined>("")
     const [images, setImages] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
 
@@ -65,6 +65,7 @@ const Create = () => {
             name.trim() === "" ||
             description.trim() === "" ||
             featuredImage === "" ||
+            content == null ||
             content.trim() === "" ||
             subtitle.trim() === "" ||
             images.length === 0
@@ -86,7 +87,7 @@ const Create = () => {
             })
             return
         }
-        const newContent = await parseContent(content)
+        const newContent = await parseContent(content ?? "")
         instance
             .post("/projects", {
                 name,

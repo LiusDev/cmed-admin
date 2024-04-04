@@ -86,7 +86,7 @@ const Create = () => {
             })
             return
         }
-        const newContent = await parseContent(content)
+        const newContent = await parseContent(content ?? "")
         instance
             .post("/news", {
                 title,

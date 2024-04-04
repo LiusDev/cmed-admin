@@ -16,7 +16,7 @@ const ServicePage = () => {
 
     useEffect(() => {
         instance
-            .get(`/homeservices?perPage=${PAGE_SIZE}&order=desc`)
+            .get(`/constservices?perPage=${PAGE_SIZE}&order=desc`)
             .then((res) => {
                 setData(res.data)
             })
@@ -34,7 +34,7 @@ const ServicePage = () => {
         setSearchLoading(true)
 
         instance
-            .get(`/homeservices?name=${searchName}&perPage=${PAGE_SIZE}`)
+            .get(`/constservices?name=${searchName}&perPage=${PAGE_SIZE}`)
             .then((res) => {
                 setData(res.data)
                 setSearchLoading(false)
@@ -123,7 +123,7 @@ const ServicePage = () => {
                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                     <div className="flex items-center space-x-3.5">
                                                         <Link
-                                                            href={`/homepage-services/edit/${id}`}
+                                                            href={`/const-services/edit/${id}`}
                                                             className="hover:text-success"
                                                         >
                                                             <MdOutlineEdit className="text-xl" />

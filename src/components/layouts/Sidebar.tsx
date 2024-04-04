@@ -90,7 +90,7 @@ const menuItems = [
             {
                 label: "Dịch vụ trang chủ",
                 icon: <MdMiscellaneousServices className="text-2xl" />,
-                link: "/homepage-services",
+                link: "/const-services",
                 roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {

@@ -19,7 +19,7 @@ const Create = () => {
     const [category, setCategory] = useState<Category["id"]>()
     const [description, setDescription] = useState("")
     const [featuredImage, setFeaturedImage] = useState("")
-    const [content, setContent] = useState("")
+    const [content, setContent] = useState<string | undefined>("")
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
@@ -65,6 +65,7 @@ const Create = () => {
             title.trim() === "" ||
             description.trim() === "" ||
             featuredImage === "" ||
+            content == null ||
             content.trim() === ""
         ) {
             return false
@@ -142,6 +143,7 @@ const Create = () => {
                                     Danh mục
                                 </label>
                                 <select
+                                    title="Chọn danh mục"
                                     onChange={handleChangeCategory}
                                     className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                 >
@@ -173,6 +175,7 @@ const Create = () => {
                                 Ảnh nổi bật
                             </label>
                             <input
+                                title="Chọn ảnh nổi bật"
                                 type="file"
                                 accept="image/*"
                                 onChange={handleUploadFeaturedImage}

@@ -33,8 +33,8 @@ const Edit = (props: any) => {
             instance
                 .get(`/projects/${path}`)
                 .then((res) => {
-                    setName(res.data.name)
-                    setDescription(res.data.description)
+                    setName(res.data.name ?? "")
+                    setDescription(res.data.description ?? "")
                     setFeaturedImage(res.data.featuredImage)
                     setContent(res.data.content)
                     setImages(res.data.images)

@@ -7,7 +7,6 @@ import { convertBase64, instance } from "@/utils"
 import dynamic from "next/dynamic"
 import React, { ChangeEventHandler, forwardRef, useCallback, useEffect, useMemo, useState, type ForwardedRef, useImperativeHandle, useRef } from "react"
 import Swal from "sweetalert2"
-import { TextInput } from "@/components/Text"
 import { useInput } from "@/hooks/useInput"
 import ImageInput from "@/components/ImageInput"
 import { useForm, type UseFormReturnType } from '@mantine/form';

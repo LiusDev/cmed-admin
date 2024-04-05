@@ -91,8 +91,8 @@ const Edit = (props: any) => {
         if (id != null) {
             instance.get(`/service2/${id}`).then(res => {
                 const data = res.data
-                setName(data.name)
-                setDescription(data.description)
+                setName(data.name?? "")
+                setDescription(data.description ?? "")
                 if (data.category)
                     setCategoryId(data.category.id.toString())
                 setIndex(data.index)

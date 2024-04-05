@@ -10,7 +10,7 @@ type Props = {
 	title: string;
 }
 
-export const Text = (props: Props) => {
+export const TextInput = (props: Props) => {
 	return <div>
 		<label className="mb-3 block text-black dark:text-white">
 			{props.title}

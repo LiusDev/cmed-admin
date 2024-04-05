@@ -233,7 +233,7 @@ const Edit = (props: any) => {
                                 Nội dung
                             </label>
                             <CustomEditor
-                                data={content}
+                                value={content}
                                 onChange={setContent}
                             />
                         </div>

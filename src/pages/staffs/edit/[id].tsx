@@ -153,7 +153,7 @@ const Edit = () => {
                                 Mô tả
                             </label>
                             <CustomEditor
-                                data={description}
+                                value={description}
                                 onChange={setDescription}
                             />
                         </div>

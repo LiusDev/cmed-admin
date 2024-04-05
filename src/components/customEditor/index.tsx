@@ -26,11 +26,11 @@ const editorConfiguration: EditorConfig = {
 }
 
 type Props = {
-    data?: string
+    value?: string
     onChange: (value?: string) => void
 }
 
-function CustomEditor({ data, onChange }: Props) {
+function CustomEditor({ value: data, onChange }: Props) {
     return (
         <CKEditor
             editor={Editor as any}

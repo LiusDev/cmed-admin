@@ -1,9 +1,14 @@
 import { useForm } from '@mantine/form';
-import { TextInput, Switch, Group, ActionIcon, Box, Text, Button, Code, Textarea, Flex, Card } from '@mantine/core';
+import { Switch, Group, ActionIcon, Box, Text, Button, Code, Textarea, Flex, Card, NumberInput } from '@mantine/core';
 import { TiTrash } from 'react-icons/ti';
 import ImageInput from '../ImageInput';
 import { useMemo, ForwardedRef, forwardRef, useImperativeHandle } from 'react';
+import dynamic from 'next/dynamic';
+import { TextInput } from '../Text';
 
+const CustomEditor = dynamic(() => import("@/components/customEditor"), {
+	ssr: false,
+})
 
 export type ContentListRef = {
 	getValues: () => ContentType[]
@@ -27,10 +32,16 @@ export default forwardRef(function (props: {}, ref: ForwardedRef<ContentListRef>
 
 	useImperativeHandle(ref, () => ({
 		getValues: () => form.values.data,
-		setValues: (data) => form.setValues({ data })
+		setValues: (data) => {
+			if (data)
+				form.setValues({ data })
+			else {
+				form.setValues({ data: [] })
+			}
+		}
 	}), [form])
 
-	const fields = useMemo(() => form.values.data.map((item, index) => (
+	const fields = form.values.data.map((item, index) => (
 		<Flex gap={15} direction={"column"} key={index} mt="xs">
 			<Card shadow="sm" padding="lg" radius="md" withBorder>
 				<Card.Section withBorder inheritPadding py="xs">
@@ -41,21 +52,50 @@ export default forwardRef(function (props: {}, ref: ForwardedRef<ContentListRef>
 						</ActionIcon>
 					</Group>
 				</Card.Section>
-				<TextInput
-					label='Tên tab'
-					{...form.getInputProps(`data.${index}.title`)}
-				/>
-				<Textarea
-					title='Nội dung'
-					label="Nội dung"
-					{...form.getInputProps(`data.${index}.content`)}
-				/>
-				<ImageInput {...form.getInputProps(`data.${index}.logo`)} />
-				<ImageInput {...form.getInputProps(`data.${index}.featuredImage`)} />
-				<ImageInput {...form.getInputProps(`data.${index}.featuredImage2`)} />
+				<Flex gap={15} direction={"column"}>
+					<TextInput
+						title='Tên tab'
+						{...form.getInputProps(`data.${index}.title`)}
+					/>
+					<div>
+						<label className="mb-3 block text-black dark:text-white">
+							Thứ tự
+						</label>
+						<NumberInput {...form.getInputProps(`data.${index}.index`)} />
+					</div>
+					<div>
+						<label className="mb-3 block text-black dark:text-white">
+							Nội dung
+						</label>
+						<CustomEditor
+							{...form.getInputProps(`data.${index}.content`)}
+						/>
+					</div>
+					<div>
+						<label className="mb-3 block text-black dark:text-white">
+							Logo
+						</label>
+						<ImageInput {...form.getInputProps(`data.${index}.logo`)} />
+
+					</div>
+					<div>
+						<label className="mb-3 block text-black dark:text-white">
+							Ảnh tiêu biểu
+						</label>
+						<ImageInput {...form.getInputProps(`data.${index}.featuredImage`)} />
+
+					</div>
+					<div>
+						<label className="mb-3 block text-black dark:text-white">
+							Ảnh sau ảnh tiêu biểu
+						</label>
+						<ImageInput {...form.getInputProps(`data.${index}.featuredImage2`)} />
+
+					</div>
+				</Flex>
 			</Card>
 		</Flex>
-	)), [form.values]);
+	))
 
 	return (
 		<Box mx="auto">
@@ -76,6 +116,7 @@ export default forwardRef(function (props: {}, ref: ForwardedRef<ContentListRef>
 							title: "",
 							content: "",
 							logo: "",
+							index: 0,
 						})
 					}
 				>

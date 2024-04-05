@@ -7,7 +7,7 @@ import { convertBase64, instance } from "@/utils"
 import dynamic from "next/dynamic"
 import React, { ChangeEventHandler, forwardRef, useCallback, useEffect, useMemo, useState, type ForwardedRef, useImperativeHandle, useRef } from "react"
 import Swal from "sweetalert2"
-import { Text } from "@/components/Text"
+import { TextInput } from "@/components/Text"
 import { useInput } from "@/hooks/useInput"
 import ImageInput from "@/components/ImageInput"
 import { useForm, type UseFormReturnType } from '@mantine/form';
@@ -53,7 +53,7 @@ const Qutes2Modal = forwardRef((props: {
     return <Modal size={"50%"} yOffset={"200px"} opened={open} onClose={() => setOpen(false)}>
         <Flex direction={"column"} gap={"15px"}>
             <TextInput label="Tiêu đề" {...props.form.getInputProps(`quotes2.${index}.title`)} />
-            <CustomEditor  data={props.form.getInputProps(`quotes2.${index}.content`).value} onChange={props.form.getInputProps(`quotes2.${index}.content`).onChange}  />
+            <CustomEditor  value={props.form.getInputProps(`quotes2.${index}.content`).value} onChange={props.form.getInputProps(`quotes2.${index}.content`).onChange}  />
             <ImageInput title="Ảnh" {...props.form.getInputProps(`quotes2.${index}.image`)} />
             <Group>
                 <Button color="green" onClick={handleSave}>Lưu</Button>
@@ -209,22 +209,22 @@ const Edit = () => {
                 <div className="flex flex-col gap-5.5 p-6.5">
                     <SegmentedControl disabled={loading} data={[{ label: "Tiếng Việt", value: 'vi' }, { label: 'Tiếng Anh', value: "en" }, { label: "Tiếng Nhật", value: 'jp' }]} value={lang} onChange={handle} />
                     <Skeleton visible={loading}>
-                        <Text title="Tiêu đề chính" {...form.getInputProps("title1")} />
-                        <Text title="Tiêu đề phụ" {...form.getInputProps("subtitle")} />
+                        <TextInput title="Tiêu đề chính" {...form.getInputProps("title1")} />
+                        <TextInput title="Tiêu đề phụ" {...form.getInputProps("subtitle")} />
                         <ImageInput title="Ảnh tiêu biểu" {...form.getInputProps("featuredImage")} />
-                        <Text title="Nội dung nút 1" {...form.getInputProps("featuredButtonTitle")} />
-                        <Text title="Nội dung nút 2" {...form.getInputProps("featuredButtonTitle2")} />
+                        <TextInput title="Nội dung nút 1" {...form.getInputProps("featuredButtonTitle")} />
+                        <TextInput title="Nội dung nút 2" {...form.getInputProps("featuredButtonTitle2")} />
                         <Divider my="md" />
-                        <Text title="Tiêu đề tab 1" {...form.getInputProps("tabTitle1")} />
-                        <Text title="Tiêu đề tab 2" {...form.getInputProps("tabTitle2")} />
-                        <Text title="Tiêu đề tab 3" {...form.getInputProps("tabTitle3")} />
+                        <TextInput title="Tiêu đề tab 1" {...form.getInputProps("tabTitle1")} />
+                        <TextInput title="Tiêu đề tab 2" {...form.getInputProps("tabTitle2")} />
+                        <TextInput title="Tiêu đề tab 3" {...form.getInputProps("tabTitle3")} />
                         <Divider my="md" />
-                        <Text title="Tiêu đề 2" {...form.getInputProps("title2")} />
-                        <CustomEditor  data={form.getInputProps("content2").value}  onChange={form.getInputProps("content2").onChange} />
+                        <TextInput title="Tiêu đề 2" {...form.getInputProps("title2")} />
+                        <CustomEditor  value={form.getInputProps("content2").value}  onChange={form.getInputProps("content2").onChange} />
                         <ImageInput title="Ảnh 2" {...form.getInputProps("image2")} />
                         <Divider my="md" />
-                        <Text title="Nội dung quote" {...form.getInputProps("quotes1.content")} />
-                        <Text title="Tác giả quote" {...form.getInputProps("quotes1.author")} />
+                        <TextInput title="Nội dung quote" {...form.getInputProps("quotes1.content")} />
+                        <TextInput title="Tác giả quote" {...form.getInputProps("quotes1.author")} />
                         <ImageInput title="Ảnh nền quote" {...form.getInputProps("quotes1.background")} />
                         <Divider my="md" />
                         <Quotes2Table form={form} {...form.getInputProps("quotes2")} />

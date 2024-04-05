@@ -4,6 +4,7 @@ import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import { Category } from "@/types"
 import { convertBase64, instance } from "@/utils"
+import { NumberInput } from "@mantine/core"
 import { useRouter } from "next/router"
 import { useCallback, useEffect, useState } from "react"
 
@@ -13,6 +14,8 @@ const Create = () => {
     const [category, setCategory] = useState<Category["id"]>()
     const [description, setDescription] = useState("")
     const [featuredImage, setFeaturedImage] = useState("")
+    const [view, setView] = useState(0)
+    const [download, setDownload] = useState(0)
     const [document, setDocument] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
 
@@ -61,6 +64,26 @@ const Create = () => {
         }
     }, [])
 
+    const handleView = useCallback((value: string | number) => {
+        if (typeof value === "string") {
+            const numberValue = parseInt(value);
+            setView(numberValue);
+        }
+        else if (typeof value === "number") {
+            setView(value);
+        }
+    }, [])
+
+    const handleDownload = useCallback((value: string | number) => {
+        if (typeof value === "string") {
+            const numberValue = parseInt(value);
+            setDownload(numberValue);
+        }
+        else if (typeof value === "number") {
+            setDownload(value);
+        }
+    }, [])
+
     const router = useRouter()
 
     const handlePublish = useCallback(async () => {
@@ -73,6 +96,8 @@ const Create = () => {
                     description,
                     featuredImage,
                     document,
+                    view,
+                    download,
                     categoryId: category,
                 },
                 {
@@ -92,7 +117,7 @@ const Create = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }, [name, description, featuredImage, document, category])
+    }, [name, description, featuredImage, document, category, view, download])
 
     return (
         <MainLayout>
@@ -121,6 +146,30 @@ const Create = () => {
                                     onChange={handleChangeName}
                                     type="text"
                                     placeholder="Tên tài liệu"
+                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                />
+                            </div>
+                            <div className="col-span-3">
+                                <label className="mb-3 block text-black dark:text-white">
+                                    Lượt xem
+                                </label>
+                                <NumberInput
+                                    value={view}
+                                    onChange={handleView}
+                                    type="text"
+                                    placeholder="Lượt xem"
+                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                />
+                            </div>
+                            <div className="col-span-3">
+                                <label className="mb-3 block text-black dark:text-white">
+                                    Lượt tải xuống
+                                </label>
+                                <NumberInput
+                                    value={download}
+                                    onChange={handleDownload}
+                                    type="text"
+                                    placeholder="Lượt tải xuống"
                                     className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                 />
                             </div>

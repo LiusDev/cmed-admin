@@ -4,19 +4,42 @@ import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import { Category, Document } from "@/types"
 import { convertBase64, instance } from "@/utils"
+import { NumberInput } from "@mantine/core"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 const Create = () => {
     const [categories, setCategories] = useState<Category[] | null>(null)
     const [document, setDocument] = useState<Document | null>(null)
-
     const [name, setName] = useState("")
     const [category, setCategory] = useState<Category["id"]>(1)
     const [description, setDescription] = useState("")
     const [featuredImage, setFeaturedImage] = useState("")
     const [documentUrl, setDocumentUrl] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
+
+    const [view, setView] = useState(0)
+    const [download, setDownload] = useState(0)
+
+    const handleView = useCallback((value: string | number) => {
+        if (typeof value === "string") {
+            const numberValue = parseInt(value);
+            setView(numberValue);
+        }
+        else if (typeof value === "number") {
+            setView(value);
+        }
+    }, [])
+
+    const handleDownload = useCallback((value: string | number) => {
+        if (typeof value === "string") {
+            const numberValue = parseInt(value);
+            setDownload(numberValue);
+        }
+        else if (typeof value === "number") {
+            setDownload(value);
+        }
+    }, [])
 
     let path: string
     useEffect(() => {
@@ -41,6 +64,8 @@ const Create = () => {
                 setDescription(res.data.description)
                 setFeaturedImage(res.data.featuredImage)
                 setDocumentUrl(res.data.documentUrl)
+                setView(res.data.view)
+                setDownload(res.data.download)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
@@ -49,36 +74,32 @@ const Create = () => {
             })
     }, [])
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
-    }
+    }, [])
 
-    const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChangeCategory = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
         setCategory(parseInt(e.target.value))
-    }
+    }, [])
 
-    const handleChangeDescription = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleChangeDescription = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setDescription(e.target.value)
-    }
+    }, [])
 
-    const handleUploadFeaturedImage = async (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleUploadFeaturedImage = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const file = e.target.files[0]
             const base64image = await convertBase64(file)
             setFeaturedImage(base64image)
         }
-    }
+    }, [])
 
-    const handleUploadDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUploadDocument = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const file = e.target.files[0]
             setDocumentUrl(file)
         }
-    }
+    }, [])
 
     const router = useRouter()
     const handlePublish = async () => {
@@ -93,6 +114,7 @@ const Create = () => {
                         featuredImage,
                         document: documentUrl,
                         categoryId: category,
+                        view, download
                     },
                     {
                         headers: {
@@ -146,11 +168,36 @@ const Create = () => {
                                     className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                 />
                             </div>
+                            <div className="col-span-3">
+                                <label className="mb-3 block text-black dark:text-white">
+                                    Lượt xem
+                                </label>
+                                <NumberInput
+                                    value={view}
+                                    onChange={handleView}
+                                    type="text"
+                                    placeholder="Lượt xem"
+                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                />
+                            </div>
+                            <div className="col-span-3">
+                                <label className="mb-3 block text-black dark:text-white">
+                                    Lượt tải xuống
+                                </label>
+                                <NumberInput
+                                    value={download}
+                                    onChange={handleDownload}
+                                    type="text"
+                                    placeholder="Lượt tải xuống"
+                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                />
+                            </div>
                             <div className="col-span-2">
                                 <label className="mb-3 block text-black dark:text-white">
                                     Danh mục
                                 </label>
                                 <select
+                                    title="Danh mục"
                                     onChange={handleChangeCategory}
                                     className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                 >
@@ -182,6 +229,7 @@ const Create = () => {
                                 Ảnh nổi bật
                             </label>
                             <input
+                                title="Ảnh nổi bật"
                                 type="file"
                                 accept="image/*"
                                 onChange={handleUploadFeaturedImage}
@@ -200,6 +248,7 @@ const Create = () => {
                                 Upload tài liệu
                             </label>
                             <input
+                                title="Upload tài liệu"
                                 type="file"
                                 accept="application/pdf"
                                 onChange={handleUploadDocument}

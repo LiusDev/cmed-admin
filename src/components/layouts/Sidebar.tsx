@@ -88,13 +88,13 @@ const menuItems = [
                 roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
-                label: "Dịch vụ trang chủ",
+                label: "Dịch vụ \"Về chúng tôi\"",
                 icon: <MdMiscellaneousServices className="text-2xl" />,
-                link: "/const-services",
+                link: "/service2",
                 roles: [UserRole.ADMIN, UserRole.STAFF],
             },
             {
-                label: "Dịch vụ",
+                label: "Dịch vụ trang chủ",
                 icon: <MdMiscellaneousServices className="text-2xl" />,
                 link: "/services",
                 roles: [UserRole.ADMIN, UserRole.STAFF],

@@ -120,8 +120,14 @@ export interface Staff {
     createdAt: string
     modifiedAt: string
     name: string
+    nameJP: string
+    nameEN: string
     position: string
+    postionJP: string
+    postionEN: string
     description: string
+    descriptionJP: string
+    descriptionEN: string
     featuredImage: string
 }
 

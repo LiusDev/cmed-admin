@@ -36,8 +36,7 @@ const Edit = (props: any) => {
 
     const validateData = (): boolean => {
         if (
-            name.trim() === "" ||
-            description.trim() === ""
+            name.trim() === ""
         ) {
             return false
         }

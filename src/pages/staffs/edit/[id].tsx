@@ -3,23 +3,39 @@ import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import type { Staff } from "@/types"
-import { convertBase64, instance } from "@/utils"
+import { alias, convertBase64, instance, langOptions } from "@/utils"
+import { useForm } from "@mantine/form"
 import dynamic from "next/dynamic"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import Swal from "sweetalert2"
+import { TextInput } from "../../../components/Text"
+import { SegmentedControl } from "@mantine/core"
+import ImageInput from "../../../components/ImageInput"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
 })
 
 const Edit = () => {
-    const [staff, setStaff] = useState<Staff | null>(null)
 
-    const [name, setName] = useState("")
-    const [position, setPosition] = useState("")
-    const [featuredImage, setFeaturedImage] = useState("")
-    const [description, setDescription] = useState<string | undefined>("")
-    const [loading, setLoading] = useState(false)
+    const [lang, setLang] = useState<keyof typeof alias>('')
+    const form = useForm({
+        initialValues: {
+            name: "",
+            nameEN: "",
+            nameJP: "",
+            position: "",
+            positionEN: "",
+            positionJP: "",
+            description: "",
+            descriptionEN: "",
+            descriptionJP: "",
+            featuredImage: "",
+        },
+    }
+    )
+
+    const [loading, setLoading] = useState(true)
 
     let path: string
     useEffect(() => {
@@ -27,11 +43,8 @@ const Edit = () => {
         instance
             .get(`/staffs/${path}`)
             .then((res) => {
-                setStaff(res.data)
-                setName(res.data.name)
-                setPosition(res.data.position)
-                setDescription(res.data.description)
-                setFeaturedImage(res.data.featuredImage)
+                form.setValues(res.data)
+                setLoading(false)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
@@ -40,39 +53,10 @@ const Edit = () => {
             })
     }, [])
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value)
-    }
-
-    const handleChangePosition = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPosition(e.target.value)
-    }
-
-    const handleUploadFeaturedImage = async (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        if (e.target.files) {
-            const file = e.target.files[0]
-            const base64Image = await convertBase64(file)
-            setFeaturedImage(base64Image)
-        }
-    }
-
-    const validateData = (): boolean => {
-        if (
-            name.trim() === "" ||
-            position.trim() === "" ||
-            description == null ||
-            description.trim() === ""
-        ) {
-            return false
-        }
-        return true
-    }
 
     const handlePublish = async () => {
         setLoading(true)
-        if (!validateData()) {
+        if (form.validate().hasErrors) {
             setLoading(false)
             Swal.fire({
                 icon: "error",
@@ -81,16 +65,10 @@ const Edit = () => {
             })
             return
         }
-        const body = {
-            name,
-            position,
-            description,
-            featuredImage,
-        }
-
-        if (staff) {
+        const id = form.getInputProps("id").value
+        if (id) {
             await instance
-                .patch(`/staffs/${staff.id}`, body)
+                .patch(`/staffs/${id}`, form.values)
                 .then(() => {
                     window.location.href = "/staffs"
                 })
@@ -107,10 +85,12 @@ const Edit = () => {
         }
     }
 
+    const currentAlias = useMemo(() => alias[lang], [lang])
+
     return (
         <MainLayout>
             <Breadcrumb pageName="Nhân viên" link="/staffs" />
-            {!staff ? (
+            {loading ? (
                 <TableSkeleton
                     rows={4}
                     columns={1}
@@ -124,59 +104,24 @@ const Edit = () => {
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
+                        <SegmentedControl disabled={loading} data={langOptions} value={lang} onChange={setLang as any} />
+                        <TextInput title={`Tên nhân viên ${currentAlias}`} {...form.getInputProps(`name${lang}`)} />
+                        <TextInput title={`Vị trí ${currentAlias}`} {...form.getInputProps(`position${lang}`)} />
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Tên
+                                Mô tả {currentAlias}
                             </label>
-                            <input
-                                value={name}
-                                onChange={handleChangeName}
-                                type="text"
-                                placeholder="Tên nhân viên"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
+                            <div hidden={lang != ''}>
+                                <CustomEditor {...form.getInputProps(`description`)} />
+                            </div>
+                            <div hidden={lang != 'JP'}>
+                                <CustomEditor {...form.getInputProps(`descriptionJP`)} />
+                            </div>
+                            <div hidden={lang != 'EN'}>
+                                <CustomEditor {...form.getInputProps(`descriptionEN`)} />
+                            </div>
                         </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Vị trí
-                            </label>
-                            <input
-                                value={position}
-                                onChange={handleChangePosition}
-                                type="text"
-                                placeholder="Vị trí hiện tại"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Mô tả
-                            </label>
-                            <CustomEditor
-                                value={description}
-                                onChange={setDescription}
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Ảnh nổi bật
-                            </label>
-                            <input
-                                title="Chọn ảnh nổi bật"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleUploadFeaturedImage}
-                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
-                            />
-                            {featuredImage && (
-                                <img
-                                    src={featuredImage}
-                                    alt="featured image"
-                                    className="h-40 object-cover rounded-sm"
-                                />
-                            )}
-                        </div>
-
+                        <ImageInput title="Ảnh nội bật" {...form.getInputProps("featuredImage")} />
                         <div>
                             <Button
                                 onClick={handlePublish}

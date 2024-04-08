@@ -79,7 +79,6 @@ const Edit = (props: any) => {
     const validateData = useCallback((): boolean => {
         if (
             name.trim() === "" ||
-            description.trim() === "" ||
             featuredImage === "" ||
             subtitle.trim() === "" ||
             content == null ||

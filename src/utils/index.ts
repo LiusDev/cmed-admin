@@ -145,3 +145,7 @@ export const parseContent = (content: string) => {
             });
     });
 };
+
+export const langOptions = [{ label: "Tiếng Việt", value: '' }, { label: 'Tiếng Anh', value: "EN" }, { label: "Tiếng Nhật", value: 'JP' }]
+
+export const alias = { '': '', 'EN': '(Tiếng Anh)', 'JP': '(Tiếng Nhật)' }

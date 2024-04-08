@@ -57,7 +57,11 @@ export interface Customer {
     createdAt: string
     modifiedAt: string
     name: string
+    nameJP: string
+    nameEN: string
     description: string
+    descriptionJP: string
+    descriptionEN: string
     image: string
     logo: string
     icon: string

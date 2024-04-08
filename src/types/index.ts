@@ -68,6 +68,8 @@ export interface Partner {
     createdAt: string
     modifiedAt: string
     name: string
+    nameJP: string
+    nameEN: string
     image: string
 }
 

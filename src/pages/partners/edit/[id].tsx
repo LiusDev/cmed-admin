@@ -2,16 +2,29 @@ import { Box, Button, Breadcrumb } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
-import { Partner } from "@/types"
-import { convertBase64, instance } from "@/utils"
+import { alias, instance, langOptions } from "@/utils"
+import { SegmentedControl } from "@mantine/core"
+import { useForm } from "@mantine/form"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Swal from "sweetalert2"
+import ImageInput from "@/components/ImageInput"
+import { TextInput } from "@/components/Text"
 
 const Update = () => {
     const [mount, setMount] = useState(false)
-    const [name, setName] = useState("")
-    const [image, setImage] = useState("")
+
+    const [lang, setLang] = useState<keyof typeof alias>("");
+    const currentAlias = useMemo(() => alias[lang], [lang]);
+    const form = useForm({
+        initialValues: {
+            name: "",
+            nameJP: "",
+            nameEN: "",
+            image: ""
+        }
+    })
+
     const [loading, setLoading] = useState(false)
 
     let path: string
@@ -20,8 +33,7 @@ const Update = () => {
         instance
             .get(`/partners/${path}`)
             .then((res) => {
-                setName(res.data.name)
-                setImage(res.data.image)
+                form.setValues(res.data)
                 setMount(true)
             })
             .catch((err) => {
@@ -31,33 +43,13 @@ const Update = () => {
             })
     }, [])
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value)
-    }
-
-    const handleUploadImage = async (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        if (e.target.files) {
-            const file = e.target.files[0]
-            const base64Image = await convertBase64(file)
-            setImage(base64Image)
-        }
-    }
-
-    const validateData = (): boolean => {
-        if (name.trim() === "" || image === "") {
-            return false
-        }
-        return true
-    }
 
     const router = useRouter()
 
     const handlePublish = async () => {
         path = window.location.pathname.split("/")[3]
         setLoading(true)
-        if (!validateData()) {
+        if (form.validate().hasErrors) {
             setLoading(false)
             Swal.fire({
                 icon: "error",
@@ -66,10 +58,7 @@ const Update = () => {
             })
             return
         }
-        const body = {
-            name,
-            image,
-        }
+        const body = form.values
 
         instance
             .patch(`/partners/${path}`, body)
@@ -103,37 +92,11 @@ const Update = () => {
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Tên
-                            </label>
-                            <input
-                                value={name}
-                                onChange={handleChangeName}
-                                type="text"
-                                placeholder="Tên đối tác"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
 
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Logo
-                            </label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleUploadImage}
-                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
-                            />
-                            {image && (
-                                <img
-                                    src={image}
-                                    alt="featured image"
-                                    className="h-40 object-cover rounded-sm"
-                                />
-                            )}
-                        </div>
+                        <SegmentedControl disabled={loading} data={langOptions} value={lang} onChange={setLang as any} />
+                        <TextInput title={`Tên nhân viên ${currentAlias}`} {...form.getInputProps(`name${lang}`)} />
+                        <ImageInput title="Logo" {...form.getInputProps("image")} />
+
                         <div>
                             <Button
                                 onClick={handlePublish}

@@ -3,43 +3,60 @@ import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import { ProjectImage } from "@/types"
-import { convertBase64, instance, parseContent } from "@/utils"
+import { alias, convertBase64, instance, langOptions, parseContent } from "@/utils"
 import { AxiosError } from "axios"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { MdClose } from "react-icons/md"
 import Swal from "sweetalert2"
 import { useInput } from "../../../hooks/useInput"
+import { useForm } from "@mantine/form"
+import { SegmentedControl } from "@mantine/core"
+import { TextInput } from "../../../components/Text"
+import ImageInput from "../../../components/ImageInput"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
 })
 
 const Edit = (props: any) => {
-    console.log(JSON.stringify(props))
+
+    const form = useForm({
+        initialValues: {
+            name: "",
+            nameJP: "",
+            nameEN: "",
+            subtitle: "",
+            subtitleJP: "",
+            subtitleEN: "",
+            content: "",
+            contentJP: "",
+            contentEN: "",
+            description: "",
+            descriptionJP: "",
+            descriptionEN: "",
+            featuredImage: "",
+        }
+    })
+
     const [mounted, setMounted] = useState(false)
-    const [name, setName, handleChangeName] = useInput("")
-    const [subtitle, setSubtitle, handleChangeSubtitle] = useInput("")
-    const [description, setDescription, handleChangeDescription] = useInput("")
-    const [featuredImage, setFeaturedImage] = useState("")
-    const [content, setContent] = useState<string | undefined>("")
     const [images, setImages] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+
+    const [lang, setLang] = useState<keyof typeof alias>("");
+    const currentAlias = useMemo(() => alias[lang], [lang]);
+
     useEffect(() => {
         const path = router.query.id
         if (path)
             instance
                 .get(`/projects/${path}`)
                 .then((res) => {
-                    setName(res.data.name ?? "")
-                    setDescription(res.data.description ?? "")
-                    setFeaturedImage(res.data.featuredImage)
-                    setContent(res.data.content)
+                    form.setValues(res.data)
                     setImages(res.data.images)
                     setMounted(true)
-                    setSubtitle(res.data.subtitle)
                 })
                 .catch((err) => {
                     if (err instanceof AxiosError && err.response?.status === 401) {
@@ -48,15 +65,7 @@ const Edit = (props: any) => {
                 })
     }, [router.query.id])
 
-    const handleUploadFeaturedImage = useCallback(async (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        if (e.target.files) {
-            const file = e.target.files[0]
-            const base64image = await convertBase64(file)
-            setFeaturedImage(base64image)
-        }
-    }, [])
+
 
     const handleUploadImages = useCallback(async (
         e: React.ChangeEvent<HTMLInputElement>
@@ -76,22 +85,11 @@ const Edit = (props: any) => {
         setImages(old => old.filter((_, i) => i !== index))
     }, [])
 
-    const validateData = useCallback((): boolean => {
-        if (
-            name.trim() === "" ||
-            featuredImage === "" ||
-            subtitle.trim() === "" ||
-            content == null ||
-            content.trim() === ""
-        ) {
-            return false
-        }
-        return true
-    }, [name, description, featuredImage, content])
+
 
     const handlePublish = useCallback(async () => {
         setLoading(true)
-        if (!validateData()) {
+        if (form.validate().hasErrors) {
             setLoading(false)
             Swal.fire({
                 icon: "error",
@@ -100,13 +98,19 @@ const Edit = (props: any) => {
             })
             return
         }
-        const newContent = await parseContent(content ?? "")
+        const [newContent, newContentEN, newContentJP] = await Promise.all([
+            parseContent(form.values.content ?? ""),
+            parseContent(form.values.contentEN ?? ""),
+            parseContent(form.values.contentJP ?? ""),
+        ]);
+
+
         const body = {
-            name,
-            description,
-            featuredImage,
+            ...form.values,
             content: newContent,
-            images, subtitle
+            contentEN: newContentEN,
+            contentJP: newContentJP,
+            images
         }
 
         await instance
@@ -122,7 +126,7 @@ const Edit = (props: any) => {
             .finally(() => {
                 setLoading(false)
             })
-    }, [name, description, featuredImage, content, images, subtitle])
+    }, [images, form])
 
     return (
         <MainLayout>
@@ -141,61 +145,11 @@ const Edit = (props: any) => {
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Tên
-                            </label>
-                            <input
-                                value={name}
-                                onChange={handleChangeName}
-                                type="text"
-                                placeholder="Tên dự án"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Tiêu đề phụ
-                            </label>
-                            <input
-                                value={subtitle}
-                                onChange={handleChangeSubtitle}
-                                type="text"
-                                placeholder="Tiêu đề phụ của dự án"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Mô tả
-                            </label>
-                            <input
-                                value={description}
-                                onChange={handleChangeDescription}
-                                type="text"
-                                placeholder="Mô tả dự án"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Ảnh nổi bật
-                            </label>
-                            <input
-                                title="image upload"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleUploadFeaturedImage}
-                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
-                            />
-                            {featuredImage && (
-                                <img
-                                    src={featuredImage}
-                                    alt="featured image"
-                                    className="h-40 object-cover rounded-sm"
-                                />
-                            )}
-                        </div>
+                        <SegmentedControl disabled={loading} data={langOptions} value={lang} onChange={setLang as any} />
+                        <TextInput title={`Tiêu đề ${currentAlias}`} {...form.getInputProps(`name${lang}`)} />
+                        <TextInput title={`Tiêu đề phụ ${currentAlias}`} {...form.getInputProps(`subtitle${lang}`)} />
+                        <TextInput title={`Mô tả ${currentAlias}`} {...form.getInputProps(`description${lang}`)} />
+                        <ImageInput title="Ảnh nổi bật" {...form.getInputProps("featuredImage")} />
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
                                 Hình ảnh khác
@@ -229,12 +183,11 @@ const Edit = (props: any) => {
                         </div>
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Nội dung
+                                Nội dung {currentAlias}
                             </label>
-                            <CustomEditor
-                                value={content}
-                                onChange={setContent}
-                            />
+                            <div hidden={lang != ""}><CustomEditor {...form.getInputProps(`content`)} /></div>
+                            <div hidden={lang != "EN"}><CustomEditor {...form.getInputProps(`contentEN`)} /></div>
+                            <div hidden={lang != "JP"}><CustomEditor {...form.getInputProps(`contentJP`)} /></div>
                         </div>
                         <div>
                             <Button

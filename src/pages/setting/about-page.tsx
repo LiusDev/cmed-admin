@@ -50,7 +50,7 @@ const Qutes2Modal = forwardRef((props: {
     }), [])
     return <Modal size={"50%"} yOffset={"200px"} opened={open} onClose={() => setOpen(false)}>
         <Flex direction={"column"} gap={"15px"}>
-            <TextInput label="Tiêu đề" {...props.form.getInputProps(`quotes2.${index}.title`)} />
+            <TextInput title="Tiêu đề" {...props.form.getInputProps(`quotes2.${index}.title`)} />
             <CustomEditor  value={props.form.getInputProps(`quotes2.${index}.content`).value} onChange={props.form.getInputProps(`quotes2.${index}.content`).onChange}  />
             <ImageInput title="Ảnh" {...props.form.getInputProps(`quotes2.${index}.image`)} />
             <Group>

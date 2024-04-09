@@ -111,7 +111,7 @@ const Create = () => {
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
                         <SegmentedControl disabled={loading} data={langOptions} value={lang} onChange={setLang as any} />
-                        <TextInput title={`Tên nhân viên ${currentAlias}`} {...form.getInputProps(`name${lang}`)} />
+                        <TextInput title={`Tên tài liêu ${currentAlias}`} {...form.getInputProps(`name${lang}`)} />
                         <NumberInput title="Lượt xem" {...form.getInputProps("view")} />
                         <NumberInput title="Lượt tải xuống" {...form.getInputProps("download")} />
 

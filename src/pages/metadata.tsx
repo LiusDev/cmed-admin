@@ -2,67 +2,46 @@ import { Box, Breadcrumb, Button } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
-import { convertBase64, instance } from "@/utils"
+import { alias, convertBase64, instance, langOptions } from "@/utils"
+import { SegmentedControl } from "@mantine/core"
+import { useForm } from "@mantine/form"
 import { useRouter } from "next/router"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import Swal from "sweetalert2"
+import { TextInput } from "../components/Text"
+import { NumberInput } from "../components/NumberInput"
+import ImageInput from "../components/ImageInput"
 
 const Metadata = () => {
     const [mounted, setMounted] = useState(false)
-    const [name, setName] = useState("")
-    const [phone, setPhone] = useState("")
-    const [email, setEmail] = useState("")
-    const [address, setAddress] = useState("")
-    const [ceoImage, setCeoImage] = useState("")
-    const [quoteImage, setQuoteImage] = useState("")
+    const [lang, setLang] = useState<keyof typeof alias>("");
+    const currentAlias = useMemo(() => alias[lang], [lang]);
     const [buttonLoading, setButtonLoading] = useState(false)
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value)
-    }
-
-    const handleChangePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPhone(e.target.value)
-    }
-
-    const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value)
-    }
-
-    const handleChangeAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAddress(e.target.value)
-    }
-
-    const handleChangeCeoImage = async (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        if (e.target.files) {
-            const file = e.target.files[0]
-            const base64Image = await convertBase64(file)
-            setCeoImage(base64Image)
+    const form = useForm({
+        initialValues: {
+            companyName: "",
+            companyNameJP: "",
+            comapnyNameEN: "",
+            comapnyPhone: "",
+            companyPhoneJP: "",
+            companyPhoneEN: "",
+            comapnyEmail: "",
+            compnayEmailJP: "",
+            companyEmailEN: "",
+            comapnyAddress: "",
+            companyAddressJP: "",
+            companyAddressEN: "",
+            ceoImage: "",
+            quoteImage: "",
         }
-    }
-
-    const handleChangeQuoteImage = async (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        if (e.target.files) {
-            const file = e.target.files[0]
-            const base64Image = await convertBase64(file)
-            setQuoteImage(base64Image)
-        }
-    }
+    })
 
     useEffect(() => {
         instance
             .get("/metadata")
             .then((res) => {
-                setName(res.data.companyName)
-                setPhone(res.data.companyPhone)
-                setEmail(res.data.companyEmail)
-                setAddress(res.data.companyAddress)
-                setCeoImage(res.data.ceoImage)
-                setQuoteImage(res.data.quoteImage)
+                form.setValues(res.data)
                 setMounted(true)
             })
             .catch((err) => {
@@ -70,24 +49,10 @@ const Metadata = () => {
             })
     }, [])
 
-    const validateData = (): boolean => {
-        if (
-            name.trim() === "" ||
-            phone.trim() === "" ||
-            email.trim() === "" ||
-            address.trim() === "" ||
-            ceoImage === "" ||
-            quoteImage === ""
-        ) {
-            return false
-        }
-        return true
-    }
-
     const router = useRouter()
-    const handleUpdateData = () => {
+    const handleUpdateData = useCallback(() => {
         setButtonLoading(true)
-        if (!validateData()) {
+        if (form.validate().hasErrors) {
             setButtonLoading(false)
             Swal.fire({
                 icon: "error",
@@ -97,14 +62,7 @@ const Metadata = () => {
             return
         }
         instance
-            .patch("/metadata", {
-                companyName: name,
-                companyPhone: phone,
-                companyEmail: email,
-                companyAddress: address,
-                ceoImage,
-                quoteImage,
-            })
+            .patch("/metadata", form.values)
             .then((res) => {
                 Swal.fire({
                     icon: "success",
@@ -118,7 +76,8 @@ const Metadata = () => {
                     title: "Có lỗi xảy ra",
                 })
             })
-    }
+    }, [form])
+
     return (
         <MainLayout>
             <Breadcrumb pageName="Thông tin công ty" link="/metadata" />
@@ -130,102 +89,14 @@ const Metadata = () => {
                 />
             ) : (
                 <Box className="max-w-230 m-auto">
-                    <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                        <h3 className="font-medium text-black dark:text-white capitalize">
-                            Thông tin công ty
-                        </h3>
-                    </div>
-
                     <div className="flex flex-col gap-5.5 p-6.5">
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Tên công ty
-                            </label>
-                            <input
-                                value={name}
-                                onChange={handleChangeName}
-                                type="text"
-                                placeholder="Tên công ty"
-                                name="categoryName"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Số điện thoại
-                            </label>
-                            <input
-                                value={phone}
-                                onChange={handleChangePhone}
-                                type="text"
-                                placeholder="Số điện thoại"
-                                name="categoryName"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Email
-                            </label>
-                            <input
-                                value={email}
-                                onChange={handleChangeEmail}
-                                type="text"
-                                placeholder="Email"
-                                name="categoryName"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Địa chỉ
-                            </label>
-                            <input
-                                value={address}
-                                onChange={handleChangeAddress}
-                                type="text"
-                                placeholder="Địa chỉ"
-                                name="categoryName"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Ảnh CEO
-                            </label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleChangeCeoImage}
-                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
-                            />
-                            {ceoImage && (
-                                <img
-                                    src={ceoImage}
-                                    alt="CEO Image"
-                                    className="h-40 object-cover rounded-sm"
-                                />
-                            )}
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Ảnh nền Quote
-                            </label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleChangeQuoteImage}
-                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
-                            />
-                            {quoteImage && (
-                                <img
-                                    src={quoteImage}
-                                    alt="Quote Image"
-                                    className="h-40 object-cover rounded-sm"
-                                />
-                            )}
-                        </div>
+                    <SegmentedControl disabled={!mounted} data={langOptions} value={lang} onChange={setLang as any} />
+                        <TextInput title={`Tên nhân viên ${currentAlias}`} {...form.getInputProps(`companyName${lang}`)} />
+                        <NumberInput title={`Số điện thoại ${currentAlias}`} {...form.getInputProps(`companyPhone${lang}`)} />
+                        <TextInput title="Email" {...form.getInputProps(`companyEmail${lang}`)} />
+                        <TextInput title="Địa chỉ" {...form.getInputProps(`companyAddress${lang}`)} />
+                        <ImageInput title="Ảnh CEO" {...form.getInputProps("ceoImage")} />
+                        <ImageInput title="Ảnh nền Quote" {...form.getInputProps("quoteImage")} />
                         <div>
                             <Button
                                 onClick={handleUpdateData}

@@ -165,9 +165,17 @@ export interface AboutPage {
 export interface Metadata {
     id: number
     companyName: string
+    companyNameJP: string
+    companyNameEN:string
     companyPhone: string
+    companyPhoneJP:string
+    compnayPhoneEN:string
     companyEmail: string
+    companyEmailJP: string
+    companyEmailEN: string
     companyAddress: string
+    companyAddressJP: string
+    companyAddressEN: string
     ceoImage: string
     quoteImage: string
 }

@@ -2,12 +2,15 @@ import { Box, Breadcrumb, Button } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
-import { instance, parseContent } from "@/utils"
+import { alias, instance, langOptions, parseContent } from "@/utils"
+import { SegmentedControl } from "@mantine/core"
 import { DateTimePicker } from "@mantine/dates"
+import { useForm } from "@mantine/form"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import Swal from "sweetalert2"
+import { TextInput } from "../../../components/Text"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
@@ -15,14 +18,26 @@ const CustomEditor = dynamic(() => import("@/components/customEditor"), {
 
 const Edit = () => {
     const [mounted, setMounted] = useState(false)
-    const [title, setTitle] = useState("")
     const [deadline, setDeadline] = useState<Date | null>(() => {
         const d = new Date()
         d.setHours(1)
         return d
     })
-    const [content, setContent] = useState<string | undefined>("")
     const [loading, setLoading] = useState(false)
+    const [lang, setLang] = useState<keyof typeof alias>("");
+    const currentAlias = useMemo(() => alias[lang], [lang]);
+
+    const form = useForm({
+        initialValues: {
+            title: "",
+            titleJP: "",
+            titleEN: "",
+            content: "",
+            contentJP: "",
+            contentEN: "",
+        }
+    })
+
 
     let path: string
     useEffect(() => {
@@ -31,9 +46,8 @@ const Edit = () => {
         instance
             .get(`/recruitment/${path}`)
             .then((res) => {
-                setTitle(res.data.title)
+                form.setValues(res.data)
                 setDeadline(new Date(res.data.deadline))
-                setContent(res.data.content)
                 setMounted(true)
             })
             .catch((err) => {
@@ -43,21 +57,12 @@ const Edit = () => {
             })
     }, [])
 
-    const handleChangeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value)
-    }, [])
 
-    const validateData = useCallback((): boolean => {
-        if (title.trim() === "" || deadline === null || content == null || content.trim() === "") {
-            return false
-        }
-        return true
-    }, [title, deadline, content])
 
     const router = useRouter()
     const handlePublish = useCallback(async () => {
         setLoading(true)
-        if (!validateData()) {
+        if (form.validate().hasErrors) {
             setLoading(false)
             Swal.fire({
                 icon: "error",
@@ -66,13 +71,19 @@ const Edit = () => {
             })
             return
         }
-        const newContent = await parseContent(content ?? "")
+        const [newContent, newContentEN, newContentJP] = await Promise.all([
+            parseContent(form.values.content ?? ""),
+            parseContent(form.values.contentEN ?? ""),
+            parseContent(form.values.contentJP ?? ""),
+        ]);
 
         await instance
             .patch(`/recruitment/${router.query.id}`, {
-                title,
+                ...form.values,
                 deadline: deadline!.toISOString(),
                 content: newContent,
+                contentEN: newContentEN,
+                contentJP: newContentJP,
             })
             .then(() => {
                 window.location.href = "/recruitment"
@@ -85,7 +96,7 @@ const Edit = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }, [title, deadline, content])
+    }, [form, deadline])
 
     return (
         <MainLayout>
@@ -104,40 +115,27 @@ const Edit = () => {
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Tiêu đề
-                            </label>
-                            <input
-                                value={title}
-                                onChange={handleChangeTitle}
-                                type="text"
-                                placeholder="Tên dự án"
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
-                        </div>
+                        <SegmentedControl disabled={loading} data={langOptions} value={lang} onChange={setLang as any} />
+                        <TextInput title={`Tiêu đề ${currentAlias}`} {...form.getInputProps(`title${lang}`)} />
 
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
                                 Hạn nộp hồ sơ
                             </label>
                             <DateTimePicker
-                                placeholder="Chọn thời hạn"
-                                monthsListFormat="mm"
-                                locale="vn"
+                                placeholder="Pick date"
                                 value={deadline}
-
                                 onChange={setDeadline}
                             />
                         </div>
+
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Nội dung
+                                Nội dung {currentAlias}
                             </label>
-                            <CustomEditor
-                                value={content}
-                                onChange={setContent}
-                            />
+                            <div hidden={lang != ""}><CustomEditor {...form.getInputProps(`content`)} /></div>
+                            <div hidden={lang != "EN"}><CustomEditor {...form.getInputProps(`contentEN`)} /></div>
+                            <div hidden={lang != "JP"}><CustomEditor {...form.getInputProps(`contentJP`)} /></div>
                         </div>
                         <div>
                             <Button

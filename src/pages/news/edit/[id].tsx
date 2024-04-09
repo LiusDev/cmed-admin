@@ -3,24 +3,26 @@ import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import type { Category, News } from "@/types"
-import { convertBase64, instance, parseContent } from "@/utils"
+import { alias, convertBase64, instance, langOptions, parseContent } from "@/utils"
+import { SegmentedControl } from "@mantine/core"
+import { useForm } from "@mantine/form"
 import dynamic from "next/dynamic"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import Swal from "sweetalert2"
+import { TextInput } from "../../../components/Text"
+import ImageInput from "../../../components/ImageInput"
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
 })
 
 const Edit = () => {
+    const [lang, setLang] = useState<keyof typeof alias>("");
+    const currentAlias = useMemo(() => alias[lang], [lang]);
     const [categories, setCategories] = useState<Category[]>([])
-    const [news, setNews] = useState<News | null>(null)
-
-    const [title, setTitle] = useState("")
     const [category, setCategory] = useState<Category["id"]>(1)
-    const [description, setDescription] = useState("")
-    const [featuredImage, setFeaturedImage] = useState("")
-    const [content, setContent] = useState<string | undefined>("")
+    const [news, setNews] = useState<News | null>(null)
+    const form = useForm({ initialValues: { title: "", titleJP: "", titleEN: "", description: "", descriptionEN: "", descriptionJP: "", featuredImage: "", content: "", contentJP: "", contentEN: "" } })
     const [loading, setLoading] = useState(false)
 
     let path: string
@@ -40,11 +42,9 @@ const Edit = () => {
             .get(`/news/${path}`)
             .then((res) => {
                 setNews(res.data)
-                setTitle(res.data.title)
                 setCategory(res.data.category.id)
-                setDescription(res.data.description)
-                setFeaturedImage(res.data.featuredImage)
-                setContent(res.data.content)
+                delete res.data[category]
+                form.setValues(res.data)
             })
             .catch((err) => {
                 if (err.response.status === 401) {
@@ -53,46 +53,14 @@ const Edit = () => {
             })
     }, [])
 
-    const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value)
-    }
 
     const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setCategory(parseInt(e.target.value))
     }
 
-    const handleChangeDescription = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setDescription(e.target.value)
-    }
-
-    const handleUploadFeaturedImage = async (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        if (e.target.files) {
-            const file = e.target.files[0]
-            const base64image = await convertBase64(file)
-            setFeaturedImage(base64image)
-        }
-    }
-
-    const validateData = (): boolean => {
-        if (
-            title.trim() === "" ||
-            description.trim() === "" ||
-            featuredImage === "" ||
-            content == null ||
-            content.trim() === ""
-        ) {
-            return false
-        }
-        return true
-    }
-
     const handlePublish = async () => {
         setLoading(true)
-        if (!validateData()) {
+        if (form.validate().hasErrors) {
             setLoading(false)
             Swal.fire({
                 icon: "error",
@@ -101,13 +69,17 @@ const Edit = () => {
             })
             return
         }
-        const newContent = await parseContent(content ?? "")
+        const [newContent, newContentEN, newContentJP] = await Promise.all([
+            parseContent(form.values.content ?? ""),
+            parseContent(form.values.contentEN ?? ""),
+            parseContent(form.values.contentJP ?? "")
+        ]);
         const body = {
-            title,
+            ...form.values,
             categoryId: category,
-            description,
-            featuredImage,
             content: newContent,
+            contentEN: newContentEN,
+            contentJP: newContentJP
         }
         if (news) {
             await instance
@@ -145,79 +117,38 @@ const Edit = () => {
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
-                        <div className="grid grid-cols-5 gap-2">
-                            <div className="col-span-3">
-                                <label className="mb-3 block text-black dark:text-white">
-                                    Tiêu đề
-                                </label>
-                                <input
-                                    value={title}
-                                    onChange={handleChangeTitle}
-                                    type="text"
-                                    placeholder="Tiêu đề bài viết"
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                                />
-                            </div>
-                            <div className="col-span-2">
-                                <label className="mb-3 block text-black dark:text-white">
-                                    Danh mục
-                                </label>
-                                <select
-                                    title="Danh mục"
-                                    onChange={handleChangeCategory}
-                                    value={category}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                                >
-                                    {categories.map((category) => (
-                                        <option
-                                            key={category.id}
-                                            value={category.id}
-                                        >
-                                            {category.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div>
+                        <SegmentedControl disabled={loading} data={langOptions} value={lang} onChange={setLang as any} />
+                        <TextInput title={`Tiều đề ${currentAlias}`} {...form.getInputProps(`title${lang}`)} />
+                        <div className="col-span-2">
                             <label className="mb-3 block text-black dark:text-white">
-                                Mô tả
+                                Danh mục
                             </label>
-                            <input
-                                value={description}
-                                onChange={handleChangeDescription}
-                                type="text"
-                                placeholder="Mô tả bài viết"
+                            <select
+                                title="Danh mục"
+                                onChange={handleChangeCategory}
+                                value={category}
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                            />
+                            >
+                                {categories.map((category) => (
+                                    <option
+                                        key={category.id}
+                                        value={category.id}
+                                    >
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
+                        <TextInput title={`Mô tả ${currentAlias}`} {...form.getInputProps(`description${lang}`)} />
+                        <ImageInput title="Ảnh nổi bật" {...form.getInputProps("featuredImage")} />
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
-                                Ảnh nổi bật
+                                Nội dung {currentAlias}
                             </label>
-                            <input
-                                title="Chọn ảnh nổi bật"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleUploadFeaturedImage}
-                                className="mb-3 w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
-                            />
-                            {featuredImage && (
-                                <img
-                                    src={featuredImage}
-                                    alt="featured image"
-                                    className="h-40 object-cover rounded-sm"
-                                />
-                            )}
-                        </div>
-                        <div>
-                            <label className="mb-3 block text-black dark:text-white">
-                                Nội dung
-                            </label>
-                            <CustomEditor
-                                value={content}
-                                onChange={setContent}
-                            />
+                            <div hidden={lang != ""}><CustomEditor {...form.getInputProps("content")} /></div>
+                            <div hidden={lang != "EN"}><CustomEditor {...form.getInputProps("contentEN")} /></div>
+                            <div hidden={lang != "JP"}><CustomEditor {...form.getInputProps("contentJP")} /></div>
+
                         </div>
                         <div>
                             <Button

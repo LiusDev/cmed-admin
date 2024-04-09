@@ -1,10 +1,13 @@
 import { useForm } from '@mantine/form';
-import { Switch, Group, ActionIcon, Box, Text, Button, Code, Textarea, Flex, Card, NumberInput } from '@mantine/core';
+import { Switch, Group, ActionIcon, Box, Text, Button, Code, Textarea, Flex, Card } from '@mantine/core';
 import { TiTrash } from 'react-icons/ti';
 import ImageInput from '../ImageInput';
 import { useMemo, ForwardedRef, forwardRef, useImperativeHandle } from 'react';
 import dynamic from 'next/dynamic';
 import { TextInput } from '../Text';
+import { alias } from '../../utils';
+import { NumberInput } from '../NumberInput';
+import { title } from 'process';
 
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
 	ssr: false,
@@ -23,7 +26,9 @@ type ContentType = {
 	logo: string
 }
 
-export default forwardRef(function (props: {}, ref: ForwardedRef<ContentListRef>) {
+export default forwardRef(function ({ lang }: { lang: keyof typeof alias }, ref: ForwardedRef<ContentListRef>) {
+	const currentAlias = useMemo(() => alias[lang], [lang]);
+
 	const form = useForm<{
 		data: ContentType[]
 	}>({
@@ -54,22 +59,19 @@ export default forwardRef(function (props: {}, ref: ForwardedRef<ContentListRef>
 				</Card.Section>
 				<Flex gap={15} direction={"column"}>
 					<TextInput
-						title='Tên tab'
-						{...form.getInputProps(`data.${index}.title`)}
+						title={`Tên tab ${currentAlias}`}
+						{...form.getInputProps(`data.${index}.title${lang}`)}
 					/>
+
+					<NumberInput title='Thứ tự' {...form.getInputProps(`data.${index}.index`)} />
+
 					<div>
 						<label className="mb-3 block text-black dark:text-white">
-							Thứ tự
+							Nội dung {currentAlias}
 						</label>
-						<NumberInput {...form.getInputProps(`data.${index}.index`)} />
-					</div>
-					<div>
-						<label className="mb-3 block text-black dark:text-white">
-							Nội dung
-						</label>
-						<CustomEditor
-							{...form.getInputProps(`data.${index}.content`)}
-						/>
+						<div hidden={lang != ""}><CustomEditor {...form.getInputProps(`data.${index}.content`)} /></div>
+						<div hidden={lang != "EN"}><CustomEditor {...form.getInputProps(`data.${index}.contentEN`)} /></div>
+						<div hidden={lang != "JP"}><CustomEditor {...form.getInputProps(`data.${index}.contentJP`)} /></div>
 					</div>
 					<div>
 						<label className="mb-3 block text-black dark:text-white">
@@ -114,7 +116,11 @@ export default forwardRef(function (props: {}, ref: ForwardedRef<ContentListRef>
 					onClick={() =>
 						form.insertListItem("data", {
 							title: "",
+							titleEN: "",
+							titleJP: "",
 							content: "",
+							contentEN: "",
+							contentJP: "",
 							logo: "",
 							index: 0,
 						})

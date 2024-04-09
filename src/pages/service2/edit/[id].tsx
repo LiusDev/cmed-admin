@@ -3,51 +3,45 @@ import MainLayout from "@/components/layouts/MainLayout"
 import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
 import { Category } from "@/types"
-import { convertBase64, instance, parseContent } from "@/utils"
-import { Select, type ComboboxData, type ComboboxItem, NumberInput } from "@mantine/core"
+import { alias, convertBase64, instance, langOptions, parseContent } from "@/utils"
+import { Select, type ComboboxData, type ComboboxItem, SegmentedControl } from "@mantine/core"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Swal from "sweetalert2"
 import ContentList, { type ContentListRef } from "../../../components/home-services/ContentList"
 import { useParams } from "next/navigation"
+import { useForm } from "@mantine/form"
+import { TextInput } from "../../../components/Text"
+import { NumberInput } from "../../../components/NumberInput"
 
 const Edit = (props: any) => {
 
     const id = useParams()?.id as string ?? undefined
-
-    const [name, setName] = useState("")
-    const [description, setDescription] = useState("")
+    const [lang, setLang] = useState<keyof typeof alias>("");
+    const currentAlias = useMemo(() => alias[lang], [lang]);
+    const form = useForm({
+        initialValues: {
+            name: "",
+            nameEN: "",
+            nameJP: "",
+            description: "",
+            descriptionJP: "",
+            descriptionEN: "",
+            index: 0,
+        }
+    })
     const [loading, setLoading] = useState(false)
     const [categories, setCategories] = useState<ComboboxItem[]>([])
-    const [index, setIndex] = useState(0)
-
     const [categoryId, setCategoryId] = useState<string | null>(null)
     const contentRef = useRef<ContentListRef>(null)
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value)
-    }
 
-    const handleChangeDescription = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setDescription(e.target.value)
-    }
-
-    const validateData = (): boolean => {
-        if (
-            name.trim() === ""
-        ) {
-            return false
-        }
-        return true
-    }
 
     const router = useRouter()
 
     const handlePublish = useCallback(async () => {
         setLoading(true)
-        if (!validateData()) {
+        if (form.validate().hasErrors) {
             setLoading(false)
             Swal.fire({
                 icon: "error",
@@ -59,10 +53,8 @@ const Edit = (props: any) => {
 
         instance
             .put(`/service2/${id}`, {
-                name,
-                description,
+                ...form.values,
                 categoryId,
-                index,
                 content: contentRef.current?.getValues() ?? []
             })
             .then(() => {
@@ -76,7 +68,7 @@ const Edit = (props: any) => {
             .finally(() => {
                 setLoading(false)
             })
-    }, [name, description, contentRef.current, categoryId, index, id])
+    }, [contentRef.current, categoryId, form, id])
 
     useEffect(() => {
         instance.get<Category[]>('/categories').then(res => {
@@ -90,11 +82,9 @@ const Edit = (props: any) => {
         if (id != null) {
             instance.get(`/service2/${id}`).then(res => {
                 const data = res.data
-                setName(data.name?? "")
-                setDescription(data.description ?? "")
+                form.setValues(data)
                 if (data.category)
                     setCategoryId(data.category.id.toString())
-                setIndex(data.index)
                 contentRef.current?.setValues(data.content ?? [])
             })
         }
@@ -110,32 +100,9 @@ const Edit = (props: any) => {
                     </h3>
                 </div>
                 <div className="flex flex-col gap-5.5 p-6.5">
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">
-                            Tên
-                        </label>
-                        <input
-                            value={name}
-                            onChange={handleChangeName}
-                            type="text"
-                            placeholder="Tên dịch vụ"
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">
-                            Mô tả
-                        </label>
-                        <input
-                            value={description}
-                            onChange={handleChangeDescription}
-                            type="text"
-                            placeholder="Mô tả dịch vụ"
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                        />
-                    </div>
-
+                    <SegmentedControl disabled={loading} data={langOptions} value={lang} onChange={setLang as any} />
+                    <TextInput title={`Tên dịch vụ ${currentAlias}`} {...form.getInputProps(`name${lang}`)} />
+                    <TextInput title={`Mô tả ${currentAlias}`} {...form.getInputProps(`description${lang}`)} />
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
                             Thể loại tin tức
@@ -144,16 +111,12 @@ const Edit = (props: any) => {
                             setCategoryId(v)
                         }} />
                     </div>
-                    <NumberInput value={index} onChange={v => {
-                        if (typeof v === 'number') {
-                            setIndex(v)
-                        }
-                    }} />
+                    <NumberInput title="Thứ tự" {...form.getInputProps("index")} />
                     <div>
                         <label className="mb-3 block text-black dark:text-white">
                             Nội dung
                         </label>
-                        <ContentList ref={contentRef} />
+                        <ContentList lang={lang} ref={contentRef} />
                     </div>
                     <div>
                         <Button

@@ -1,16 +1,15 @@
 import { Box, Breadcrumb, Button as CustomButton } from "@/components/common"
 import MainLayout from "@/components/layouts/MainLayout"
-import { TableSkeleton } from "@/components/skeletons"
 import withAuth from "@/hoc/withAuth"
-import type { Staff, AboutPage, ElementOf } from "@/types"
-import { convertBase64, instance } from "@/utils"
+import type { AboutPage, ElementOf } from "@/types"
+import { instance } from "@/utils"
 import dynamic from "next/dynamic"
-import React, { ChangeEventHandler, forwardRef, useCallback, useEffect, useMemo, useState, type ForwardedRef, useImperativeHandle, useRef } from "react"
+import React, { forwardRef, useCallback, useEffect, useMemo, useState, type ForwardedRef, useImperativeHandle, useRef } from "react"
 import Swal from "sweetalert2"
-import { useInput } from "@/hooks/useInput"
 import ImageInput from "@/components/ImageInput"
 import { useForm, type UseFormReturnType } from '@mantine/form';
-import { Button, Divider, Flex, Group, Image, Modal, SegmentedControl, Skeleton, Table, TextInput, Textarea } from '@mantine/core';
+import { Button, Divider, Flex, Group, Image, Modal, SegmentedControl, Skeleton, Table } from '@mantine/core';
+import { TextInput } from "../../components/Text"
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
 })

@@ -1,30 +1,29 @@
 import { Box, Breadcrumb, Button } from "@/components/common";
 import MainLayout from "@/components/layouts/MainLayout";
 import withAuth from "@/hoc/withAuth";
-import { instance } from "@/utils";
+import { alias, instance, langOptions } from "@/utils";
+import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { use, useCallback, useMemo, useState } from "react";
 import Swal from "sweetalert2";
+import { TextInput } from "../../components/Text";
+import { SegmentedControl } from "@mantine/core";
 
 const Create = () => {
-    const [name, setName] = useState("");
-    const [buttonLoading, setButtonLoading] = useState(false);
-
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
-
-    const validateData = (): boolean => {
-        if (name.trim() === "") {
-            return false;
+    const form = useForm({
+        initialValues: {
+            name: "",
+            nameJP: "",
+            nameEN: ""
         }
-        return true;
-    };
-
+    })
+    const [lang, setLang] = useState<keyof typeof alias>("");
+    const currentAlias = useMemo(() => alias[lang], [lang]);
+    const [buttonLoading, setButtonLoading] = useState(false);
     const router = useRouter();
-    const handleCreateCategory = async () => {
+    const handleCreateCategory = useCallback(async () => {
         setButtonLoading(true);
-        if (!validateData()) {
+        if (form.validate().hasErrors) {
             setButtonLoading(false);
             Swal.fire({
                 icon: "error",
@@ -34,9 +33,7 @@ const Create = () => {
             return;
         }
         await instance
-            .post("/categories", {
-                name,
-            })
+            .post("/categories", form.values)
             .then((res) => {
                 if (res.status === 201) {
                     router.push("/categories");
@@ -50,7 +47,7 @@ const Create = () => {
             .finally(() => {
                 setButtonLoading(false);
             });
-    };
+    }, [form, router]);
 
     return (
         <MainLayout>
@@ -64,19 +61,8 @@ const Create = () => {
                 </div>
 
                 <div className="flex flex-col gap-5.5 p-6.5">
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">
-                            Tên danh mục
-                        </label>
-                        <input
-                            value={name}
-                            onChange={handleChangeName}
-                            type="text"
-                            placeholder="Tên danh mục"
-                            name="categoryName"
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                        />
-                    </div>
+                    <SegmentedControl data={langOptions} value={lang} onChange={setLang as any} />
+                    <TextInput title={`Tên danh mục ${currentAlias}`} {...form.getInputProps(`name${lang}`)} />
 
                     <div>
                         <Button

@@ -24,6 +24,8 @@ export interface Category {
     createdAt: string
     modifiedAt: string
     name: string
+    nameEN: string
+    nameJP: string
     documents: any
     news: News[]
 }

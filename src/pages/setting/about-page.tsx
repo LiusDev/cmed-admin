@@ -29,7 +29,6 @@ import {
     Table,
 } from "@mantine/core"
 import { TextInput } from "../../components/Text"
-import { useRouter } from "next/router"
 const CustomEditor = dynamic(() => import("@/components/customEditor"), {
     ssr: false,
 })
@@ -59,12 +58,10 @@ const Qutes2Modal = forwardRef(
             }
         }, [index?.toString()])
 
-        const router = useRouter()
-        const handleSave = useCallback(() => {
+        const handleSave = () => {
             setOpen(false)
-            setIndex(undefined)
-            router.reload()
-        }, [])
+            // setIndex(undefined)
+        }
 
         useImperativeHandle(
             ref,
@@ -91,8 +88,9 @@ const Qutes2Modal = forwardRef(
                     />
                     <CustomEditor
                         value={
-                            props.form.getInputProps(`quotes2.${index}.content`)
-                                .value
+                            props?.form?.getInputProps(
+                                `quotes2.${index}.content`
+                            )?.value
                         }
                         onChange={
                             props.form.getInputProps(`quotes2.${index}.content`)
@@ -130,7 +128,10 @@ const Quotes2Row = ({
     return (
         <Table.Tr>
             <Table.Td>{value.title}</Table.Td>
-            <Table.Td>{value.content}</Table.Td>
+            <Table.Td>
+                {" "}
+                <div dangerouslySetInnerHTML={{ __html: value.content }} />
+            </Table.Td>
             <Table.Td>
                 <Image src={value.image} />
             </Table.Td>
@@ -352,8 +353,8 @@ const Edit = () => {
                             {...form.getInputProps("title2")}
                         />
                         <CustomEditor
-                            value={form.getInputProps("content2").value}
-                            onChange={form.getInputProps("content2").onChange}
+                            value={form.getInputProps("content2")?.value}
+                            onChange={form.getInputProps("content2")?.onChange}
                         />
                         <ImageInput
                             title="Ảnh 2"

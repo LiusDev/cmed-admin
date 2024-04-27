@@ -24,8 +24,8 @@ const Edit = () => {
         return d
     })
     const [loading, setLoading] = useState(false)
-    const [lang, setLang] = useState<keyof typeof alias>("");
-    const currentAlias = useMemo(() => alias[lang], [lang]);
+    const [lang, setLang] = useState<keyof typeof alias>("")
+    const currentAlias = useMemo(() => alias[lang], [lang])
 
     const form = useForm({
         initialValues: {
@@ -35,9 +35,8 @@ const Edit = () => {
             content: "",
             contentJP: "",
             contentEN: "",
-        }
+        },
     })
-
 
     let path: string
     useEffect(() => {
@@ -57,8 +56,6 @@ const Edit = () => {
             })
     }, [])
 
-
-
     const router = useRouter()
     const handlePublish = useCallback(async () => {
         setLoading(true)
@@ -75,7 +72,7 @@ const Edit = () => {
             parseContent(form.values.content ?? ""),
             parseContent(form.values.contentEN ?? ""),
             parseContent(form.values.contentJP ?? ""),
-        ]);
+        ])
 
         await instance
             .patch(`/recruitment/${router.query.id}`, {
@@ -115,8 +112,16 @@ const Edit = () => {
                         </h3>
                     </div>
                     <div className="flex flex-col gap-5.5 p-6.5">
-                        <SegmentedControl disabled={loading} data={langOptions} value={lang} onChange={setLang as any} />
-                        <TextInput title={`Tiêu đề ${currentAlias}`} {...form.getInputProps(`title${lang}`)} />
+                        <SegmentedControl
+                            disabled={loading}
+                            data={langOptions}
+                            value={lang}
+                            onChange={setLang as any}
+                        />
+                        <TextInput
+                            title={`Tiêu đề ${currentAlias}`}
+                            {...form.getInputProps(`title${lang}`)}
+                        />
 
                         <div>
                             <label className="mb-3 block text-black dark:text-white">
@@ -133,9 +138,21 @@ const Edit = () => {
                             <label className="mb-3 block text-black dark:text-white">
                                 Nội dung {currentAlias}
                             </label>
-                            <div hidden={lang != ""}><CustomEditor {...form.getInputProps(`content`)} /></div>
-                            <div hidden={lang != "EN"}><CustomEditor {...form.getInputProps(`contentEN`)} /></div>
-                            <div hidden={lang != "JP"}><CustomEditor {...form.getInputProps(`contentJP`)} /></div>
+                            <div hidden={lang != ""}>
+                                <CustomEditor
+                                    {...form.getInputProps(`content`)}
+                                />
+                            </div>
+                            <div hidden={lang != "EN"}>
+                                <CustomEditor
+                                    {...form.getInputProps(`contentEN`)}
+                                />
+                            </div>
+                            <div hidden={lang != "JP"}>
+                                <CustomEditor
+                                    {...form.getInputProps(`contentJP`)}
+                                />
+                            </div>
                         </div>
                         <div>
                             <Button
